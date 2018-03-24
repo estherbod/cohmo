@@ -1,4 +1,4 @@
-from history import Correction, HistoryManager
+from cohmo.history import Correction, HistoryManager
 import enum
 
 class TableStatus(enum.Enum):

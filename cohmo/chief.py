@@ -1,5 +1,5 @@
-from table import Table, create_table_from_file, dump_table_to_file
-from history import HistoryManager
+from cohmo.table import Table, create_table_from_file, dump_table_to_file
+from cohmo.history import HistoryManager
 
 # This class is the global handler of both the tables and the history.
 # The name of the class is inspired from the real-world name of the person
