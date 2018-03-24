@@ -34,14 +34,6 @@ class Table:
         self.current_coordination_start_time = None # Timestamp in seconds
         self.current_coordination_team = None
 
-    # Removes the team from the queue.
-    # Returns whether the team was in the queue.
-    def remove_from_queue(self, team):
-        if team in self.queue:
-            self.queue.remove(team)
-            return True
-        else: return False
-
     # Adds a team to the queue in the given position (default is last).
     # If the team is already in the queue nothing is done and False is returned.
     # Otherwise True is returned.
@@ -52,9 +44,13 @@ class Table:
             return True
         else: return False
 
-    # Returns the queue of teams still to coordinate.
-    def get_queue(self):
-        return self.queue
+    # Removes the team from the queue.
+    # Returns whether the team was in the queue.
+    def remove_from_queue(self, team):
+        if team in self.queue:
+            self.queue.remove(team)
+            return True
+        else: return False
 
     # Starts a coordination with team.
     # Returns whether the coordination started successfully.
@@ -81,4 +77,34 @@ class Table:
         if self.status != TableStatus.NOTHING: return False
         self.status = TableStatus.CALLING
         return True
-    
+
+# ACHTUNG: Why I am not saving everything to file?
+
+# Returns a table created from the given file (with history_manager injected).
+# The format for the file is the following one:
+# table name
+# problem name
+# coordinators (separated by commas)
+# queue of teams (separated by commas)
+def create_table_from_file(path, history_manager):
+    with open(path, newline='') as table_file:
+        lines = table_file.readlines()
+        assert(len(lines) >= 4)
+        name = lines[0]
+        problem = lines[1]
+        coordinators = [coordinator.strip() for coordinator in lines[2].split(',')]
+        queue = [team.strip() for team in lines[3].split(',')]
+        table = Table(name, problem, coordinators, history_manager)
+        for team in queue:
+            table.add_to_queue(team)
+        return table
+
+# Dumps the table to file. The format is the same as create_table_from_file.
+# It should be remarked that the current status of the table (whether it is
+# currently correcting is lost when doing this operation).
+def dump_table_to_file(table, path):
+    with open(path, 'w', newline='') as table_file:
+        table_file.write(table.name + '\n')
+        table_file.write(table.problem + '\n')
+        table_file.write(','.join(table.coordinators) + '\n')
+        table_file.write(','.join(table.queue) + '\n')
