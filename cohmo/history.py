@@ -67,9 +67,9 @@ class HistoryManager:
         return False
 
     # Returns a (eventually empty) list of corrections that satisfies all the
-    # given properties. If all corrections are desired, no property should be
+    # given filters. If all corrections are desired, no property should be
     # specified.
-    # The properties have to be passed as keywords arguments and the possible
+    # The filters have to be passed as a dictionary and the possible
     # arguments are:
     # identifier: The unique id of the correction.
     # table: The table that performed the correction.
@@ -78,26 +78,26 @@ class HistoryManager:
     #             are returned.
     # end_time: Exactly as start_time, but the corrections that END in that
     #           range re returned.
-    def get_corrections(self, **properties):
+    def get_corrections(self, filters):
         result = []
         for correction in self.corrections:
             filtered_correction = True
-            if 'identifier' in properties:
-                filtered_correction &= correction.id == properties['identifier']
-            if 'table' in properties:
-                filtered_correction &= correction.table == properties['table']
-            if 'team' in properties:
-                filtered_correction &= correction.team == properties['team']
-            if 'start_time' in properties:
+            if 'identifier' in filters:
+                filtered_correction &= correction.id == filters['identifier']
+            if 'table' in filters:
+                filtered_correction &= correction.table == filters['table']
+            if 'team' in filters:
+                filtered_correction &= correction.team == filters['team']
+            if 'start_time' in filters:
                 filtered_correction &= (
-                    properties['start_time'][0]
+                    filters['start_time'][0]
                     <= correction.start_time
-                    <= properties['start_time'][1])
-            if 'end_time' in properties:
+                    <= filters['start_time'][1])
+            if 'end_time' in filters:
                 filtered_correction &= (
-                    properties['end_time'][0]
+                    filters['end_time'][0]
                     <= correction.end_time
-                    <= properties['end_time'][1])
+                    <= filters['end_time'][1])
             
             if filtered_correction: result.append(correction)
         return result
