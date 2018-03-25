@@ -1,4 +1,4 @@
-from cohmo.table import Table, create_table_from_file, dump_table_to_file
+from cohmo.table import Table
 from cohmo.history import HistoryManager
 
 # This class is the global handler of both the tables and the history.
@@ -18,13 +18,11 @@ class ChiefCoordinator:
             lines = teams_file.readlines()
             assert(len(lines) >= 1)
             self.teams = [team.strip() for team in lines[0].split(',')]
-        self.history_manager = HistoryManager()
-        self.history_manager.load_from_file(history_path)
+        self.history_manager = HistoryManager(history_path)
 
         self.tables = {}
         for name in table_paths:
-            self.tables[name] = create_table_from_file(
-                table_paths[name], self.history_manager)
+            self.tables[name] = Table(table_paths[name], self.history_manager)
 
     # Saves the current states of tables and history to the given files.
     # The default files are the ones passed to the constructor.
@@ -33,7 +31,7 @@ class ChiefCoordinator:
         if history_path is None: history_path = self.history_path
         self.history_manager.dump_to_file(history_path)
         for name in table_paths:
-            dump_table_to_file(self.tables[name], table_paths[name])
+            self.tables[name].dump_to_file(table_paths[name])
 
 #  chief = ChiefCoordinator('../test_data/teams.txt',
     #  {'T1':'../test_data/T1.txt', 'T8': '../test_data/T8.txt'},

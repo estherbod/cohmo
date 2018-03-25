@@ -22,8 +22,37 @@ class Correction:
 # The internal state is simply a list of corrections.
 # It can load (and dump) the history from a csv file.
 class HistoryManager:
-    def __init__(self):
+    # Loads the corrections from a file.
+    # Can raise a ValueError if the file is malformed.
+    # The file must be a csv file where each row contains a correction in the
+    # form: team, table, start_time, end_time, id
+    def __init__(self, path):
+        self.path = path
         self.corrections = []
+        try:
+            with open(path, newline='') as history_file:
+                history_reader = csv.reader(
+                    history_file, delimiter=',', quotechar='"')
+                for row in history_reader:
+                    if not row: continue
+                    assert(len(row) == 5)
+                    self.corrections.append(Correction(*row))
+        except AssertionError:
+            raise ValueError('The file \'{0}\' is malformed.'.format(path))
+
+    # Dumps all the corrections to a file. The format is the same used by
+    # the constructor, see the header comment of __init__ for the
+    # specifications.
+    def dump_to_file(self, path=None):
+        if path is None: path = self.path
+        with open(path, 'w', newline='') as history_file:
+            history_writer = csv.writer(history_file, delimiter=',',
+                                        quotechar='"',
+                                        quoting=csv.QUOTE_MINIMAL)
+            for correction in corrections:
+                history_writer.writerow([correction.team, correction.table,
+                                        correction.start_time,
+                                        correction.end_time, correction.id])
 
     # Adds a single correction to the history.
     def add(self, team, table, start_time, end_time):
@@ -72,32 +101,3 @@ class HistoryManager:
             
             if filtered_correction: result.append(correction)
         return result
-
-    # Loads the corrections from a file. The current corrections are deleted.
-    # Can raise a ValueError if the file is malformed.
-    # The file must be a csv file where each row contains a correction in the
-    # form: team, table, start_time, end_time, id
-    def load_from_file(self, path):
-        try:
-            with open(path, newline='') as history_file:
-                history_reader = csv.reader(
-                    history_file, delimiter=',', quotechar='"')
-                for row in history_reader:
-                    if not row: continue
-                    assert(len(row) == 5)
-                    self.corrections.append(Correction(*row))
-        except AssertionError:
-            raise ValueError('The file \'{0}\' is malformed.'.format(path))
-
-    # Dumps all the corrections to a file. The format is the same used by
-    # load_from_file, see the header comments of that method for the
-    # specifications.
-    def dump_to_file(self, path):
-        with open(path, 'w', newline='') as history_file:
-            history_writer = csv.writer(history_file, delimiter=',',
-                                        quotechar='"',
-                                        quoting=csv.QUOTE_MINIMAL)
-            for correction in corrections:
-                history_writer.writerow([correction.team, correction.table,
-                                        correction.start_time,
-                                        correction.end_time, correction.id])
