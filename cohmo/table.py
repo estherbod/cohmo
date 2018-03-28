@@ -1,6 +1,11 @@
 from cohmo.history import Correction, HistoryManager
 import enum
 
+
+NUM_SIGN_CORR = 5
+APRIORI_DURATION = 20*60*60
+
+
 class TableStatus(enum.Enum):
     CALLING = 0
     CORRECTING = 1
@@ -49,6 +54,8 @@ class Table:
             else:
                 self.current_coordination_start_time = None
                 self.current_coordination_team = None
+            self.number_made_corrections = self.get_number_made_corrections()
+            self.expected_duration = self.get_expected_duration()
 
     # Dumps the table to file. The format is the same as create_table_from_file.
     # It should be remarked that the current status of the table (whether it is
@@ -71,7 +78,7 @@ class Table:
     def add_to_queue(self, team, pos=-1):
         if team not in self.queue:
             if pos == -1: pos = len(self.queue)
-            self.queue.insert(len(self.queue), team)
+            self.queue.insert(pos, team)
             return True
         else: return False
 
@@ -93,12 +100,18 @@ class Table:
         return True
 
     # Finish the current coordination and saves it in the history.
+    # Updates the values of expected_duration and number_made_corrections.
     # Returns whether the coordination was successfully finished.
     def finish_coordination(self):
         if self.status != TableStatus.CORRECTING: return False
+        time_now = int(time.time())
         self.history_manager.add(self.current_coordination_team, self.name,
                                  self.current_coordination_time,
-                                 int(time.time()))
+                                 time_now)
+        self.expected_duration *= max(number_made_corrections, NUM_SIGN_CORR)
+        self.expected_duration += time_now - self.current_coordination_time
+        number_made_corrections += 1
+        self.expected_duration /= max(number_made_corrections, NUM_SIGN_CORR)
         self.status = TableStatus.NOTHING
         return True
 
@@ -108,3 +121,24 @@ class Table:
         if self.status != TableStatus.NOTHING: return False
         self.status = TableStatus.CALLING
         return True
+
+    # Returns the numbers of done corrections.
+    def get_number_made_corrections(self):
+        table_corrections = self.history_manager.get_corrections({'table': self.name})
+        return len(table_corrections)
+
+    # Compute the expected duration of the next correction of the table.
+    # It is computed taking the arithmetic mean of the durations of the made
+    # corrections.
+    # If less than NUM_SIGN_CORR corrections have been done in the table,
+    # it pretends there exist corrections with duration APRIORI_DURATION.
+    def get_expected_duration(self):
+        table_corrections = self.history_manager.get_corrections({'table': self.name})
+        sorted(table_corrections, key = attrgetter('start_time'), reverse = True)
+        expected_duration = 0
+        for i in range(0, len(table_corrections)):
+            expected_duration += table_coordinations[i].duration()
+        expected_duration += max(NUM_SIGN_CORR - len(table_coordinations), 0) * APRIORI_DURATION;
+        expected_duration /= max(NUM_SIGN_CORR, len(table_corrections);
+        return expected_duration
+        
