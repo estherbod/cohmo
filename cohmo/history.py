@@ -1,5 +1,5 @@
 import sys
-from base64 import b64encode
+from base64 import b32encode
 from os import urandom
 import csv
 
@@ -36,7 +36,9 @@ class HistoryManager:
                 for row in history_reader:
                     if not row: continue
                     assert(len(row) == 5)
-                    self.corrections.append(Correction(*row))
+                    self.corrections.append(Correction(
+                        row[0].strip(), row[1].strip(), int(row[2]),
+                        int(row[3]), row[4].strip()))
         except AssertionError:
             raise ValueError('The file \'{0}\' is malformed.'.format(path))
 
@@ -49,13 +51,14 @@ class HistoryManager:
             history_writer = csv.writer(history_file, delimiter=',',
                                         quotechar='"',
                                         quoting=csv.QUOTE_MINIMAL)
-            for correction in corrections:
+            for correction in self.corrections:
                 history_writer.writerow([correction.team, correction.table,
                                         correction.start_time,
                                         correction.end_time, correction.id])
 
     # Adds a single correction to the history.
     def add(self, team, table, start_time, end_time):
+        if start_time > end_time: return False # Maybe raise ValueError
         self.corrections.append(Correction(team, table, start_time, end_time))
         return True
 
@@ -75,10 +78,10 @@ class HistoryManager:
     # identifier: The unique id of the correction.
     # table: The table that performed the correction.
     # team: The team concerned by the correction.
-    # start_time: A pair of timestamps. All corrections that start in that range
-    #             are returned.
-    # end_time: Exactly as start_time, but the corrections that END in that
-    #           range re returned.
+    # start_time (range): A pair of timestamps. All corrections that start in
+    #                     the range are returned.
+    # end_time (range): Exactly as start_time, but the corrections that end
+    #                   in the range are returned.
     def get_corrections(self, filters):
         result = []
         for correction in self.corrections:

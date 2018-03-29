@@ -117,7 +117,7 @@ def switch_to_calling(table_name):
         return jsonify(ok = True)
     return jsonify(ok = False)
 
-# API relative to the history
+# APIs relative to the history
 
 @app.route('/history/add', methods = ['POST'])
 def history_add():
