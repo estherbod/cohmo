@@ -1,3 +1,4 @@
+from cohmo import app
 from cohmo.history import Correction, HistoryManager
 import enum
 
@@ -122,7 +123,8 @@ class Table:
         expected_duration = 0
         for corr in table_corrections:
             expected_duration += corr.duration()
-        expected_duration += max(NUM_SIGN_CORR - len(table_coordinations), 0) * APRIORI_DURATION;
-        expected_duration /= max(NUM_SIGN_CORR, len(table_corrections);
+        expected_duration += max(app.config['NUM_SIGN_CORR'] - len(table_corrections), 0) * app.config['APRIORI_DURATION']
+        expected_duration /= max(app.config['NUM_SIGN_CORR'],
+                                 len(table_corrections))
         return expected_duration
         
