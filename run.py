@@ -1,4 +1,5 @@
-from cohmo import app 
+from cohmo import app, init_chief
 
 if __name__ == '__main__':
-    app.run() 
+    init_chief()
+    app.run()

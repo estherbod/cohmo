@@ -35,7 +35,6 @@ class Table:
         self.path = path
         with open(path, newline='') as table_file:
             lines = table_file.readlines()
-            assert(len(lines) >= 5)
             self.name = lines[0].strip()
             self.problem = lines[1].strip()
             self.coordinators = [coordinator.strip() for coordinator in lines[2].split(',')]
