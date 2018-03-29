@@ -85,6 +85,14 @@ class Table:
             return True
         else: return False
 
+    def swap_teams_in_queue(self, team1, team2):
+        if team1 not in self.queue or team2 not in self.queue:
+            return False
+        pos1 = self.queue.index(team1)
+        pos2 = self.queue.index(team2)
+        self.queue[pos1], self.queue[pos2] = team2, team1
+        return True
+
     # Starts a coordination with team.
     # Returns whether the coordination started successfully.
     def start_coordination(self, team):

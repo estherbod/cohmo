@@ -10,22 +10,6 @@ SPECIFY_TEAM = 'You have to specify a team.'
 
 # API relative to a table
 
-@app.route('/table/<string:table_name>/remove_from_queue', methods = ['POST'])
-def remove_from_queue(table_name):
-    if table_name not in chief.tables:
-        return jsonify(ok = False, message = TABLE_NOT_EXIST.format(table_name))
-    req_data = request.get_json()
-    if 'team' not in req_data:
-        return jsonify(ok = False, message = SPECIFY_TEAM)
-    team = req_data['team']
-    if team not in chief.teams:
-        return jsonify(ok = False, message = TEAM_NOT_EXIST.format(team))
-    if team not in chief.tables[table_name].queue:
-        return jsonify(ok = False, message = 'Team {0} is not in queue at table {1}.'.format(team, table_name))
-    if chief.tables[table_name].remove_from_queue(team):
-        return jsonify(ok = True)
-    return jsonify(ok = False)
-
 @app.route('/table/<string:table_name>/add_to_queue', methods = ['POST'])
 def add_to_queue(table_name):
     if table_name not in chief.tables:
@@ -37,8 +21,48 @@ def add_to_queue(table_name):
     if team not in chief.teams:
         return jsonify(ok = False, message = TEAM_NOT_EXIST.format(team))
     if team in chief.tables[table_name].queue:
-        return jsonify(ok = False, message = 'Team {0} is already in queue at table {1}.'.format(team, table_name))
+        return jsonify(ok = False,
+                       message = 'Team {0} is already in queue at table {1}.'.format(team, table_name))
     if chief.tables[table_name].add_to_queue(team):
+        return jsonify(ok = True)
+    return jsonify(ok = False)
+
+@app.route('/table/<string:table_name>/remove_from_queue', methods = ['POST'])
+def remove_from_queue(table_name):
+    if table_name not in chief.tables:
+        return jsonify(ok = False, message = TABLE_NOT_EXIST.format(table_name))
+    req_data = request.get_json()
+    if 'team' not in req_data:
+        return jsonify(ok = False, message = SPECIFY_TEAM)
+    team = req_data['team']
+    if team not in chief.teams:
+        return jsonify(ok = False, message = TEAM_NOT_EXIST.format(team))
+    if team not in chief.tables[table_name].queue:
+        return jsonify(ok = False,
+                       message = 'Team {0} is not in queue at table {1}.'.format(team, table_name))
+    if chief.tables[table_name].remove_from_queue(team):
+        return jsonify(ok = True)
+    return jsonify(ok = False)
+
+@app.route('/table/<string:table_name>/swap_teams_in_queue', methods = ['POST'])
+def swap_teams_in_queue(table_name):
+    if table_name not in chief.tables:
+        return jsonify(ok = False, message = TABLE_NOT_EXIST.format(table_name))
+    req_data = request.get_json()
+    if 'teams' not in req_data:
+        return jsonify(ok = False,
+                       message = 'You have to specify the teams to be swapped.')
+    teams = req_data['teams']
+    if len(teams) != 2:
+        return jsonify(ok = False,
+                       message = 'You have to give exactly two teams to be swapped.')
+    for team in teams:
+        if team not in chief.teams:
+            return jsonify(ok = False, message = TEAM_NOT_EXIST.format(team))
+        if team not in chief.tables[table_name].queue:
+            return jsonify(ok = False,
+                           message = 'Team {0} is not in queue at table {1}.'.format(team, table_name))
+    if chief.tables[table_name].swap_teams_in_queue(teams[0], teams[1]):
         return jsonify(ok = True)
     return jsonify(ok = False)
 
@@ -60,7 +84,8 @@ def start_coordination(table_name):
     if team not in chief.teams:
         return jsonify(ok = False, message = TEAM_NOT_EXIST.format(team))
     if team in chief.tables[table_name].queue:
-        return jsonify(ok = False, message = 'Team {0} is not in queue at table {1}.'.format(team, table_name))
+        return jsonify(ok = False,
+                       message = 'Team {0} is not in queue at table {1}.'.format(team, table_name))
     if chief.tables[table_name].start_coordination(team):
         return jsonify(ok = True)
     return jsonify(ok = False)
@@ -71,6 +96,17 @@ def finish_coordination(table_name):
         return jsonify(ok = False, message = TABLE_NOT_EXIST.format(table_name))
     if chief.tables[table_name].finish_coordination():
         return jsonify(ok = True)
+    return jsonify(ok = False)
+
+@app.route('/table/<string:table_name>/pause_coordination', methods = ['POST'])
+def pause_coordination(table_name):
+    if table_name not in chief.tables:
+        return jsonify(ok = False, message = TABLE_NOT_EXIST.format(table_name))
+    team = chief.tables[table_name].current_coordination_team # TODO: maybe check this is not malformed
+    if chief.tables[table_name].finish_coordination():
+        if chief.tables[table_name].add_to_queue(team): # TODO: maybe put the team in a different position
+            return jsonify(ok = True);
+        return jsonify(ok = False)
     return jsonify(ok = False)
 
 @app.route('/table/<string:table_name>/switch_to_calling', methods = ['POST'])
@@ -120,9 +156,5 @@ def get_corrections():
         filters = req_data['filters']
     else:
         return jsonify(ok = False, message = 'You have to specify filters.')
-    if chief.history_manager.get_corrections(filters):
-        return jsonify(ok = True)
-    return jsonify(ok = False)
-
-
-        
+    return jsonify(ok = True,
+                   corrections = chief.history_manager.get_corrections(filters))

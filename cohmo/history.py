@@ -57,6 +57,7 @@ class HistoryManager:
     # Adds a single correction to the history.
     def add(self, team, table, start_time, end_time):
         self.corrections.append(Correction(team, table, start_time, end_time))
+        return True
 
     # Deletes a correction and returns True if it was succesfully deleted.
     def delete(self, correction_id):
