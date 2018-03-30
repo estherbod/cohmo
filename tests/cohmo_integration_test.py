@@ -94,12 +94,12 @@ class CohmoTestCase(unittest.TestCase):
         table.dump_to_file()
         self.assertTrue(table.remove_from_queue('ENG'))
         self.assertFalse(table.remove_from_queue('KOR'))
-        self.assertEqual(table.queue, ['ITA'])
+        self.assertEqual(table.queue, ['ITA', 'IND'])
         table.dump_to_file()
 
         # Constructing Table from the file written by dump_to_file.
         table = Table(cohmo.app.config['TABLE_FILE_PATHS']['T2'], history)
-        self.assertEqual(table.queue, ['ITA'])
+        self.assertEqual(table.queue, ['ITA', 'IND'])
         self.assertEqual(table.status, TableStatus.CORRECTING)
         self.assertEqual(table.current_coordination_team, 'IND')
         self.assertFalse(table.switch_to_calling())
@@ -115,14 +115,14 @@ class CohmoTestCase(unittest.TestCase):
         self.assertFalse(table.add_to_queue('ITA'))
         self.assertTrue(table.add_to_queue('KOR', 0))
         self.assertTrue(table.add_to_queue('CHN', 2))
-        self.assertEqual(table.queue, ['KOR', 'ITA', 'CHN', 'ENG'])
+        self.assertEqual(table.queue, ['KOR', 'ITA', 'CHN', 'IND', 'ENG'])
         self.assertFalse(table.remove_from_queue('FRA'))
         self.assertTrue(table.remove_from_queue('ITA'))
         self.assertFalse(table.remove_from_queue('ITA'))
         self.assertFalse(table.swap_teams_in_queue('CHN', 'CHN'))
         self.assertFalse(table.swap_teams_in_queue('FRA', 'KOR'))
-        self.assertTrue(table.swap_teams_in_queue('ENG', 'KOR'))
-        self.assertEqual(table.queue, ['ENG', 'CHN', 'KOR'])
+        self.assertTrue(table.swap_teams_in_queue('KOR', 'IND'))
+        self.assertEqual(table.queue, ['IND', 'CHN', 'KOR', 'ENG'])
 
 
     # Testing get_expected_duration.

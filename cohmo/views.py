@@ -96,7 +96,9 @@ def start_coordination(table_name):
         return jsonify(ok=False,
                        message='Team {0} is not in queue at table {1}.'.format(team, table_name))
     if chief.tables[table_name].start_coordination(team):
-        return jsonify(ok=True)
+        if chief.tables[table_name].remove_from_queue(team):
+            return jsonify(ok=True)
+        return jsonify(ok=False, message='The team has not been removed from queue.')
     return jsonify(ok=False)
 
 @app.route('/table/<string:table_name>/finish_coordination', methods=['POST'])
