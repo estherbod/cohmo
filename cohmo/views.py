@@ -193,8 +193,15 @@ def get_corrections():
         filters = req_data['filters']
     else:
         return jsonify(ok=False, message='You have to specify filters.')
-    return jsonify(ok=True,
-                   corrections=chief.history_manager.get_corrections(filters))
+    corrections_data = chief.history_manager.get_corrections(filters)
+    corrections = []
+    for correction in corrections_data:
+        corrections.append({'team': correction.team,
+                            'table': correction.table,
+                            'start_time': correction.start_time,
+                            'end_time': correction.end_time,
+                            'id': str(correction.id)})
+    return jsonify(ok=True, corrections=corrections)
 
 @app.route('/history/get_expected_duration', methods=['GET'])
 def get_expected_duration():
