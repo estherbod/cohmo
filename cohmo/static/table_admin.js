@@ -1,12 +1,19 @@
+Vue.options.delimiters = ['[[', ']]'];
+
+const TableStatus = Object.freeze({CALLING: 0, CORRECTING: 1, IDLE: 2});
+const TableStatusName = ['Calling', 'Correcting', 'Idle'];
+
 let table_model = {
     data: {
-        name: '',
+        name: 'TEST',
         problem: '',
         coordinators: '',
         status: 0,
         current_coordination_start_time: 0,
         current_coordination_team: '',
         queue: [],
+        TableStatus: TableStatus,
+        TableStatusName: TableStatusName,
     },
     update() {
         axios.get('/table/' + table_name + '/get_all')
@@ -25,7 +32,7 @@ let table_model = {
 
 table_model.update();
 
-let header_comp = new Vue({
+new Vue({
     el: '#header',
     data: table_model.data,
 });

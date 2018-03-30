@@ -392,11 +392,11 @@ class CohmoTestCase(unittest.TestCase):
 
         # Testing history_get_corrections.
         resp = json.loads(client.get('/history/get_corrections',
-                                      data=json.dumps({'pippo': 'USA'})).data)
+                                     data=json.dumps({'pippo': 'USA'})).data)
         self.assertTrue('ok' in resp and resp['ok'] == False and
                         resp['message'] == 'You have to specify filters.')
         resp = json.loads(client.get('/history/get_corrections',
-                                      data=json.dumps({'filters': {'team':'USA'}})).data)
+                                     data=json.dumps({'filters': {'team':'USA'}})).data)
         self.assertTrue('ok' in resp and resp['ok'] == True and
                         'corrections' in resp and len(resp['corrections']) == 1)
         correction = resp['corrections'][0]
@@ -408,11 +408,11 @@ class CohmoTestCase(unittest.TestCase):
 
         # Testing get_expected_duration.
         resp = json.loads(client.get('/history/get_expected_duration',
-                                      data=json.dumps({'pippo': 'T2'})).data)
+                                     data=json.dumps({'pippo': 'T2'})).data)
         self.assertTrue('ok' in resp and resp['ok'] == False and
                         resp['message'] == 'You have to specify a table.')
         resp = json.loads(client.get('/history/get_expected_duration',
-                                      data=json.dumps({'table': 'T2'})).data)
+                                     data=json.dumps({'table': 'T2'})).data)
         self.assertTrue('ok' in resp and resp['ok'] == True)
         self.assertAlmostEqual(resp['expected_duration'], 4)
         

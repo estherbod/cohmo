@@ -1,25 +1,25 @@
 <head>
     <meta charset="utf-8">
     <title>Admin Page for Coordinators</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
     <script src="https://unpkg.com/axios@0.18.0/dist/axios.js"></script>
 </head>
 <body>
     <div id='header'>
-        <h1>Table: {{ name }}</h1>
-        <h2>Problem: {{ problem }}</h2>
+        <h1>Table: [[ name ]]</h1>
+        <h2>Problem: [[ problem ]]</h2>
         <h2>Coordinators:
-            <span v-for='(coordinator, index) in coordinators'>{{ coordinator }}<span v-if='index+1 < coordinators.length'>, </span>
+            <span v-for='(coordinator, index) in coordinators'>[[ coordinator ]]<span v-if='index+1 < coordinators.length'>, </span>
         </h2>
     </div>
     <div id='content'>
-        <span>Status: {{ status }}</span>
-        <div v-if='status == "CORRECTING"'>
-            <div>SQUADRA: {{ current_coordination_team }}</div>
+        <span>Status: [[ TableStatusName[status] ]]</span>
+        <div v-if='status == TableStatus.CORRECTING'>
+            <div>SQUADRA: [[ current_coordination_team ]]</div>
             <input type='button' v-on:click='finish_coordination' value='Finish coordination'>
             <input type='button' v-on:click='delay_coordination' value='Delay coordination'>
         </div>
-        <div v-if='status == "CALLING"'>
+        <div v-if='status == TableStatus.CALLING'>
             ???
         </div>
     </div>
