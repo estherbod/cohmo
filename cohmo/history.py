@@ -114,10 +114,10 @@ class HistoryManager:
 
     # Computes the expected duration of the next correction of a table
     # and stores it in the dictionary expected_durations.
-    # It is computed taking the arithmetic mean of the durations of the made
+    # It is computed taking the arithmetic mean of the durations of the past
     # corrections.
     # If less than NUM_SIGN_CORR corrections have been done in the table,
-    # it pretends there exist corrections with duration APRIORI_DURATION.
+    # it pretends there exist additional corrections with duration APRIORI_DURATION.
     def compute_expected_duration(self, table):
         table_corrections = self.get_corrections({'table': table})
         expected_duration = 0

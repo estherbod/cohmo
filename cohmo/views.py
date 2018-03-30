@@ -117,6 +117,18 @@ def switch_to_calling(table_name):
         return jsonify(ok = True)
     return jsonify(ok = False)
 
+@app.route('/table/<string:table_name>/get_all', methods = ['GET'])
+def get_all(table_name):
+    if table_name not in chief.tables:
+        return jsonify(ok = False, message = TABLE_NOT_EXIST.format(table_name))
+    table = chief.tables[table_name]
+    table_data = json.dumps({'name': table.name,
+                             'problem': table.problem,
+                             'coordinators': table.coordinators,
+                             'queue': table.queue,
+                             'status': table.status})
+    return jsonify(ok = True, table_data = table_data)
+
 # APIs relative to the history
 
 @app.route('/history/add', methods = ['POST'])
@@ -158,3 +170,12 @@ def get_corrections():
         return jsonify(ok = False, message = 'You have to specify filters.')
     return jsonify(ok = True,
                    corrections = chief.history_manager.get_corrections(filters))
+
+@app.route('/history/get_expected_duration', methods = ['GET'])
+def get_expected_duration():
+    req_data = request.get_json()
+    if 'table' not in req_data:
+        return jsonify(ok = False, message = 'You have to specify a table.')
+    table = req_data['table']
+    return jsonify(ok = True,
+                   expected_duration = chief.history_manager.get_expected_duration(table))
