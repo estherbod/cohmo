@@ -2,6 +2,10 @@ import os
 import cohmo
 import unittest
 import tempfile
+from unittest import mock
+from unittest.mock import *
+import time
+
 from cohmo.table import Table, TableStatus
 from cohmo.history import HistoryManager
 
@@ -116,6 +120,26 @@ class CohmoTestCase(unittest.TestCase):
         self.assertFalse(table.swap_teams_in_queue('FRA', 'KOR'))
         self.assertTrue(table.swap_teams_in_queue('IND', 'KOR'))
         self.assertEqual(table.queue, ['IND', 'CHN', 'KOR', 'ENG'])
+
+
+    mock_time = Mock()
+    mock_time.side_effect = [3, 10, 5, 21]
+    @patch('time.time', mock_time) 
+    def test_get_expected_duration(self):
+        cohmo.app.config['NUM_SIGN_CORR'] = 2
+        cohmo.app.config['APRIORI_DURATION'] = 3
+        history = HistoryManager(cohmo.app.config['HISTORY_FILE_PATH'])
+        table = Table(cohmo.app.config['TABLE_FILE_PATHS']['T2'], history)
+        self.assertEqual(history.corrections[0].duration(), 5)
+        self.assertEqual(len(history.get_corrections({'table':'T2'})), 1)
+        self.assertEqual(table.get_expected_duration(), 4)
+        self.assertTrue(table.start_coordination('ITA'))
+        self.assertEqual(table.get_expected_duration(), 4)
+        self.assertTrue(table.finish_coordination())
+        self.assertEqual(table.get_expected_duration(), 6)
+        self.assertTrue(table.start_coordination('ENG'))
+        self.assertTrue(table.finish_coordination())
+        self.assertEqual(table.get_expected_duration(), 28/3)
 
 
 if __name__ == '__main__':
