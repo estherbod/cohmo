@@ -8,6 +8,7 @@ import time
 
 from cohmo.table import Table, TableStatus
 from cohmo.history import HistoryManager
+from cohmo.views import init_chief
 
 def generate_tempfile(content_rows):
     with tempfile.NamedTemporaryFile(delete=False) as t_file:
@@ -24,7 +25,7 @@ class CohmoTestCase(unittest.TestCase):
             'T8': generate_tempfile(['T8', '1', 'Marco Faschi, Giorgio Gigi', 'KOR, ENG, FRA', 'CORRECTING', 'USA', '10']),
         }
         cohmo.app.testing = True
-        self.client = cohmo.app.test_client()
+        #  self.client = cohmo.app.test_client()
 
     def tearDown(self):
         os.unlink(cohmo.app.config['TEAMS_FILE_PATH'])
@@ -33,16 +34,16 @@ class CohmoTestCase(unittest.TestCase):
             os.unlink(cohmo.app.config['TABLE_FILE_PATHS'][table])
 
     def test_chief_initialization(self):
-        cohmo.init_chief()
-        self.assertTrue('T2' in cohmo.chief.tables and 'T5' in cohmo.chief.tables and 'T8' in cohmo.chief.tables)
-        self.assertEqual(cohmo.chief.teams, ['FRA', 'ITA', 'ENG', 'USA', 'CHN', 'IND', 'KOR'])
-        self.assertEqual(cohmo.chief.tables['T2'].status, TableStatus.IDLE)
-        self.assertEqual(cohmo.chief.tables['T5'].status, TableStatus.CALLING)
-        self.assertEqual(cohmo.chief.tables['T8'].status, TableStatus.CORRECTING)
-        self.assertEqual(cohmo.chief.tables['T8'].current_coordination_team, 'USA')
-        self.assertEqual(cohmo.chief.tables['T8'].current_coordination_start_time,
+        chief = cohmo.get_chief()
+        self.assertTrue('T2' in chief.tables and 'T5' in chief.tables and 'T8' in chief.tables)
+        self.assertEqual(chief.teams, ['FRA', 'ITA', 'ENG', 'USA', 'CHN', 'IND', 'KOR'])
+        self.assertEqual(chief.tables['T2'].status, TableStatus.IDLE)
+        self.assertEqual(chief.tables['T5'].status, TableStatus.CALLING)
+        self.assertEqual(chief.tables['T8'].status, TableStatus.CORRECTING)
+        self.assertEqual(chief.tables['T8'].current_coordination_team, 'USA')
+        self.assertEqual(chief.tables['T8'].current_coordination_start_time,
                          10)
-        self.assertEqual(len(cohmo.chief.history_manager.corrections), 3)
+        self.assertEqual(len(chief.history_manager.corrections), 3)
 
     def test_history(self):
         history = HistoryManager(cohmo.app.config['HISTORY_FILE_PATH'])
@@ -149,6 +150,10 @@ class CohmoTestCase(unittest.TestCase):
         self.assertTrue(history.delete(id_corr_ITA))
         self.assertAlmostEqual(history.get_expected_duration(table.name), 19/2)
 
+    def test_giada(self):
+        cohmo.views.init_chief()
+        client = cohmo.app.test_client()
+        resp = client.get('/table/T2/get_queue')
 
 if __name__ == '__main__':
     unittest.main()

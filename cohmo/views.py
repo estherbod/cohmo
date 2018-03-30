@@ -1,6 +1,15 @@
-from cohmo import app, chief
+from cohmo import app, get_chief
 from flask import Flask, request, jsonify #TODO where I have to put this thinks?
 
+chief = None
+def init_chief():
+    global chief
+    chief = get_chief()
+
+@app.cli.command('initchief')
+def init_chief_command():
+    init_chief()
+    print('Initialized the chief coordinator object.')
 
 
 TABLE_NOT_EXIST = 'Table {0} does not exist.'
