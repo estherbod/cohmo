@@ -134,6 +134,14 @@ def switch_to_calling(table_name):
         return jsonify(ok = True)
     return jsonify(ok = False)
 
+@app.route('/table/<string:table_name>/switch_to_idle', methods = ['POST'])
+def switch_to_idle(table_name):
+    if table_name not in chief.tables:
+        return jsonify(ok = False, message = TABLE_NOT_EXIST.format(table_name))
+    if chief.tables[table_name].switch_to_idle():
+        return jsonify(ok = True)
+    return jsonify(ok = False)
+
 @app.route('/table/<string:table_name>/get_all', methods = ['GET'])
 def get_all(table_name):
     if table_name not in chief.tables:

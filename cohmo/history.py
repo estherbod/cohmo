@@ -30,7 +30,8 @@ class HistoryManager:
         self.path = path
         self.corrections = []
         self.expected_durations = {}
-        self.additional_config = additional_config
+        self.num_sign_corr = additional_config['NUM_SIGN_CORR']
+        self.apriori_duration = additional_config['APRIORI_DURATION']
         try:
             with open(path, newline='') as history_file:
                 history_reader = csv.reader(
@@ -123,8 +124,8 @@ class HistoryManager:
         expected_duration = 0
         for corr in table_corrections:
             expected_duration += corr.duration()
-        expected_duration += max(self.additional_config['NUM_SIGN_CORR'] - len(table_corrections), 0) * self.additional_config['APRIORI_DURATION']
-        expected_duration /= max(self.additional_config['NUM_SIGN_CORR'],
+        expected_duration += max(self.num_sign_corr - len(table_corrections), 0) * self.apriori_duration
+        expected_duration /= max(self.num_sign_corr,
                                  len(table_corrections))
         self.expected_durations[table] = expected_duration
 
