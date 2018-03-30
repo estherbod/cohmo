@@ -6,6 +6,7 @@ import tempfile
 # ~ from unittest import mock
 from unittest.mock import *
 import time
+from flask import json, jsonify
 
 from cohmo.table import Table, TableStatus
 from cohmo.history import HistoryManager
@@ -93,12 +94,12 @@ class CohmoTestCase(unittest.TestCase):
         table.dump_to_file()
         self.assertTrue(table.remove_from_queue('ENG'))
         self.assertFalse(table.remove_from_queue('KOR'))
-        self.assertEqual(table.queue, ['ITA', 'IND'])
+        self.assertEqual(table.queue, ['ITA'])
         table.dump_to_file()
 
         # Constructing Table from the file written by dump_to_file.
         table = Table(cohmo.app.config['TABLE_FILE_PATHS']['T2'], history)
-        self.assertEqual(table.queue, ['ITA', 'IND'])
+        self.assertEqual(table.queue, ['ITA'])
         self.assertEqual(table.status, TableStatus.CORRECTING)
         self.assertEqual(table.current_coordination_team, 'IND')
         self.assertFalse(table.switch_to_calling())
@@ -114,14 +115,14 @@ class CohmoTestCase(unittest.TestCase):
         self.assertFalse(table.add_to_queue('ITA'))
         self.assertTrue(table.add_to_queue('KOR', 0))
         self.assertTrue(table.add_to_queue('CHN', 2))
-        self.assertEqual(table.queue, ['KOR', 'ITA', 'CHN', 'IND', 'ENG'])
+        self.assertEqual(table.queue, ['KOR', 'ITA', 'CHN', 'ENG'])
         self.assertFalse(table.remove_from_queue('FRA'))
         self.assertTrue(table.remove_from_queue('ITA'))
         self.assertFalse(table.remove_from_queue('ITA'))
         self.assertFalse(table.swap_teams_in_queue('CHN', 'CHN'))
         self.assertFalse(table.swap_teams_in_queue('FRA', 'KOR'))
-        self.assertTrue(table.swap_teams_in_queue('IND', 'KOR'))
-        self.assertEqual(table.queue, ['IND', 'CHN', 'KOR', 'ENG'])
+        self.assertTrue(table.swap_teams_in_queue('ENG', 'KOR'))
+        self.assertEqual(table.queue, ['ENG', 'CHN', 'KOR'])
 
 
     # Testing get_expected_duration.
@@ -151,10 +152,202 @@ class CohmoTestCase(unittest.TestCase):
         self.assertTrue(history.delete(id_corr_ITA))
         self.assertAlmostEqual(history.get_expected_duration('T2'), 19/2)
 
-    def test_giada(self):
+    def test_views_table_queue_modifications(self):
         cohmo.views.init_chief()
         client = cohmo.app.test_client()
-        resp = client.get('/table/T2/get_queue')
+
+        # Testing add_to_queue.
+        resp = json.loads(client.post('/table/T1/add_to_queue',
+                                      data={'team': 'ITA'}).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Table T1 does not exist.')
+        resp = json.loads(client.post('/table/T2/add_to_queue',
+                                      data=json.dumps({'pippo': 'USA'})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'You have to specify a team.')
+        resp = json.loads(client.post('/table/T2/add_to_queue',
+                                      data=json.dumps({'team': 'VAT'})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Team VAT does not exist.')
+        resp = json.loads(client.post('/table/T2/add_to_queue',
+                                      data=json.dumps({'team': 'ENG'})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Team ENG is already in queue at table T2.')
+        resp = json.loads(client.post('/table/T2/add_to_queue',
+                                      data=json.dumps({'team': 'CHN'})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == True)        
+        resp = json.loads(client.get('/table/T2/get_queue').data)
+        self.assertTrue('ok' in resp)
+        self.assertEqual(resp['queue'], ['ITA', 'ENG', 'IND', 'CHN'])
+
+        # Testing remove_from_queue.
+        resp = json.loads(client.post('/table/T1/remove_from_queue',
+                                      data={'team': 'ITA'}).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Table T1 does not exist.')
+        resp = json.loads(client.post('/table/T2/remove_from_queue',
+                                      data=json.dumps({'pippo': 'USA'})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'You have to specify a team.')
+        resp = json.loads(client.post('/table/T2/remove_from_queue',
+                                      data=json.dumps({'team': 'VAT'})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Team VAT does not exist.')
+        resp = json.loads(client.post('/table/T2/remove_from_queue',
+                                      data=json.dumps({'team': 'KOR'})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Team KOR is not in queue at table T2.')
+        resp = json.loads(client.post('/table/T2/remove_from_queue',
+                                      data=json.dumps({'team': 'CHN'})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == True)        
+        resp = json.loads(client.get('/table/T2/get_queue').data)
+        self.assertTrue('ok' in resp)
+        self.assertEqual(resp['queue'], ['ITA', 'ENG', 'IND'])
+
+        # Testing swap_teams_in_queue.
+        resp = json.loads(client.post('/table/T1/swap_teams_in_queue',
+                                      data={'teams': ['ITA', 'ENG']}).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Table T1 does not exist.')
+        resp = json.loads(client.post('/table/T2/swap_teams_in_queue',
+                                      data=json.dumps({'pippo': ['USA']})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'You have to specify the teams to be swapped.')
+        resp = json.loads(client.post('/table/T2/swap_teams_in_queue',
+                                      data=json.dumps({'teams': ['VAT']})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'You have to give exactly two teams to be swapped.')
+        resp = json.loads(client.post('/table/T2/swap_teams_in_queue',
+                                      data=json.dumps({'teams': ['VAT', 'ENG']})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Team VAT does not exist.')
+        resp = json.loads(client.post('/table/T2/swap_teams_in_queue',
+                                      data=json.dumps({'teams': ['ITA', 'KOR']})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Team KOR is not in queue at table T2.')
+        resp = json.loads(client.post('/table/T2/swap_teams_in_queue',
+                                      data=json.dumps({'teams': ['ENG', 'ITA']})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == True)        
+        resp = json.loads(client.get('/table/T2/get_queue').data)
+        self.assertTrue('ok' in resp)
+        self.assertEqual(resp['queue'], ['ENG', 'ITA', 'IND'])
+
+    def test_views_table_coordination_management(self):
+        cohmo.views.init_chief()
+        client = cohmo.app.test_client()
+
+        # Testing start_coordination.
+        resp = json.loads(client.post('/table/T1/start_coordination',
+                                      data={'team': 'ITA'}).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Table T1 does not exist.')
+        resp = json.loads(client.post('/table/T2/start_coordination',
+                                      data=json.dumps({'pippo': 'USA'})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'You have to specify a team.')
+        resp = json.loads(client.post('/table/T2/start_coordination',
+                                      data=json.dumps({'team': 'VAT'})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Team VAT does not exist.')
+        resp = json.loads(client.post('/table/T2/start_coordination',
+                                      data=json.dumps({'team': 'KOR'})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Team KOR is not in queue at table T2.')
+        resp = json.loads(client.post('/table/T2/start_coordination',
+                                      data=json.dumps({'team': 'ITA'})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == True)
+        resp = json.loads(client.get('/table/T2/get_queue').data)
+        self.assertTrue('ok' in resp)
+        self.assertEqual(resp['queue'], ['ENG', 'IND'])
+        resp = json.loads(client.get('/table/T2/get_all').data)
+        self.assertTrue('ok' in resp and 'table_data' in resp)
+        table_data = json.loads(resp['table_data'])
+        self.assertEqual(table_data['status'], 1)
+
+        # Testing finish_coordination.
+        resp = json.loads(client.post('/table/T1/finish_coordination').data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Table T1 does not exist.')
+        resp = json.loads(client.post('/table/T2/finish_coordination').data)
+        self.assertTrue('ok' in resp and resp['ok'] == True)
+        resp = json.loads(client.get('/table/T2/get_queue').data)
+        self.assertTrue('ok' in resp)
+        self.assertEqual(resp['queue'], ['ENG', 'IND'])
+        resp = json.loads(client.get('/table/T2/get_all').data)
+        self.assertTrue('ok' in resp and 'table_data' in resp)
+        table_data = json.loads(resp['table_data'])
+        self.assertEqual(table_data['status'], 2)
+        resp = json.loads(client.post('/table/T2/finish_coordination').data)
+        self.assertTrue('ok' in resp and resp['ok'] == False)
+
+        # Testing pause_coordination.
+        resp = json.loads(client.post('/table/T2/start_coordination',
+                                      data=json.dumps({'team': 'ENG'})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == True)
+        resp = json.loads(client.get('/table/T2/get_queue').data)
+        self.assertTrue('ok' in resp)
+        self.assertEqual(resp['queue'], ['IND'])
+        resp = json.loads(client.post('/table/T1/pause_coordination').data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Table T1 does not exist.')
+        resp = json.loads(client.post('/table/T2/pause_coordination').data)
+        self.assertTrue('ok' in resp and resp['ok'] == True)
+        resp = json.loads(client.get('/table/T2/get_queue').data)
+        self.assertTrue('ok' in resp)
+        self.assertEqual(resp['queue'], ['IND', 'ENG'])
+
+        # Testing switch_to_calling.
+        resp = json.loads(client.post('/table/T1/switch_to_calling',
+                                      data={'team': 'ITA'}).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Table T1 does not exist.')
+        resp = json.loads(client.post('/table/T2/switch_to_calling').data)
+        self.assertTrue('ok' in resp and resp['ok'] == True)
+        resp = json.loads(client.get('/table/T2/get_all').data)
+        self.assertTrue('ok' in resp and 'table_data' in resp)
+        table_data = json.loads(resp['table_data'])
+        self.assertEqual(table_data['status'], 0)
+
+        # Testing switch_to_idle.
+        resp = json.loads(client.post('/table/T1/switch_to_idle',
+                                      data={'team': 'ITA'}).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Table T1 does not exist.')
+        resp = json.loads(client.post('/table/T2/switch_to_idle').data)
+        self.assertTrue('ok' in resp and resp['ok'] == True)
+        resp = json.loads(client.get('/table/T2/get_all').data)
+        self.assertTrue('ok' in resp and 'table_data' in resp)
+        table_data = json.loads(resp['table_data'])
+        self.assertEqual(table_data['status'], 2)
+
+    def test_views_table_get(self):
+        cohmo.views.init_chief()
+        client = cohmo.app.test_client()
+
+        # Testing get_queue.
+        resp = json.loads(client.get('/table/T1/get_queue').data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Table T1 does not exist.')
+        resp = json.loads(client.get('/table/T2/get_queue').data)
+        self.assertTrue('ok' in resp)
+        self.assertEqual(resp['queue'], ['ITA', 'ENG', 'IND'])
+
+        # Testing get_all.
+        resp = json.loads(client.get('/table/T1/get_all').data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Table T1 does not exist.')
+        resp = json.loads(client.get('/table/T2/get_queue').data)
+        self.assertTrue('ok' in resp)
+        self.assertEqual(resp['queue'], ['ITA', 'ENG', 'IND'])
+        resp = json.loads(client.get('/table/T2/get_all').data)
+        self.assertTrue('ok' in resp and 'table_data' in resp)
+        table_data = json.loads(resp['table_data'])
+        self.assertTrue(table_data['name'] == 'T2' and
+                        table_data['problem'] == '3' and
+                        table_data['coordinators'] == ['Franco Anselmi', 'Antonio Cannavaro'] and
+                        table_data['queue'] == ['ITA', 'ENG', 'IND'] and
+                        table_data['status'] == 2)
+        
 
 if __name__ == '__main__':
     unittest.main()

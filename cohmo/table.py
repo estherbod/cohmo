@@ -98,6 +98,7 @@ class Table:
         self.status = TableStatus.CORRECTING
         self.current_coordination_team = team
         self.current_coordination_start_time = int(time.time())
+        self.remove_from_queue(team)
         return True
 
     # Finish the current coordination and saves it in the history.
