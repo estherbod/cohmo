@@ -9,7 +9,8 @@ from cohmo.chief import ChiefCoordinator
 def get_chief():
     return ChiefCoordinator(app.config['TEAMS_FILE_PATH'],
                             app.config['TABLE_FILE_PATHS'],
-                            app.config['HISTORY_FILE_PATH'])
+                            app.config['HISTORY_FILE_PATH'],
+                            app.config)
 
 
 import cohmo.views

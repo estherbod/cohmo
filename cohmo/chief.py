@@ -9,7 +9,7 @@ from cohmo.history import HistoryManager
 # teams_path and history_path are paths, whereas table_paths is a dictionary
 # of the form: table_name: table_path.
 class ChiefCoordinator:
-    def __init__(self, teams_path, table_paths, history_path):
+    def __init__(self, teams_path, table_paths, history_path, additional_config):
         self.teams_path = teams_path
         self.table_paths = table_paths
         self.history_path = history_path
@@ -18,7 +18,7 @@ class ChiefCoordinator:
             lines = teams_file.readlines()
             assert(len(lines) >= 1)
             self.teams = [team.strip() for team in lines[0].split(',')]
-        self.history_manager = HistoryManager(history_path)
+        self.history_manager = HistoryManager(history_path, additional_config)
 
         self.tables = {}
         for name in table_paths:

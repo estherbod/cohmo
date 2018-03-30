@@ -1,5 +1,6 @@
 import os
 import cohmo
+from cohmo import app
 import unittest
 import tempfile
 # ~ from unittest import mock
@@ -46,7 +47,7 @@ class CohmoTestCase(unittest.TestCase):
         self.assertEqual(len(chief.history_manager.corrections), 3)
 
     def test_history(self):
-        history = HistoryManager(cohmo.app.config['HISTORY_FILE_PATH'])
+        history = HistoryManager(cohmo.app.config['HISTORY_FILE_PATH'], app.config)
         self.assertTrue(history.add('ITA', 'T2', 10, 20))
         self.assertTrue(history.add('FRA', 'T8', 20, 30))
         self.assertTrue(history.add('KOR', 'T5', 15, 30))
@@ -58,7 +59,7 @@ class CohmoTestCase(unittest.TestCase):
         history.dump_to_file()
 
         # Constructing HistoryManager from the file written by dump_to_file.
-        history = HistoryManager(cohmo.app.config['HISTORY_FILE_PATH'])
+        history = HistoryManager(cohmo.app.config['HISTORY_FILE_PATH'], app.config)
         self.assertEqual(len(history.corrections), 5)
         self.assertEqual(history.corrections[2].table, 'T2')
         self.assertEqual(history.corrections[2].team, 'ITA')
@@ -76,7 +77,7 @@ class CohmoTestCase(unittest.TestCase):
         self.assertEqual(len(history.get_corrections({'end_time':(15,25)})), 2)
 
     def test_table(self):
-        history = HistoryManager(cohmo.app.config['HISTORY_FILE_PATH'])
+        history = HistoryManager(cohmo.app.config['HISTORY_FILE_PATH'], app.config)
         table = Table(cohmo.app.config['TABLE_FILE_PATHS']['T2'], history)
         self.assertEqual(table.queue, ['ITA', 'ENG', 'IND'])
         self.assertEqual(table.status, TableStatus.IDLE)
@@ -130,25 +131,25 @@ class CohmoTestCase(unittest.TestCase):
     def test_get_expected_duration(self):
         cohmo.app.config['NUM_SIGN_CORR'] = 2
         cohmo.app.config['APRIORI_DURATION'] = 3
-        history = HistoryManager(cohmo.app.config['HISTORY_FILE_PATH'])
+        history = HistoryManager(cohmo.app.config['HISTORY_FILE_PATH'], app.config)
         table = Table(cohmo.app.config['TABLE_FILE_PATHS']['T2'], history)
         self.assertEqual(history.corrections[0].duration(), 5)
         self.assertEqual(len(history.get_corrections({'table':'T2'})), 1)
-        self.assertAlmostEqual(history.get_expected_duration(table.name), 4)
+        self.assertAlmostEqual(history.get_expected_duration('T2'), 4)
         self.assertAlmostEqual(history.get_expected_duration('T8'), 3)
         self.assertTrue(table.start_coordination('ITA'))
-        self.assertAlmostEqual(history.get_expected_duration(table.name), 4)
+        self.assertAlmostEqual(history.get_expected_duration('T2'), 4)
         self.assertTrue(table.finish_coordination())
-        self.assertAlmostEqual(history.get_expected_duration(table.name), 6)
+        self.assertAlmostEqual(history.get_expected_duration('T2'), 6)
         self.assertTrue(history.add('ENG', 'T2', 5, 21))
-        self.assertAlmostEqual(history.get_expected_duration(table.name), 28/3)
+        self.assertAlmostEqual(history.get_expected_duration('T2'), 28/3)
         self.assertTrue(history.delete('ID1'))
         self.assertEqual(len(history.get_corrections({'table':'T2'})), 2)
-        self.assertAlmostEqual(history.get_expected_duration(table.name), 23/2)
+        self.assertAlmostEqual(history.get_expected_duration('T2'), 23/2)
         self.assertEqual(len(history.get_corrections({'table':'T2', 'team':'ITA'})), 1)
         id_corr_ITA = history.get_corrections({'table':'T2', 'team':'ITA'})[0].id
         self.assertTrue(history.delete(id_corr_ITA))
-        self.assertAlmostEqual(history.get_expected_duration(table.name), 19/2)
+        self.assertAlmostEqual(history.get_expected_duration('T2'), 19/2)
 
     def test_giada(self):
         cohmo.views.init_chief()
