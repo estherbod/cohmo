@@ -1,4 +1,3 @@
-from cohmo import app
 from cohmo.history import Correction, HistoryManager
 import enum
 import time
@@ -50,7 +49,6 @@ class Table:
             else:
                 self.current_coordination_start_time = None
                 self.current_coordination_team = None
-            self.expected_duration = self.get_expected_duration()
 
     # Dumps the table to file. The format is the same as create_table_from_file.
     # It should be remarked that the current status of the table (whether it is
@@ -103,7 +101,7 @@ class Table:
         return True
 
     # Finish the current coordination and saves it in the history.
-    # Updates the values of expected_duration and number_made_corrections.
+    # Moreover it recomputes the expected_duration of the table.
     # Returns whether the coordination was successfully finished.
     def finish_coordination(self):
         if self.status != TableStatus.CORRECTING: return False
@@ -111,7 +109,7 @@ class Table:
                                         self.current_coordination_start_time,
                                         int(time.time())): return False
         self.status = TableStatus.IDLE
-        self.expected_duration = self.get_expected_duration()
+        self.history_manager.compute_expected_duration(self.name)
         return True
 
     # Switch the status to calling.
@@ -127,19 +125,4 @@ class Table:
         if self.status != TableStatus.CALLING: return False
         self.status = TableStatus.IDLE
         return True
-
-    # Compute the expected duration of the next correction of the table.
-    # It is computed taking the arithmetic mean of the durations of the made
-    # corrections.
-    # If less than NUM_SIGN_CORR corrections have been done in the table,
-    # it pretends there exist corrections with duration APRIORI_DURATION.
-    def get_expected_duration(self):
-        table_corrections = self.history_manager.get_corrections({'table': self.name})
-        expected_duration = 0
-        for corr in table_corrections:
-            expected_duration += corr.duration()
-        expected_duration += max(app.config['NUM_SIGN_CORR'] - len(table_corrections), 0) * app.config['APRIORI_DURATION']
-        expected_duration /= max(app.config['NUM_SIGN_CORR'],
-                                 len(table_corrections))
-        return expected_duration
         

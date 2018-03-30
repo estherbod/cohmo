@@ -2,6 +2,7 @@ import sys
 from base64 import b32encode
 from os import urandom
 import csv
+from cohmo import app
 
 # Simple class to store a correction.
 class Correction:
@@ -29,6 +30,7 @@ class HistoryManager:
     def __init__(self, path):
         self.path = path
         self.corrections = []
+        self.expected_durations = {}
         try:
             with open(path, newline='') as history_file:
                 history_reader = csv.reader(
@@ -56,17 +58,21 @@ class HistoryManager:
                                         correction.start_time,
                                         correction.end_time, correction.id])
 
-    # Adds a single correction to the history.
+    # Adds a single correction to the history (updating the expected_duration
+    # of the related table).
     def add(self, team, table, start_time, end_time):
         if start_time > end_time: return False # Maybe raise ValueError
         self.corrections.append(Correction(team, table, start_time, end_time))
+        self.compute_expected_duration(table)
         return True
 
-    # Deletes a correction and returns True if it was succesfully deleted.
+    # Deletes a correction (updating the expected_duration of the related table)
+    # and returns True if it was succesfully deleted.
     def delete(self, correction_id):
         for correction in self.corrections:
             if correction.id == correction_id:
                 self.corrections.remove(correction)
+                self.compute_expected_duration(correction.table)
                 return True
         return False
 
@@ -105,3 +111,28 @@ class HistoryManager:
             
             if filtered_correction: result.append(correction)
         return result
+
+    # Computes the expected duration of the next correction of a table
+    # and stores it in the dictionary expected_durations.
+    # It is computed taking the arithmetic mean of the durations of the made
+    # corrections.
+    # If less than NUM_SIGN_CORR corrections have been done in the table,
+    # it pretends there exist corrections with duration APRIORI_DURATION.
+    def compute_expected_duration(self, table):
+        table_corrections = self.get_corrections({'table': table})
+        expected_duration = 0
+        for corr in table_corrections:
+            expected_duration += corr.duration()
+        expected_duration += max(app.config['NUM_SIGN_CORR'] - len(table_corrections), 0) * app.config['APRIORI_DURATION']
+        expected_duration /= max(app.config['NUM_SIGN_CORR'],
+                                 len(table_corrections))
+        self.expected_durations[table] = expected_duration
+
+    # Returns the expected_duration of the given table, stored in
+    # expected_durations.
+    # If the table is not still present in expected_durations, calls
+    # compute_expected_duration.
+    def get_expected_duration(self, table):
+        if table not in self.expected_durations:
+            self.compute_expected_duration(table)
+        return self.expected_durations[table]

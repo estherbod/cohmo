@@ -2,7 +2,7 @@ import os
 import cohmo
 import unittest
 import tempfile
-from unittest import mock
+# ~ from unittest import mock
 from unittest.mock import *
 import time
 
@@ -122,6 +122,7 @@ class CohmoTestCase(unittest.TestCase):
         self.assertEqual(table.queue, ['IND', 'CHN', 'KOR', 'ENG'])
 
 
+    # Testing get_expected_duration.
     mock_time = Mock()
     mock_time.side_effect = [3, 10, 5, 21]
     @patch('time.time', mock_time) 
@@ -132,14 +133,21 @@ class CohmoTestCase(unittest.TestCase):
         table = Table(cohmo.app.config['TABLE_FILE_PATHS']['T2'], history)
         self.assertEqual(history.corrections[0].duration(), 5)
         self.assertEqual(len(history.get_corrections({'table':'T2'})), 1)
-        self.assertEqual(table.get_expected_duration(), 4)
+        self.assertAlmostEqual(history.get_expected_duration(table.name), 4)
+        self.assertAlmostEqual(history.get_expected_duration('T8'), 3)
         self.assertTrue(table.start_coordination('ITA'))
-        self.assertEqual(table.get_expected_duration(), 4)
+        self.assertAlmostEqual(history.get_expected_duration(table.name), 4)
         self.assertTrue(table.finish_coordination())
-        self.assertEqual(table.get_expected_duration(), 6)
-        self.assertTrue(table.start_coordination('ENG'))
-        self.assertTrue(table.finish_coordination())
-        self.assertEqual(table.get_expected_duration(), 28/3)
+        self.assertAlmostEqual(history.get_expected_duration(table.name), 6)
+        self.assertTrue(history.add('ENG', 'T2', 5, 21))
+        self.assertAlmostEqual(history.get_expected_duration(table.name), 28/3)
+        self.assertTrue(history.delete('ID1'))
+        self.assertEqual(len(history.get_corrections({'table':'T2'})), 2)
+        self.assertAlmostEqual(history.get_expected_duration(table.name), 23/2)
+        self.assertEqual(len(history.get_corrections({'table':'T2', 'team':'ITA'})), 1)
+        id_corr_ITA = history.get_corrections({'table':'T2', 'team':'ITA'})[0].id
+        self.assertTrue(history.delete(id_corr_ITA))
+        self.assertAlmostEqual(history.get_expected_duration(table.name), 19/2)
 
 
 if __name__ == '__main__':
