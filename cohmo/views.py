@@ -1,5 +1,6 @@
 from cohmo import app, get_chief
-from flask import Flask, request, jsonify #TODO where I have to put this thinks?
+from flask import Flask, request, jsonify, render_template
+import json
 
 chief = None
 def init_chief():
@@ -18,6 +19,13 @@ SPECIFY_TEAM = 'You have to specify a team.'
 
 
 # API relative to a table
+
+@app.route('/table/<string:table_name>/admin')
+def table_admin(table_name):
+    print(table_name in chief.tables)
+    if table_name not in chief.tables:
+        return 'TODO'
+    return render_template('table_admin.html', table_name=table_name)
 
 @app.route('/table/<string:table_name>/add_to_queue', methods = ['POST'])
 def add_to_queue(table_name):

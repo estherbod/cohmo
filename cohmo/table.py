@@ -2,7 +2,7 @@ from cohmo.history import Correction, HistoryManager
 import enum
 import time
 
-class TableStatus(enum.Enum):
+class TableStatus(enum.IntEnum):
     CALLING = 0
     CORRECTING = 1
     IDLE = 2
