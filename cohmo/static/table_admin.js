@@ -42,10 +42,10 @@ let content_comp = new Vue({
     data: table_model.data,
     methods: {
         finish_coordination: function(event) {
-            this.status = 'CALLING';
+            this.status = TableStatus.CALLING;
         },
         delay_coordination: function(event) {
-            this.status = 'IDLE';
+            this.status = TableStatus.IDLE;
         },
     }
 });
