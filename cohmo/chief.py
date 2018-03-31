@@ -22,6 +22,9 @@ class ChiefCoordinator:
 
         self.tables = {}
         for name in table_paths:
+            with open(table_paths[name], newline='') as table_file:
+                table_lines = table_file.readlines()
+                assert(table_lines[0].strip() == name)
             self.tables[name] = Table(table_paths[name], self.history_manager)
 
     # Saves the current states of tables and history to the given files.
