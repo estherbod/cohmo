@@ -65,10 +65,23 @@ class Table:
                 table_file.write(self.current_coordination_team + '\n')
                 table_file.write(str(self.current_coordination_start_time) + '\n')
 
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'problem': self.problem,
+            'coordinators': self.coordinators,
+            'queue': self.queue,
+            'status': self.status,
+            'current_coordination_team': self.current_coordination_team,
+            'current_coordination_start_time': self.current_coordination_start_time
+        }
+
+
     # Adds a team to the queue in the given position (default is last).
     # If the team is already in the queue nothing is done and False is returned.
     # Otherwise True is returned.
     def add_to_queue(self, team, pos=-1):
+        self.history_manager.operations_num += 1
         if team not in self.queue:
             if pos == -1: pos = len(self.queue)
             self.queue.insert(pos, team)
@@ -78,12 +91,14 @@ class Table:
     # Removes the team from the queue.
     # Returns whether the team was in the queue.
     def remove_from_queue(self, team):
+        self.history_manager.operations_num += 1
         if team in self.queue:
             self.queue.remove(team)
             return True
         else: return False
 
     def swap_teams_in_queue(self, team1, team2):
+        self.history_manager.operations_num += 1
         if team1 not in self.queue or team2 not in self.queue or team1 == team2:
             return False
         pos1 = self.queue.index(team1)
@@ -94,16 +109,18 @@ class Table:
     # Starts a coordination with team.
     # Returns whether the coordination started successfully.
     def start_coordination(self, team):
+        self.history_manager.operations_num += 1
         if self.status == TableStatus.CORRECTING: return False
         self.status = TableStatus.CORRECTING
         self.current_coordination_team = team
         self.current_coordination_start_time = int(time.time())
         return True
 
-    # Finish the current coordination and saves it in the history.
+    # Finish the current coordination and saves it in the history_manager.
     # Moreover it recomputes the expected_duration of the table.
     # Returns whether the coordination was successfully finished.
     def finish_coordination(self):
+        self.history_manager.operations_num += 1
         if self.status != TableStatus.CORRECTING: return False
         if not self.history_manager.add(self.current_coordination_team, self.name,
                                         self.current_coordination_start_time,
@@ -115,6 +132,7 @@ class Table:
     # Switch the status to calling.
     # Returns whether the status was succesfully changed.
     def switch_to_calling(self):
+        self.history_manager.operations_num += 1
         if self.status != TableStatus.IDLE: return False
         self.status = TableStatus.CALLING
         return True
@@ -122,6 +140,7 @@ class Table:
     # Switch the status to IDLE.
     # Returns whether the status was succesfully changed.
     def switch_to_idle(self):
+        self.history_manager.operations_num += 1
         if self.status != TableStatus.CALLING: return False
         self.status = TableStatus.IDLE
         return True

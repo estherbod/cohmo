@@ -20,7 +20,7 @@ def generate_tempfile(content_rows):
 class CohmoTestCase(unittest.TestCase):
     def setUp(self):
         cohmo.app.config['TEAMS_FILE_PATH'] = generate_tempfile(['FRA,ITA,ENG,USA,CHN,IND,KOR'])
-        cohmo.app.config['HISTORY_FILE_PATH'] = generate_tempfile(['USA,T2,5,10,ID1', 'ENG,T5,8,12,ID2', 'CHN,T5,13,17,ID3'])
+        cohmo.app.config['HISTORY_FILE_PATH'] = generate_tempfile(['3', 'USA,T2,5,10,ID1', 'ENG,T5,8,12,ID2', 'CHN,T5,13,17,ID3'])
         cohmo.app.config['TABLE_FILE_PATHS'] = {
             'T2': generate_tempfile(['T2', '3', 'Franco Anselmi, Antonio Cannavaro', 'ITA, ENG, IND', 'IDLE']),
             'T5': generate_tempfile(['T5', '6', 'Alessandro Maschi, Giovanni Muciaccia', 'IND, KOR, ENG, USA', 'CALLING']),
@@ -61,6 +61,7 @@ class CohmoTestCase(unittest.TestCase):
 
         # Constructing HistoryManager from the file written by dump_to_file.
         history = HistoryManager(cohmo.app.config['HISTORY_FILE_PATH'], app.config)
+        self.assertEqual(history.operations_num, 3)
         self.assertEqual(len(history.corrections), 5)
         self.assertEqual(history.corrections[2].table, 'T2')
         self.assertEqual(history.corrections[2].team, 'ITA')
@@ -125,9 +126,21 @@ class CohmoTestCase(unittest.TestCase):
         self.assertEqual(table.queue, ['IND', 'CHN', 'KOR', 'ENG'])
 
 
+    # Testing operations_num.
+    def test_operations_num(self):
+        history = HistoryManager(cohmo.app.config['HISTORY_FILE_PATH'], app.config)
+        table = Table(cohmo.app.config['TABLE_FILE_PATHS']['T2'], history)
+        self.assertEqual(history.operations_num, 3)
+        self.assertTrue(table.start_coordination('ITA'))
+        self.assertAlmostEqual(history.operations_num, 4)
+        self.assertTrue(table.finish_coordination())
+        self.assertAlmostEqual(history.operations_num, 5)
+        self.assertTrue(table.add_to_queue('CHN'))
+        self.assertAlmostEqual(history.operations_num, 6)
+        
     # Testing get_expected_duration.
     mock_time = Mock()
-    mock_time.side_effect = [3, 10, 5, 21]
+    mock_time.side_effect = [3, 10]
     @patch('time.time', mock_time) 
     def test_get_expected_duration(self):
         cohmo.app.config['NUM_SIGN_CORR'] = 2
@@ -348,6 +361,24 @@ class CohmoTestCase(unittest.TestCase):
                                       'status': 2,
                                       'current_coordination_start_time': None,
                                       'current_coordination_team': None})
+
+        # Testing tables get_all.
+        resp = json.loads(client.get('/tables/get_all',
+                                     data=json.dumps({})).data)
+        self.assertTrue('ok' in resp and resp['ok'])
+        self.assertEqual(len(json.loads(resp['tables'])), 3)
+        self.assertEqual(resp['changed'], True)
+        last_update = resp['last_update']
+        resp = json.loads(client.get('/tables/get_all',
+                                     data=json.dumps({'last_update': last_update})).data)
+        self.assertTrue('ok' in resp and resp['ok'])
+        self.assertEqual(resp['changed'], False)
+
+        resp = json.loads(client.get('/tables/get_all',
+                                     data=json.dumps({'last_update': last_update-1})).data)
+        self.assertTrue('ok' in resp and resp['ok'])
+        self.assertEqual(len(json.loads(resp['tables'])), 3)
+        self.assertEqual(resp['changed'], True)
 
     def test_views_history(self):
         cohmo.app.config['NUM_SIGN_CORR'] = 2

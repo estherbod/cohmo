@@ -25,20 +25,28 @@ class HistoryManager:
     # Loads the corrections from a file.
     # Can raise a ValueError if the file is malformed.
     # The file must be a csv file where each row contains a correction in the
-    # form: team, table, start_time, end_time, id
+    # form:
+    #   team, table, start_time, end_time, id
+    # The first line must contain the number of past operations happened.
     def __init__(self, path, additional_config):
         self.path = path
         self.corrections = []
         self.expected_durations = {}
         self.num_sign_corr = additional_config['NUM_SIGN_CORR']
         self.apriori_duration = additional_config['APRIORI_DURATION']
+        # Number of operations related to tables ever happened.
+        # This is useful for caching.
+        self.operations_num = 0
         try:
             with open(path, newline='') as history_file:
                 history_reader = csv.reader(
                     history_file, delimiter=',', quotechar='"')
                 for row in history_reader:
                     if not row: continue
-                    assert(len(row) == 5)
+                    assert(len(row) == 5 or len(row) == 1)
+                    if len(row) == 1:
+                        self.operations_num = int(row[0])
+                        continue
                     self.corrections.append(Correction(
                         row[0].strip(), row[1].strip(), int(row[2]),
                         int(row[3]), row[4].strip()))
@@ -54,6 +62,7 @@ class HistoryManager:
             history_writer = csv.writer(history_file, delimiter=',',
                                         quotechar='"',
                                         quoting=csv.QUOTE_MINIMAL)
+            history_writer.writerow([self.operations_num])
             for correction in self.corrections:
                 history_writer.writerow([correction.team, correction.table,
                                         correction.start_time,

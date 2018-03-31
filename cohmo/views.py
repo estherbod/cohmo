@@ -150,15 +150,25 @@ def get_all(table_name):
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
     table = chief.tables[table_name]
     
-    table_data = json.dumps({'name': table.name,
-                             'problem': table.problem,
-                             'coordinators': table.coordinators,
-                             'queue': table.queue,
-                             'status': table.status,
-                             'current_coordination_team': table.current_coordination_team,
-                             'current_coordination_start_time': table.current_coordination_start_time})
+    table_data = json.dumps(table.to_dict())
     return jsonify(ok=True, table_data=table_data)
 
+# Return the tables data if and only if a new operation happened since last
+# update.
+@app.route('/tables/get_all', methods=['GET'])
+def get_tables_if_changed():
+    req_data = json.loads(request.data)
+    last_update = -1
+    if 'last_update' in req_data: last_update = req_data['last_update']
+    if chief.history_manager.operations_num == last_update:
+        return jsonify(ok=True, changed=False)
+
+    all_tables_data = json.dumps(
+        {name: chief.tables[name].to_dict() for name in chief.tables})
+    return jsonify(ok=True, changed=True,
+                   last_update=chief.history_manager.operations_num,
+                   tables=all_tables_data)
+    
 # APIs relative to the history
 
 @app.route('/history/add', methods=['POST'])
