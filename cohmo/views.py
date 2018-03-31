@@ -17,14 +17,19 @@ TEAM_NOT_EXIST = 'Team {0} does not exist.'
 SPECIFY_TEAM = 'You have to specify a team.'
 
 
-# API relative to a table
+# Available pages
 
 @app.route('/table/<string:table_name>/admin')
 def table_admin(table_name):
-    print(table_name in chief.tables)
     if table_name not in chief.tables:
         return 'TODO'
     return render_template('table_admin.html', table_name=table_name)
+
+@app.route('/queues')
+def queues():
+    return render_template('queues.html')
+
+# API relative to a table
 
 @app.route('/table/<string:table_name>/add_to_queue', methods=['POST'])
 def add_to_queue(table_name):
@@ -157,9 +162,8 @@ def get_all(table_name):
 # update.
 @app.route('/tables/get_all', methods=['GET'])
 def get_tables_if_changed():
-    req_data = json.loads(request.data)
     last_update = -1
-    if 'last_update' in req_data: last_update = req_data['last_update']
+    if 'last_update' in request.args: last_update = request.args['last_update']
     if chief.history_manager.operations_num == last_update:
         return jsonify(ok=True, changed=False)
 
