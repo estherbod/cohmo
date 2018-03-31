@@ -1,0 +1,20 @@
+<head>
+    <meta charset="utf-8">
+    <title>Admin Page for Coordinators</title>
+    <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios@0.18.0/dist/axios.js"></script>
+</head>
+<body>
+    <div id='queues' style='width:500px, margin:auto'>
+        <div v-for='table in tables' style='float:left; width:100px'>
+            <div>[[ table.name ]]: [[ TableStatusName[table.status] ]]
+                <span v-if='table.status === TableStatus.CORRECTING'>
+                    with [[ table.current_coordination_team ]]
+                    (since [[ human_readable_time(table.current_coordination_start_time) ]])
+                </span>
+            </div>
+            <div v-for='team in table.queue'>[[ team ]]</div>
+        </div>
+    </div>
+    <script src='{{url_for("static", filename="queues.js")}}'></script>
+</body>
