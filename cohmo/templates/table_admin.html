@@ -13,14 +13,42 @@
         </h2>
     </div>
     <div id='content'>
-        <span>Status: [[ TableStatusName[status] ]]</span>
-        <div v-if='status == TableStatus.CORRECTING'>
-            <div>SQUADRA: [[ current_coordination_team ]]</div>
-            <input type='button' v-on:click='finish_coordination' value='Finish coordination'>
-            <input type='button' v-on:click='delay_coordination' value='Delay coordination'>
+        <span>Status: [[ TableStatusName[table.status] ]]</span>
+        <div v-if='table.status == TableStatus.CALLING'>
+            <div>SQUADRA: [[ table.queue[0] ]]</div>
+            <form>
+<!--
+                TODO: here I would like to put as default value table.queue[0]
+                e cambiare anche sotto
+-->
+                <input type='team_coordination' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>
+                <input type='button' v-on:click='start_coordination' value='Start coordination'>
+            </form>
+            <input type='button' v-on:click='switch_to_idle' value='Stop calling'>
+<!--
+            TODO: do this part
+            <input type='button' v-on:click='call_next_one' value='Call next one'>
+-->
         </div>
-        <div v-if='status == TableStatus.CALLING'>
-            ???
+        <div v-if='table.status == TableStatus.CORRECTING'>
+            <div>SQUADRA: [[ table.current_coordination_team ]]</div>
+            <input type='button' v-on:click='finish_coordination' value='Finish coordination'>
+            <input type='button' v-on:click='pause_coordination' value='Delay coordination'>
+            <input type='checkbox' id='call_next' value='Call next' v-model='call_next'>
+            <label for='call_next'>Call next</label>
+        </div>
+        <div v-if='table.status == TableStatus.IDLE'>
+            <span>
+                Queue: <span v-for='(team, index) in table.queue'>[[ team ]] <span v-if='index+1 < table.queue.length'>, </span>
+            </span>
+            <form>
+<!--
+                TODO: correct also here
+-->
+                <input type='team_coordination' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>
+                <input type='button' v-on:click='start_coordination' value='Start coordination'>
+            </form>
+            <input type='button' v-on:click='switch_to_calling' value='Call next one'>
         </div>
     </div>
     <script>

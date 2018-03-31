@@ -39,13 +39,79 @@ new Vue({
 
 let content_comp = new Vue({
     el: '#content',
-    data: table_model.data,
+    data: {
+        table: table_model.data,
+        TableStatus: TableStatus,
+        TableStatusName: TableStatusName,
+        call_next: true,
+        team_coordination: '',
+    },
     methods: {
-        finish_coordination: function(event) {
-            this.status = TableStatus.CALLING;
+        start_coordination: function(event) {
+            axios.post('/table/' + table_name + '/start_coordination',
+                       {'team': this.team_coordination})
+                .then(response => {
+                    if (!response.data.ok) {
+                        console.log('TODO')
+                        return;
+                    }
+                    table_model.update();
+                })
         },
-        delay_coordination: function(event) {
-            this.status = TableStatus.IDLE;
+        finish_coordination: function(event) {
+            axios.post('/table/' + table_name + '/finish_coordination')
+                .then(response => {
+                    if (!response.data.ok) {
+                        console.log('TODO');
+                        return;
+                    }
+                    if (this.call_next) {
+                        content_comp.switch_to_calling(event);
+                    }
+                    table_model.update();
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        pause_coordination: function(event) {
+            axios.post('/table/' + table_name + '/pause_coordination')
+                .then(response => {
+                    if (!response.data.ok) {
+                        console.log('TODO');
+                        return;
+                    }
+                    table_model.update();
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        switch_to_calling: function(event) {
+            axios.post('/table/' + table_name + '/switch_to_calling')
+                .then(response => {
+                    if (!response.data.ok) {
+                        console.log('TODO');
+                        return;
+                    }
+                    table_model.update();
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        switch_to_idle: function(event) {
+            axios.post('/table/' + table_name + '/switch_to_idle')
+                .then(response => {
+                    if (!response.data.ok) {
+                        console.log('TODO');
+                        return;
+                    }
+                    table_model.update();
+                })
+                .catch(error => {
+                    console.log(error);
+                });
         },
     }
 });
