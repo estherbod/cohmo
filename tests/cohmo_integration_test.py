@@ -342,11 +342,12 @@ class CohmoTestCase(unittest.TestCase):
         resp = json.loads(client.get('/table/T2/get_all').data)
         self.assertTrue('ok' in resp and 'table_data' in resp)
         table_data = json.loads(resp['table_data'])
-        self.assertTrue(table_data['name'] == 'T2' and
-                        table_data['problem'] == '3' and
-                        table_data['coordinators'] == ['Franco Anselmi', 'Antonio Cannavaro'] and
-                        table_data['queue'] == ['ITA', 'ENG', 'IND'] and
-                        table_data['status'] == 2)
+        self.assertEqual(table_data, {'name': 'T2', 'problem': '3',
+                                      'coordinators': ['Franco Anselmi', 'Antonio Cannavaro'],
+                                      'queue': ['ITA', 'ENG', 'IND'],
+                                      'status': 2,
+                                      'current_coordination_start_time': None,
+                                      'current_coordination_team': None})
 
     def test_views_history(self):
         cohmo.app.config['NUM_SIGN_CORR'] = 2
@@ -400,11 +401,9 @@ class CohmoTestCase(unittest.TestCase):
         self.assertTrue('ok' in resp and resp['ok'] == True and
                         'corrections' in resp and len(resp['corrections']) == 1)
         correction = resp['corrections'][0]
-        self.assertTrue(correction['team'] == 'USA' and
-                        correction['table'] == 'T2' and
-                        correction['start_time'] == 5 and
-                        correction['end_time'] == 10 and
-                        correction['id'] == 'ID1')
+        self.assertEqual(correction, {'team': 'USA', 'table': 'T2',
+                                      'start_time': 5, 'end_time': 10,
+                                      'id': 'ID1'})
 
         # Testing get_expected_duration.
         resp = json.loads(client.get('/history/get_expected_duration',

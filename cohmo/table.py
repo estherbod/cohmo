@@ -29,8 +29,8 @@ class Table:
     # coordinators (separated by commas)
     # queue of teams (separated by commas)
     # status (calling, correcting, nothing)
-    # start_time (needed only if status == CORRECTING) # Timestamp in seconds
     # current_team (needed only if status == CORRECTING)
+    # start_time (needed only if status == CORRECTING) # Timestamp in seconds
     def __init__(self, path, history_manager):
         self.path = path
         with open(path, newline='') as table_file:

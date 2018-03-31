@@ -149,11 +149,14 @@ def get_all(table_name):
     if table_name not in chief.tables:
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
     table = chief.tables[table_name]
+    
     table_data = json.dumps({'name': table.name,
                              'problem': table.problem,
                              'coordinators': table.coordinators,
                              'queue': table.queue,
-                             'status': table.status})
+                             'status': table.status,
+                             'current_coordination_team': table.current_coordination_team,
+                             'current_coordination_start_time': table.current_coordination_start_time})
     return jsonify(ok=True, table_data=table_data)
 
 # APIs relative to the history
