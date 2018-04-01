@@ -1,0 +1,15 @@
+.team-in-queue {
+    margin: auto;
+    width: 100%;
+    border: 2px solid #ffeb8e;
+    border-top: none;
+    background-color: #FFF8DC;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table-div {
+    width: 100%;
+    height: 100px;
+}

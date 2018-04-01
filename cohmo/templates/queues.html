@@ -1,13 +1,14 @@
 <head>
-    <meta charset="utf-8">
-    <title>Admin Page for Coordinators</title>
-    <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
-    <script src="https://unpkg.com/axios@0.18.0/dist/axios.js"></script>
+    <meta charset='utf-8'>
+    <title>Coordination Queues</title>
+    <script src='https://unpkg.com/vue@2.5.16/dist/vue.js'></script>
+    <script src='https://unpkg.com/axios@0.18.0/dist/axios.js'></script>
+    <link rel='stylesheet' type='text/css' href='{{url_for("static", filename="queues.css")}}'>
 </head>
 <body>
     <div id='queues' style='width:500px, margin:auto'>
         <div v-for='table in tables' style='float:left; width:100px'>
-            <div>[[ table.name ]]: [[ TableStatusName[table.status] ]]
+            <div class='table-div'>[[ table.name ]]: [[ TableStatusName[table.status] ]]
                 <span v-if='table.status === TableStatus.CORRECTING'>
                     with [[ table.current_coordination_team ]]
                     (since [[ human_readable_time(table.current_coordination_start_time) ]])

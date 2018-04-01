@@ -2,6 +2,7 @@ Vue.options.delimiters = ['[[', ']]'];
 
 const TableStatus = Object.freeze({CALLING: 0, CORRECTING: 1, IDLE: 2});
 const TableStatusName = ['Calling', 'Coordination', 'Idle'];
+const SECOND_IN_PIXELS = 0.05;
 
 let queues_model = {
     tables: {},
@@ -26,9 +27,15 @@ let queues_model = {
 queues_model.update();
 
 Vue.component('team-in-queue', {
-  props: ['team', 'expected_duration'],
-  template: `
-<div :style="'height: ' + expected_duration/20 + 'px'">[[ team ]]</div>`
+    props: ['team', 'expected_duration'],
+    computed: {
+        height: function() {
+            return this.expected_duration * SECOND_IN_PIXELS;
+        },
+    },
+    template: `
+<div class='team-in-queue'
+     :style='"height: " + height + "px; line-height: " + height + "px;"'>[[ team ]]</div>`
 });
 
 const queues_component = new Vue({
