@@ -33,8 +33,8 @@
         <div v-if='table.status == TableStatus.CORRECTING'>
             <div>SQUADRA: [[ table.current_coordination_team ]]</div>
             <input type='button' v-on:click='finish_coordination' value='Finish coordination'>
-            <input type='button' v-on:click='pause_coordination' value='Delay coordination'>
-            <input type='checkbox' id='call_next' value='Call next' v-model='call_next'>
+            <input type='button' v-on:click='pause_coordination' value='Pause coordination'>
+            <input type='checkbox' id='call_next' value='true' v-model='call_next'>
             <label for='call_next'>Call next</label>
         </div>
         <div v-if='table.status == TableStatus.IDLE'>

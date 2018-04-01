@@ -119,9 +119,10 @@ def finish_coordination(table_name):
 def pause_coordination(table_name):
     if table_name not in chief.tables:
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
-    team = chief.tables[table_name].current_coordination_team # TODO: maybe check this is not malformed
-    if chief.tables[table_name].finish_coordination(): # If only this is true there is a problem.
-        if chief.tables[table_name].add_to_queue(team): # TODO: maybe put the team in a different position
+    table = chief.tables[table_name]
+    team = table.current_coordination_team # TODO: maybe check this is not malformed
+    if table.finish_coordination(): # If only this is true there is a problem.
+        if table.add_to_queue(team, min(chief.lost_positions, len(table.queue))):
             return jsonify(ok=True);
         return jsonify(ok=False)
     return jsonify(ok=False)
@@ -132,6 +133,25 @@ def switch_to_calling(table_name):
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
     if chief.tables[table_name].switch_to_calling():
         return jsonify(ok=True)
+    return jsonify(ok=False)
+
+@app.route('/table/<string:table_name>/skip_to_next', methods=['POST'])
+def skip_to_next(table_name):
+    if table_name not in chief.tables:
+        return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
+    table = chief.tables[table_name]
+    if table.status != 0:
+        return jsonify(ok=False,
+                       message='You can not skip to call the next team if you are not calling.')
+    if len(table.queue) == 0:
+        return jsonify(ok=True, message='There are no teams to correct.')
+    if len(table.queue) == 1:
+        return jsonify(ok=True, message='There is only a team to correct yet.')
+    team = table.queue[0]
+    if not table.remove_from_queue(team):
+        return jsonify(ok=False, message='Problem removing the team from queue.')
+    if table.add_to_queue(team, min(chief.lost_positions, len(table.queue))):
+        return jsonify(ok=True);
     return jsonify(ok=False)
 
 @app.route('/table/<string:table_name>/switch_to_idle', methods=['POST'])

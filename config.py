@@ -6,5 +6,10 @@ DEBUG = True
 # the given table, fake corrections with duration APRIORI_DURATION (see below)
 # are used to compute the expected duration.
 NUM_SIGN_CORR = 5
+
 # A priori duration of a correction in seconds.
 APRIORI_DURATION = 20*60
+
+# Positions lost when a team is removed from the top of the queue and
+# reinserted in the queue.
+LOST_POSITIONS = 3

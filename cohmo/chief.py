@@ -27,6 +27,8 @@ class ChiefCoordinator:
                 assert(table_lines[0].strip() == name)
             self.tables[name] = Table(table_paths[name], self.history_manager)
 
+        self.lost_positions = additional_config['LOST_POSITIONS']
+
     # Saves the current states of tables and history to the given files.
     # The default files are the ones passed to the constructor.
     def dump_to_file(self, table_paths=None, history_path=None):
