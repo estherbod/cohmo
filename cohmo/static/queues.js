@@ -25,6 +25,11 @@ let queues_model = {
 };
 queues_model.update();
 
+Vue.component('team-in-queue', {
+  props: ['team', 'expected_duration'],
+  template: `
+<div :style="'height: ' + expected_duration/20 + 'px'">[[ team ]]</div>`
+});
 
 const queues_component = new Vue({
     el: '#queues',
