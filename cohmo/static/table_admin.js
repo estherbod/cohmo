@@ -100,6 +100,19 @@ let content_comp = new Vue({
                     console.log(error);
                 });
         },
+        skip_to_next: function(event) {
+            axios.post('/table/' + table_name + '/skip_to_next')
+                .then(response => {
+                    if (!response.data.ok) {
+                        console.log('TODO');
+                        return;
+                    }
+                    table_model.update();
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
         switch_to_idle: function(event) {
             axios.post('/table/' + table_name + '/switch_to_idle')
                 .then(response => {
