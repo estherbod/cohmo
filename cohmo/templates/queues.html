@@ -6,9 +6,9 @@
     <link rel='stylesheet' type='text/css' href='{{url_for("static", filename="queues.css")}}'>
 </head>
 <body>
-    <div id='queues' style='width:500px, margin:auto'>
-        <div v-for='table in tables' style='float:left; width:100px'>
-            <div class='table-div'>[[ table.name ]]: [[ TableStatusName[table.status] ]]
+    <div id='queues'>
+        <div v-for='table in tables' class='queue-column'>
+            <div class='table-name'>[[ table.name ]]: [[ TableStatusName[table.status] ]]
                 <span v-if='table.status === TableStatus.CORRECTING'>
                     with [[ table.current_coordination_team ]]
                     (since [[ human_readable_time(table.current_coordination_start_time) ]])
