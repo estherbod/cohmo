@@ -396,7 +396,8 @@ class CohmoTestCase(unittest.TestCase):
                                       'queue': ['ITA', 'ENG', 'IND'],
                                       'status': 2,
                                       'current_coordination_start_time': None,
-                                      'current_coordination_team': None})
+                                      'current_coordination_team': None,
+                                      'expected_duration': 4.0})
 
         # Testing tables get_all.
         resp = json.loads(client.get('/tables/get_all',

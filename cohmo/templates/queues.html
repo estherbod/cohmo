@@ -13,7 +13,8 @@
                     (since [[ human_readable_time(table.current_coordination_start_time) ]])
                 </span>
             </div>
-            <div v-for='team in table.queue'>[[ team ]]</div>
+            <team-in-queue v-for='team in table.queue' v-bind:team='team'
+                           v-bind:expected-duration='table.expected_duration'></team-in-queue>
         </div>
     </div>
     <script src='{{url_for("static", filename="queues.js")}}'></script>

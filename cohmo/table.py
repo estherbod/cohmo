@@ -73,7 +73,8 @@ class Table:
             'queue': self.queue,
             'status': self.status,
             'current_coordination_team': self.current_coordination_team,
-            'current_coordination_start_time': self.current_coordination_start_time
+            'current_coordination_start_time': self.current_coordination_start_time,
+            'expected_duration': self.history_manager.get_expected_duration(self.name),
         }
 
 
