@@ -55,6 +55,7 @@ let content_comp = new Vue({
                         console.log('TODO')
                         return;
                     }
+                    this.team_coordination = this.table.queue[0];
                     table_model.update();
                 })
         },
@@ -68,6 +69,7 @@ let content_comp = new Vue({
                     if (this.call_next) {
                         content_comp.switch_to_calling(event);
                     }
+                    this.team_coordination = this.table.queue[0];
                     table_model.update();
                 })
                 .catch(error => {
@@ -81,6 +83,7 @@ let content_comp = new Vue({
                         console.log('TODO');
                         return;
                     }
+                    this.team_coordination = this.table.queue[0];
                     table_model.update();
                 })
                 .catch(error => {
@@ -94,6 +97,7 @@ let content_comp = new Vue({
                         console.log('TODO');
                         return;
                     }
+                    this.team_coordination = this.table.queue[0];
                     table_model.update();
                 })
                 .catch(error => {
@@ -107,6 +111,7 @@ let content_comp = new Vue({
                         console.log('TODO');
                         return;
                     }
+                    this.team_coordination = this.table.queue[0];
                     table_model.update();
                 })
                 .catch(error => {
@@ -120,6 +125,7 @@ let content_comp = new Vue({
                         console.log('TODO');
                         return;
                     }
+                    this.team_coordination = this.table.queue[0];
                     table_model.update();
                 })
                 .catch(error => {
