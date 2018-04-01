@@ -163,7 +163,7 @@ def get_all(table_name):
 @app.route('/tables/get_all', methods=['GET'])
 def get_tables_if_changed():
     last_update = -1
-    if 'last_update' in request.args: last_update = request.args['last_update']
+    if 'last_update' in request.args: last_update = int(request.args['last_update'])
     if chief.history_manager.operations_num == last_update:
         return jsonify(ok=True, changed=False)
 

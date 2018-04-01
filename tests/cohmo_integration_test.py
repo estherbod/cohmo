@@ -370,12 +370,12 @@ class CohmoTestCase(unittest.TestCase):
         self.assertEqual(resp['changed'], True)
         last_update = resp['last_update']
         resp = json.loads(client.get('/tables/get_all',
-                                     data=json.dumps({'last_update': last_update})).data)
+                                     query_string = {'last_update': last_update}).data)
         self.assertTrue('ok' in resp and resp['ok'])
-        self.assertEqual(resp['changed'], False)
+        self.assertFalse(resp['changed'])
 
         resp = json.loads(client.get('/tables/get_all',
-                                     data=json.dumps({'last_update': last_update-1})).data)
+                                     query_string = {'last_update': last_update-1}).data)
         self.assertTrue('ok' in resp and resp['ok'])
         self.assertEqual(len(json.loads(resp['tables'])), 3)
         self.assertEqual(resp['changed'], True)
