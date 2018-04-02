@@ -324,7 +324,7 @@ class CohmoTestCase(unittest.TestCase):
         self.assertTrue('ok' in resp and resp['ok'] == True)
         resp = json.loads(client.get('/table/T2/get_queue').data)
         self.assertTrue('ok' in resp)
-        self.assertEqual(resp['queue'], ['IND', 'ENG', 'CHN'])
+        self.assertEqual(resp['queue'], ['IND', 'CHN', 'ENG'])
 
         # Testing switch_to_calling.
         resp = json.loads(client.post('/table/T1/switch_to_calling').data)
@@ -365,7 +365,7 @@ class CohmoTestCase(unittest.TestCase):
         self.assertEqual(table_data['status'], 0)
         resp = json.loads(client.get('/table/T2/get_queue').data)
         self.assertTrue('ok' in resp)
-        self.assertEqual(resp['queue'], ['ENG', 'IND', 'CHN'])
+        self.assertEqual(resp['queue'], ['CHN', 'IND', 'ENG'])
         resp = json.loads(client.post('/table/T2/remove_from_queue',
                                       data=json.dumps({'team': 'ENG'})).data)
         self.assertTrue('ok' in resp and resp['ok'] == True)

@@ -35,11 +35,12 @@ const content_comp = new Vue({
         selected_team: '',
         selected_team1: '',
         selected_team2: '',
+        position: '',
     },
     methods: {
         add_to_queue: function(event) {
             axios.post('/table/' + this.selected_table + '/add_to_queue',
-                       {'team': this.selected_team})
+                       {'team': this.selected_team, 'pos': this.position})
                 .then(response => {
                     if (!response.data.ok) {
                         alert(response.data.message)
@@ -52,6 +53,18 @@ const content_comp = new Vue({
         remove_from_queue: function(event) {
             axios.post('/table/' + this.selected_table + '/remove_from_queue',
                        {'team': this.selected_team})
+                .then(response => {
+                    if (!response.data.ok) {
+                        alert(response.data.message)
+                        console.log('TODO')
+                        return;
+                    }
+                    schedule_model.update();
+                })
+        },
+        swap_teams_in_queue: function(event) {
+            axios.post('/table/' + this.selected_table + '/swap_teams_in_queue',
+                       {'teams': [this.selected_team1, this.selected_team2]})
                 .then(response => {
                     if (!response.data.ok) {
                         alert(response.data.message)

@@ -21,7 +21,7 @@
                 TODO: here I would like to put as default value table.queue[0]
                 e cambiare anche sotto
 -->
-                <input type='team_coordination' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>
+                <input type='text' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>
                 <input type='button' v-on:click='start_coordination' value='Start coordination'>
             </form>
             <input type='button' v-on:click='switch_to_idle' value='Stop calling'>
@@ -42,7 +42,7 @@
 <!--
                 TODO: correct also here
 -->
-                <input type='team_coordination' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>
+                <input type='text' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>
                 <input type='button' v-on:click='start_coordination' value='Start coordination'>
             </form>
             <input type='button' v-on:click='switch_to_calling' value='Call next one'>

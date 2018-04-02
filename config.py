@@ -12,4 +12,4 @@ APRIORI_DURATION = 20*60
 
 # Positions lost when a team is removed from the top of the queue and
 # reinserted in the queue.
-LOST_POSITIONS = 3
+LOST_POSITIONS = 2

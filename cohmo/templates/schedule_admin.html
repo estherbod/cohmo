@@ -15,17 +15,27 @@
         <div>
             <h2>Add to queue</h2>
             <form>
-                Table: <input type='selected_table' v-model='selected_table'>
-                Team: <input type='selected_team' v-model='selected_team'>
+                Table: <input type='text' v-model='selected_table'>
+                Team: <input type='text' v-model='selected_team'>
+                Position: <input type='number' v-model='position'>
                 <input type='button' v-on:click='add_to_queue' value='Add to queue'>
             </form>
         </div>
         <div>
             <h2>Remove from queue</h2>
             <form>
-                Table: <input type='selected_table' v-model='selected_table'>
-                Team: <input type='selected_team' v-model='selected_team'>
+                Table: <input type='text' v-model='selected_table'>
+                Team: <input type='text' v-model='selected_team'>
                 <input type='button' v-on:click='remove_from_queue' value='Remove from queue'>
+            </form>
+        </div>
+        <div>
+            <h2>Swap teams in queue</h2>
+            <form>
+                Table: <input type='text' v-model='selected_table'>
+                Team 1: <input type='text' v-model='selected_team1'>
+                Team 2: <input type='text' v-model='selected_team2'>
+                <input type='button' v-on:click='swap_teams_in_queue' value='Swap teams in queue'>
             </form>
         </div>
     </div>

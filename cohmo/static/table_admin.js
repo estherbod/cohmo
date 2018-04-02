@@ -42,10 +42,11 @@ let content_comp = new Vue({
         TableStatus: TableStatus,
         TableStatusName: TableStatusName,
         call_next: true,
-        team_coordination: '',
+        team_coordination: table_model.data.queue[0],
     },
     methods: {
         after_action: function(event) {
+            table_model.update();
             this.team_coordination = this.table.queue[0];
             table_model.update();
         },
