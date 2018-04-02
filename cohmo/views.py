@@ -29,6 +29,10 @@ def table_admin(table_name):
 def queues():
     return render_template('queues.html')
 
+@app.route('/schedule/admin')
+def schedule_admin():
+    return render_template('schedule_admin.html')
+
 # API relative to a table
 
 @app.route('/table/<string:table_name>/add_to_queue', methods=['POST'])
@@ -44,6 +48,10 @@ def add_to_queue(table_name):
     if team in chief.tables[table_name].queue:
         return jsonify(ok=False,
                        message='Team {0} is already in queue at table {1}.'.format(team, table_name))
+    if 'pos' in req_data and req_data['pos'] <= len(chief.tables[table_name].queue):
+        if chief.tables[table_name].add_to_queue(team, req_data['pos']):
+            return jsonify(ok = True)
+        return jsonify(ok=False)
     if chief.tables[table_name].add_to_queue(team):
         return jsonify(ok=True)
     return jsonify(ok=False)

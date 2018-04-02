@@ -192,6 +192,19 @@ class CohmoTestCase(unittest.TestCase):
         resp = json.loads(client.get('/table/T2/get_queue').data)
         self.assertTrue('ok' in resp)
         self.assertEqual(resp['queue'], ['ITA', 'ENG', 'IND', 'CHN'])
+        resp = json.loads(client.post('/table/T2/add_to_queue',
+                                      data=json.dumps({'team': 'FRA', 'pos': 2})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == True)        
+        resp = json.loads(client.get('/table/T2/get_queue').data)
+        self.assertTrue('ok' in resp)
+        self.assertEqual(resp['queue'], ['ITA', 'ENG', 'FRA', 'IND', 'CHN'])
+        resp = json.loads(client.post('/table/T2/remove_from_queue',
+                                      data=json.dumps({'team': 'FRA'})).data)
+        self.assertTrue('ok' in resp and resp['ok'] == True)        
+        resp = json.loads(client.get('/table/T2/get_queue').data)
+        self.assertTrue('ok' in resp)
+        self.assertEqual(resp['queue'], ['ITA', 'ENG', 'IND', 'CHN'])
+        
 
         # Testing remove_from_queue.
         resp = json.loads(client.post('/table/T1/remove_from_queue',

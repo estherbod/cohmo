@@ -12,8 +12,6 @@ let table_model = {
         current_coordination_start_time: 0,
         current_coordination_team: '',
         queue: [],
-        TableStatus: TableStatus,
-        TableStatusName: TableStatusName,
     },
     update() {
         axios.get('/table/' + table_name + '/get_all')
@@ -47,6 +45,10 @@ let content_comp = new Vue({
         team_coordination: '',
     },
     methods: {
+        after_action: function(event) {
+            this.team_coordination = this.table.queue[0];
+            table_model.update();
+        },
         start_coordination: function(event) {
             axios.post('/table/' + table_name + '/start_coordination',
                        {'team': this.team_coordination})
@@ -55,8 +57,7 @@ let content_comp = new Vue({
                         console.log('TODO')
                         return;
                     }
-                    this.team_coordination = this.table.queue[0];
-                    table_model.update();
+                    this.after_action(event);
                 })
         },
         finish_coordination: function(event) {
@@ -69,8 +70,7 @@ let content_comp = new Vue({
                     if (this.call_next) {
                         content_comp.switch_to_calling(event);
                     }
-                    this.team_coordination = this.table.queue[0];
-                    table_model.update();
+                    this.after_action(event);
                 })
                 .catch(error => {
                     console.log(error);
@@ -83,8 +83,7 @@ let content_comp = new Vue({
                         console.log('TODO');
                         return;
                     }
-                    this.team_coordination = this.table.queue[0];
-                    table_model.update();
+                    this.after_action(event);
                 })
                 .catch(error => {
                     console.log(error);
@@ -97,8 +96,7 @@ let content_comp = new Vue({
                         console.log('TODO');
                         return;
                     }
-                    this.team_coordination = this.table.queue[0];
-                    table_model.update();
+                    this.after_action(event);
                 })
                 .catch(error => {
                     console.log(error);
@@ -111,8 +109,7 @@ let content_comp = new Vue({
                         console.log('TODO');
                         return;
                     }
-                    this.team_coordination = this.table.queue[0];
-                    table_model.update();
+                    this.after_action(event);
                 })
                 .catch(error => {
                     console.log(error);
@@ -125,8 +122,7 @@ let content_comp = new Vue({
                         console.log('TODO');
                         return;
                     }
-                    this.team_coordination = this.table.queue[0];
-                    table_model.update();
+                    this.after_action(event);
                 })
                 .catch(error => {
                     console.log(error);
