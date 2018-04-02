@@ -8,7 +8,7 @@ let queues_model = {
     tables: {},
     last_update: -1,
     update() {
-        axios.get('/tables/get_all', {params: {last_update: this.last_update}})
+        return axios.get('/tables/get_all', {params: {last_update: this.last_update}})
             .then(response => {
                 if (!response.data.ok) {
                     console.log('TODO');
@@ -17,14 +17,15 @@ let queues_model = {
                 if (!response.data.changed) return;
                 this.last_update = response.data.last_update;
                 Object.assign(this.tables, JSON.parse(response.data.tables));
-                queues_component.$forceUpdate();
             })
             .catch(error => {
                 console.log(error);
             });
     }
 };
-queues_model.update();
+queues_model.update().then(() => {
+    queues_component.$forceUpdate();
+});
 
 Vue.component('team-in-queue', {
     props: ['team', 'expected_duration'],
