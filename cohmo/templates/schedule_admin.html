@@ -1,0 +1,36 @@
+<head>
+    <meta charset="utf-8">
+    <title>Schedule Admin Page</title>
+    <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios@0.18.0/dist/axios.js"></script>
+</head>
+<body>
+    <div id='header'>
+        <h1>Schedule Admin</h1>
+    </div>
+    <div id='content'>
+        <div v-for='(table, index) in tables'>
+            [[ table.name ]]: <span v-for='(team, index) in table.queue'> [[ team ]] <span v-if='index+1 < table.queue.length'>, </span></span>
+        </div>
+        <div>
+            <h2>Add to queue</h2>
+            <form>
+                Table: <input type='selected_table' v-model='selected_table'>
+                Team: <input type='selected_team' v-model='selected_team'>
+                <input type='button' v-on:click='add_to_queue' value='Add to queue'>
+            </form>
+        </div>
+        <div>
+            <h2>Remove from queue</h2>
+            <form>
+                Table: <input type='selected_table' v-model='selected_table'>
+                Team: <input type='selected_team' v-model='selected_team'>
+                <input type='button' v-on:click='remove_from_queue' value='Remove from queue'>
+            </form>
+        </div>
+    </div>
+    <script>
+        const table_name = '{{ table_name }}';
+    </script>
+    <script src='{{url_for("static", filename="schedule_admin.js")}}'></script>
+</body>
