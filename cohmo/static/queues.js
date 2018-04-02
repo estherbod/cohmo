@@ -28,23 +28,51 @@ queues_model.update().then(() => {
 });
 
 Vue.component('team-in-queue', {
-    props: ['team', 'expected_duration'],
+    props: ['team', 'expected_duration', 'start_time'],
     computed: {
         height: function() {
-            return this.expected_duration * SECOND_IN_PIXELS;
+            return this.expected_duration * SECOND_IN_PIXELS - 1;
+        },
+        top_pos: function() {
+            let now = new Date().getTime() / 1000;
+            return (this.start_time - now) * SECOND_IN_PIXELS;
         },
     },
     template: `
 <div class='team-in-queue'
-     :style='"height: " + height + "px; line-height: " + height + "px;"'>[[ team ]]</div>`
+     :style='"height: " + height + "px; line-height: " + height + "px; top: " + top_pos + "px"'>[[ team ]]</div>`
 });
 
-const queues_component = new Vue({
+let queues_component = new Vue({
     el: '#queues',
     data: {
         tables: queues_model.tables,
         TableStatus: TableStatus,
         TableStatusName: TableStatusName,
+    },
+    computed: {
+        start_time: function() {
+            let result = {};
+            for (let name in this.tables) {
+                result[name] = {};
+                let now =  new Date().getTime() / 1000; // In seconds.
+                let curr = undefined;
+                let start_time = this.tables[name].current_coordination_start_time;
+                let expected_duration = this.tables[name].expected_duration;
+                    
+                if (this.tables[name].status == TableStatus.CALLING) curr = now;
+                else if (this.tables[name].status == TableStatus.IDLE) curr = now + 300;
+                else if (this.tables[name].status == TableStatus.CORRECTING) {
+                    curr = Math.max(now + 300, start_time + expected_duration)
+                }
+                console.log(curr);
+                for (let team of this.tables[name].queue) {
+                    result[name][team] = curr;
+                    curr += expected_duration;
+                }
+            }
+            return result;
+        },
     },
     methods: {
         human_readable_time: function(timestamp) {

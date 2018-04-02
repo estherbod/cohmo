@@ -1,6 +1,6 @@
 #queues {
-    width: 500px;
-    margin: auto;
+    width: 1201px;
+    margin: 0 auto;
 }
 
 .queue-column {
@@ -8,10 +8,18 @@
     width: 100px;
 }
 
+.queue-container {
+    position: relative;
+}
+
 .team-in-queue {
-    margin: auto;
-    width: 100%;
-    border: 2px solid #D6D6D6; /*#ffeb8e;*/
+     box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    position: absolute;
+    margin: 0 auto;
+    width: 100px;
+    border: 1px solid #D6D6D6; /*#ffeb8e;*/
     border-top: none;
     background-color: f8f8f8;
     font-weight: bold;
