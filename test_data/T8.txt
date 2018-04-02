@@ -1,5 +1,5 @@
 T8
-6
+4
 Anzioso Curiosone, Folle pseudoladro
 IRN,ISR,ITA,JPN,KAZ,LIE,LTU
 IDLE
