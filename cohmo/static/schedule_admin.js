@@ -31,16 +31,19 @@ const content_comp = new Vue({
         tables: schedule_model.tables,
         TableStatus: TableStatus,
         TableStatusName: TableStatusName,
-        selected_table: '',
-        selected_team: '',
-        selected_team1: '',
-        selected_team2: '',
-        position: '',
+        add_selected_table: '',
+        add_selected_team: '',
+        add_position: '',
+        remove_selected_table: '',
+        remove_selected_team: '',
+        swap_selected_table: '',
+        swap_selected_team1: '',
+        swap_selected_team2: '',
     },
     methods: {
         add_to_queue: function(event) {
-            axios.post('/table/' + this.selected_table + '/add_to_queue',
-                       {'team': this.selected_team, 'pos': this.position})
+            axios.post('/table/' + this.add_selected_table + '/add_to_queue',
+                       {'team': this.add_selected_team, 'pos': this.add_position})
                 .then(response => {
                     if (!response.data.ok) {
                         alert(response.data.message)
@@ -51,8 +54,8 @@ const content_comp = new Vue({
                 })
         },
         remove_from_queue: function(event) {
-            axios.post('/table/' + this.selected_table + '/remove_from_queue',
-                       {'team': this.selected_team})
+            axios.post('/table/' + this.remove_selected_table + '/remove_from_queue',
+                       {'team': this.remove_selected_team})
                 .then(response => {
                     if (!response.data.ok) {
                         alert(response.data.message)
@@ -63,8 +66,8 @@ const content_comp = new Vue({
                 })
         },
         swap_teams_in_queue: function(event) {
-            axios.post('/table/' + this.selected_table + '/swap_teams_in_queue',
-                       {'teams': [this.selected_team1, this.selected_team2]})
+            axios.post('/table/' + this.swap_selected_table + '/swap_teams_in_queue',
+                       {'teams': [this.swap_selected_team1, this.swap_selected_team2]})
                 .then(response => {
                     if (!response.data.ok) {
                         alert(response.data.message)
