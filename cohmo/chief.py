@@ -1,5 +1,6 @@
 from cohmo.table import Table
 from cohmo.history import HistoryManager
+from collections import OrderedDict
 
 # This class is the global handler of both the tables and the history.
 # The name of the class is inspired from the real-world name of the person
@@ -20,13 +21,14 @@ class ChiefCoordinator:
             self.teams = [team.strip() for team in lines[0].split(',')]
         self.history_manager = HistoryManager(history_path, additional_config)
 
-        self.tables = {}
+        self.tables = OrderedDict()
         for name in table_paths:
             with open(table_paths[name], newline='') as table_file:
                 table_lines = table_file.readlines()
                 assert(table_lines[0].strip() == name)
             self.tables[name] = Table(table_paths[name], self.history_manager)
-
+        #  for x in self.tables: print(x)
+        #  print(table_paths, self.tables)
         self.lost_positions = additional_config['LOST_POSITIONS']
 
     # Saves the current states of tables and history to the given files.

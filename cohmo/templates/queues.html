@@ -6,14 +6,12 @@
     <link rel='stylesheet' type='text/css' href='{{url_for("static", filename="queues.css")}}'>
 </head>
 <body>
+    <div class='schedule-times'>
+        
+    </div>
     <div id='queues'>
-        <div v-for='table in tables' class='queue-column'>
-            <div class='table-name'>[[ table.name ]]: [[ TableStatusName[table.status] ]]
-                <span v-if='table.status === TableStatus.CORRECTING'>
-                    with [[ table.current_coordination_team ]]
-                    (since [[ human_readable_time(table.current_coordination_start_time) ]])
-                </span>
-            </div>
+        <div v-for='table in tables' class='queue-column' :key="table.name">
+            <queue-header v-bind:table='table'></queue-header>
             <div class='queue-container'>
                 <team-in-queue v-for='team in table.queue' v-bind:team='team'
                                v-bind:expected_duration='table.expected_duration'

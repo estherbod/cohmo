@@ -30,7 +30,42 @@
     color: #34495e;
 }
 
-.table-name {
+.queue-header {
     width: 100%;
-    height: 200px;
+    height: 55px;
+    text-align: center;
+    vertical-align: middle;
+    font-family: "Roboto Mono", Monaco, courier, monospace;
+    font-size: 1em;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border: 1px solid gray;
+}
+
+.queue-header-container {
+    position: relative;
+    top: 7px;
+}
+
+.queue-header.correcting {
+    background-color: #acffac;
+}
+
+.queue-header.calling {
+    background-color: #ffff90;
+}
+
+.queue-header.idle {
+    background-color: #D0D0D0;
+}
+
+.schedule-times {
+/*
+    background-color: black;
+*/
+    width: 98%;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
 }

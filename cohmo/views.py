@@ -197,8 +197,7 @@ def get_tables_if_changed():
     if chief.history_manager.operations_num == last_update:
         return jsonify(ok=True, changed=False)
 
-    all_tables_data = json.dumps(
-        {name: chief.tables[name].to_dict() for name in chief.tables})
+    all_tables_data = json.dumps([chief.tables[table].to_dict() for table in chief.tables])
     return jsonify(ok=True, changed=True,
                    last_update=chief.history_manager.operations_num,
                    tables=all_tables_data)

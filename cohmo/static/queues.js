@@ -5,7 +5,7 @@ const TableStatusName = ['Calling', 'Coordination', 'Idle'];
 const SECOND_IN_PIXELS = 0.05;
 
 let queues_model = {
-    tables: {},
+    tables: [],
     last_update: -1,
     update() {
         return axios.get('/tables/get_all', {params: {last_update: this.last_update}})
@@ -53,25 +53,51 @@ let queues_component = new Vue({
     computed: {
         start_time: function() {
             let result = {};
-            for (let name in this.tables) {
-                result[name] = {};
+            for (let table of this.tables) {
+                result[table.name] = {};
                 let now =  new Date().getTime() / 1000; // In seconds.
                 let curr = undefined;
-                let start_time = this.tables[name].current_coordination_start_time;
-                let expected_duration = this.tables[name].expected_duration;
+                let start_time = table.current_coordination_start_time;
+                let expected_duration = table.expected_duration;
                     
-                if (this.tables[name].status == TableStatus.CALLING) curr = now;
-                else if (this.tables[name].status == TableStatus.IDLE) curr = now + 300;
-                else if (this.tables[name].status == TableStatus.CORRECTING) {
+                if (table.status == TableStatus.CALLING) curr = now;
+                else if (table.status == TableStatus.IDLE) curr = now + 300;
+                else if (table.status == TableStatus.CORRECTING) {
                     curr = Math.max(now + 300, start_time + expected_duration)
                 }
-                console.log(curr);
-                for (let team of this.tables[name].queue) {
-                    result[name][team] = curr;
+                for (let team of table.queue) {
+                    result[table.name][team] = curr;
                     curr += expected_duration;
                 }
             }
             return result;
+        },
+    },
+});
+
+Vue.component('queue-header', {
+    props: ['table',],
+    computed: {
+        correcting: function() {
+            return this.table.status === TableStatus.CORRECTING;
+        },
+        calling: function() {
+            return this.table.status == TableStatus.CALLING;
+        },
+        idle: function() {
+            return this.table.status == TableStatus.IDLE;
+        },
+        status_name: function() {
+            if (this.correcting) return 'correcting';
+            if (this.calling) return 'calling';
+            if (this.idle) return 'idle';
+        },
+        height: function() {
+            return this.expected_duration * SECOND_IN_PIXELS - 1;
+        },
+        top_pos: function() {
+            let now = new Date().getTime() / 1000;
+            return (this.start_time - now) * SECOND_IN_PIXELS;
         },
     },
     methods: {
@@ -82,5 +108,14 @@ let queues_component = new Vue({
             var seconds = "0" + date.getSeconds();
             return hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
         }
-    }
+    },
+    template: `
+<div v-bind:class='"queue-header " + [[status_name]]'>
+    <div class='queue-header-container'>
+        <div class='table-name'>[[ table.name ]]</div>
+        <div class='correcting' v-if='correcting'> [[ table.current_coordination_team ]] </div>
+        <div class='calling' v-if='calling'> calling </div>
+        <div class='idle' v-if='idle'> idle </div>
+    </div>
+</div>`,
 });
