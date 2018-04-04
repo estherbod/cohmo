@@ -1,0 +1,64 @@
+body {
+    font-family: Tahoma, Geneva, sans-serif;
+}
+
+h2 {
+    font-weight: normal;
+}
+
+input[type=text]{
+    width: 150px;
+    height: 40px;
+    padding-left: 10px;
+    display: inline-block;
+    border: 1px solid;
+    box-sizing: border-box;
+}
+
+input[type=button] {
+    width: 150px;
+    height: 40px;
+    background-color: #e7e7e7;
+    border: 1px solid #D6D6D6;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=checkbox] {
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    position: relative;
+    vertical-align: middle;
+}
+
+/*
+.situation {
+    width: 50%;
+}
+*/
+
+.team {
+    font-family: "Roboto Mono", Monaco, courier, monospace;
+}
+
+#Correcting>.status {
+    font-weight: bold;
+    font-size: 10em;
+    color: #DC143C;
+}
+
+#current_coordination_team {
+    font-size: 15em;
+    color: #DC143C;
+}
+
+#Calling>.status, #Idle>.status{
+    font-size: 5em;
+    color: #34495e;
+}
+
+#current_calling_team {
+    font-size: 5em;
+    color: #34495e;
+}

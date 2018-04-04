@@ -3,53 +3,71 @@
     <title>Admin Page for Coordinators</title>
     <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
     <script src="https://unpkg.com/axios@0.18.0/dist/axios.js"></script>
+    <link rel='stylesheet' type='text/css' href='{{url_for("static", filename="table_admin.css")}}'>
 </head>
 <body>
     <div id='header'>
-        <h1>Table: [[ name ]]</h1>
-        <h2>Problem: [[ problem ]]</h2>
+        <h1><span id='table'>[[ name ]]</span> - <span id='problem'>Problem [[ problem ]]</span></h1>
         <h2>Coordinators:
             <span v-for='(coordinator, index) in coordinators'>[[ coordinator ]]<span v-if='index+1 < coordinators.length'>, </span></span>
         </h2>
     </div>
     <div id='content'>
-        <span>Status: [[ TableStatusName[table.status] ]]</span>
-        <div v-if='table.status == TableStatus.CALLING'>
-            <div>SQUADRA: [[ table.queue[0] ]]</div>
-            <form>
-<!--
-                TODO: here I would like to put as default value table.queue[0]
-                e cambiare anche sotto
--->
-                <input type='text' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>
-                <input type='button' v-on:click='start_coordination' value='Start coordination'>
-            </form>
-            <input type='button' v-on:click='switch_to_idle' value='Stop calling'>
-            <input type='button' v-on:click='skip_to_next' value='Call next one'>
-        </div>
-        <div v-if='table.status == TableStatus.CORRECTING'>
-            <div>SQUADRA: [[ table.current_coordination_team ]]</div>
-            <input type='button' v-on:click='finish_coordination' value='Finish coordination'>
-            <input type='button' v-on:click='pause_coordination' value='Pause coordination'>
-            <input type='checkbox' id='call_next' value='true' v-model='call_next'>
-            <label for='call_next'>Call next</label>
-        </div>
-        <div v-if='table.status == TableStatus.IDLE'>
-            <span>
-                Queue: <span v-for='(team, index) in table.queue'>[[ team ]] <span v-if='index+1 < table.queue.length'>, </span>
-            </span>
-            <form>
-<!--
-                TODO: correct also here
--->
-                <input type='text' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>
-                <input type='button' v-on:click='start_coordination' value='Start coordination'>
-            </form>
-            <input type='button' v-on:click='switch_to_calling' value='Call next one'>
+        <div :id='TableStatusName[table.status]' class='situation'>
+            <div class='status'>[[ TableStatusName[table.status] ]]</div>
+            <div v-if='table.status == TableStatus.CALLING'>
+                <div id='current_calling_team' class='team'>[[ table.queue[0] ]]</div>
+                <div class='queue'>
+                    Queue: <span v-for='(team, index) in table.queue' class='team'>[[ team ]]<span v-if='index+1 < table.queue.length'>, </span>
+                </div>
+                <div class='actions'>
+                    <form>
+        <!--
+                        TODO: here I would like to put as default value table.queue[0]
+                        e cambiare anche sotto
+        -->
+                        <input type='text' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>
+                        <input type='button' v-on:click='start_coordination' value='Start coordination'>
+                    </form>
+                    <input type='button' v-on:click='switch_to_idle' value='Stop calling'>
+                    <input type='button' v-on:click='skip_to_next' value='Call next one'>
+                </div>
+            </div>
+            <div v-if='table.status == TableStatus.CORRECTING'>
+                <div id='current_coordination_team' class='team'>[[ table.current_coordination_team ]]</div>
+                <div class='actions'>
+                    <input type='button' v-on:click='finish_coordination' value='Finish coordination'>
+                    <input type='button' v-on:click='pause_coordination' value='Pause coordination'>
+                    <input type='checkbox' id='call_next' value='true' v-model='call_next'>
+                    <label for='call_next'>Call next</label>
+                </div>
+            </div>
+            <div v-if='table.status == TableStatus.IDLE'>
+                <div class='queue'>
+                    Queue: <span v-for='(team, index) in table.queue'  class='team'>[[ team ]]<span v-if='index+1 < table.queue.length'>, </span>
+                </div>
+                <div class='actions'>
+                    <form>
+        <!--
+                        TODO: correct also here
+        -->
+                        <input type='text' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>
+        <!--
+                        // Attempt of autocomplete
+                        <v-autocomplete :items='table.queue' v-model='team_coordination' v-bind:placeholder='table.queue[0]'></v-autocomplete>
+        -->
+                        <input type='button' v-on:click='start_coordination' value='Start coordination'>
+                    </form>
+                    <input type='button' v-on:click='switch_to_calling' value='Call next one'>
+                </div>
+            </div>
         </div>
     </div>
     <script>
         const table_name = '{{ table_name }}';
     </script>
     <script src='{{url_for("static", filename="table_admin.js")}}'></script>
+<!--
+    <script src='{{url_for("static", filename="v-autocomplete.js")}}'></script>
+-->
 </body>
