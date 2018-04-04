@@ -3,11 +3,19 @@
     <title>Coordination Queues</title>
     <script src='https://unpkg.com/vue@2.5.16/dist/vue.js'></script>
     <script src='https://unpkg.com/axios@0.18.0/dist/axios.js'></script>
+    <script src='{{url_for("static", filename="queues.js")}}' defer></script>
     <link rel='stylesheet' type='text/css' href='{{url_for("static", filename="queues.css")}}'>
 </head>
 <body>
-    <div class='schedule-times'>
-        
+    <div id='schedule-times'>
+        <div class='times-header'></div>
+        <div class='times-container'>
+            <div v-for='time in times()'
+                 class='time-in-schedule'
+                 :style='"top: " + [[ time.height ]] + "px;"'>
+                [[ time.human_time ]]
+            </div>
+        </div>
     </div>
     <div id='queues'>
         <div v-for='table in tables' class='queue-column' :key="table.name">
@@ -20,5 +28,4 @@
             </div>
         </div>
     </div>
-    <script src='{{url_for("static", filename="queues.js")}}'></script>
 </body>

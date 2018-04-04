@@ -23,8 +23,60 @@ let queues_model = {
             });
     }
 };
-queues_model.update().then(() => {
-    queues_component.$forceUpdate();
+
+function update_queues() {
+    queues_model.update().then(() => {
+        queues_component.$forceUpdate();
+        schedule_times_component.$forceUpdate();
+    });
+}
+
+update_queues();
+setInterval(update_queues, 10000);
+
+
+const SCHEDULE_TIMES_INTERVAL = 20*60;
+let schedule_times_component = new Vue({
+    el: '#schedule-times',
+    data: {
+        tables: queues_model.tables,
+    },
+    methods: {
+        timestamp2hhmm: function(timestamp) {
+            let date = new Date(timestamp*1000);
+            let hours = date.getHours();
+            let minutes = "0" + date.getMinutes();
+            return hours + ':' + minutes.substr(-2);
+        },
+        estimated_finish_time: function() {
+            let now = new Date().getTime() / 1000;
+            let max_total_duration = 0;
+            for (table of this.tables) {
+                max_total_duration = Math.max(
+                    max_total_duration,
+                    table.queue.length * table.expected_duration);
+            }
+            return now + max_total_duration;
+        },
+        times: function() {
+            let now = new Date().getTime() / 1000;
+            let curr = Math.ceil((now + 120) / SCHEDULE_TIMES_INTERVAL);
+            curr = curr * SCHEDULE_TIMES_INTERVAL;
+
+            res = [];
+            const finish = this.estimated_finish_time();
+            while (curr < finish
+                   || curr <= now + 2*SCHEDULE_TIMES_INTERVAL) {
+                res.push({
+                    timestamp: curr,
+                    height: (curr-now)*(SECOND_IN_PIXELS),
+                    human_time: this.timestamp2hhmm(curr),
+                });
+                curr += SCHEDULE_TIMES_INTERVAL;
+            }
+            return res;
+        },
+    },
 });
 
 Vue.component('team-in-queue', {
@@ -99,15 +151,6 @@ Vue.component('queue-header', {
             let now = new Date().getTime() / 1000;
             return (this.start_time - now) * SECOND_IN_PIXELS;
         },
-    },
-    methods: {
-        human_readable_time: function(timestamp) {
-            var date = new Date(timestamp*1000);
-            var hours = date.getHours();
-            var minutes = "0" + date.getMinutes();
-            var seconds = "0" + date.getSeconds();
-            return hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-        }
     },
     template: `
 <div v-bind:class='"queue-header " + [[status_name]]'>

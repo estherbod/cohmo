@@ -8,7 +8,7 @@
     width: 100px;
 }
 
-.queue-container {
+.queue-container, .times-container {
     position: relative;
 }
 
@@ -32,7 +32,6 @@
 
 .queue-header {
     width: 100%;
-    height: 55px;
     text-align: center;
     vertical-align: middle;
     font-family: "Roboto Mono", Monaco, courier, monospace;
@@ -41,6 +40,10 @@
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     border: 1px solid gray;
+}
+
+.queue-header, .times-header {
+    height: 55px;
 }
 
 .queue-header-container {
@@ -60,12 +63,19 @@
     background-color: #D0D0D0;
 }
 
-.schedule-times {
+#schedule-times {
 /*
     background-color: black;
 */
-    width: 98%;
+    width: 90%;
     height: 100%;
     position: absolute;
     z-index: 1;
+    padding-left: 40px;
+}
+
+.time-in-schedule {
+    position: absolute;
+    width: 100%;
+    border-top: 1px dashed #004bff80;
 }
