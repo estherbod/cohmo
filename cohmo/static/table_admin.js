@@ -16,13 +16,13 @@ let table_model = {
         TableStatusName: TableStatusName,
     },
     update() {
-        axios.get('/table/' + table_name + '/get_all')
+        return axios.get('/table/' + table_name + '/get_all')
             .then(response => {
                 if (!response.data.ok) {
                     console.log('TODO');
                     return;
                 }
-                Object.assign(this.data, JSON.parse(response.data.table_data))
+                Object.assign(this.data, JSON.parse(response.data.table_data));
             })
             .catch(error => {
                 console.log(error);
@@ -30,7 +30,10 @@ let table_model = {
     }
 };
 
-table_model.update();
+table_model.update()
+    .then(function() {
+        document.getElementsByTagName('body')[0].classList.remove('hidden');
+    });
 
 new Vue({
     el: '#header',
@@ -44,12 +47,14 @@ let content_comp = new Vue({
         TableStatus: TableStatus,
         TableStatusName: TableStatusName,
         call_next: true,
-        team_coordination: table_model.data.queue[0],
+    },
+    computed: {
+        team_coordination: function() {
+            return table_model.data.queue[0];
+        },
     },
     methods: {
         after_action: function(event) {
-            table_model.update();
-            this.team_coordination = this.table.queue[0];
             table_model.update();
         },
         start_coordination: function(event) {
