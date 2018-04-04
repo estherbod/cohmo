@@ -1,7 +1,7 @@
 Vue.options.delimiters = ['[[', ']]'];
 
 const TableStatus = Object.freeze({CALLING: 0, CORRECTING: 1, IDLE: 2});
-const TableStatusName = ['Calling', 'Correcting', 'Idle'];
+const TableStatusName = ['calling', 'correcting', 'idle'];
 
 let table_model = {
     data: {
@@ -12,6 +12,8 @@ let table_model = {
         current_coordination_start_time: 0,
         current_coordination_team: '',
         queue: [],
+        TableStatus: TableStatus,
+        TableStatusName: TableStatusName,
     },
     update() {
         axios.get('/table/' + table_name + '/get_all')
