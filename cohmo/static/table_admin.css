@@ -60,15 +60,18 @@ h2 {
     padding: 10px 10px;
 }
 
-#header>#Correcting {
+#header>.Correcting {
     color: #008000;
 }
 #current_coordination_team {
     text-align: center;
     font-size: 250px;
 }
+#actions>.Correcting {
+    text-align: center;
+}
 
-#header>#Calling {
+#header>.Calling {
     color: #FFA500;
 }
 #current_calling_team {
@@ -79,7 +82,7 @@ h2 {
     border: 1px solid #FFA500;
 }
 
-#header>#Idle {
+#header>.Idle {
     color: #696969;
 }
 

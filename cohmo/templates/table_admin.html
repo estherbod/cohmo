@@ -14,15 +14,15 @@
             <span v-for='(coordinator, index) in coordinators'>[[ coordinator ]]<span v-if='index+1 < coordinators.length'>, </span></span>
         </h2>
         </div>
-        <div :id='TableStatusName[status]' class='status'>[[ TableStatusName[status] ]]</div>
+        <div :class='TableStatusName[status]' class='status'>[[ TableStatusName[status] ]]</div>
     </div>
     <div id='content'>
         <div id='situation'>
-            <div :id='TableStatusName[table.status]'>
+            <div :class='TableStatusName[table.status]'>
                 <div v-if='table.status == TableStatus.CALLING'>
                     <div class='queue'>
                         queue: <span id='current_calling_team' class='team'>[[ table.queue[0] ]]</span><span v-if='1 < table.queue.length'>, </span>
-                        <span v-for='(team, index) in table.queue' v-if='index>1'> <span class='team'>[[ team ]]</span><span v-if='index+1 < table.queue.length'>, </span></span>
+                        <span v-for='(team, index) in table.queue' v-if='index>0'> <span class='team'>[[ team ]]</span><span v-if='index+1 < table.queue.length'>, </span></span>
                     </div>
                 </div>
                 <div v-if='table.status == TableStatus.CORRECTING'>
@@ -36,7 +36,7 @@
             </div>
         </div>
         <div id='actions'>
-            <div :id='TableStatusName[table.status]' class='situation'>
+            <div :class='TableStatusName[table.status]'>
                 <div v-if='table.status == TableStatus.CALLING'>
                     <form>
                         <!-- TODO: here I would like to put as default value table.queue[0] e cambiare anche sotto -->
