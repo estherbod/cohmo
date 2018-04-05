@@ -1,5 +1,5 @@
 T2
 1
 Schedario Estroverso, Muschio Blu
-CRI,CYP,CZE,ECU,ESP,FIN,FRA,GEO,HUN,IDN,IND,IRL,IRN
+
 IDLE
