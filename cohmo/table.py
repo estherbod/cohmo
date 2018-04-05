@@ -1,6 +1,7 @@
 from cohmo.history import Correction, HistoryManager
 import enum
 import time
+import shutil
 
 class TableStatus(enum.IntEnum):
     CALLING = 0
@@ -54,7 +55,10 @@ class Table:
     # It should be remarked that the current status of the table (whether it is
     # currently correcting is lost when doing this operation).
     def dump_to_file(self, path=None):
-        if path is None: path = self.path
+        if path is None:
+            path = self.path
+            # Before modifying the default file a backup is done.
+            shutil.copyfile(path, path + '.backup')
         with open(path, 'w', newline='') as table_file:
             table_file.write(self.name + '\n')
             table_file.write(self.problem + '\n')
@@ -86,6 +90,7 @@ class Table:
         if team not in self.queue:
             if pos == -1: pos = len(self.queue)
             self.queue.insert(pos, team)
+            self.dump_to_file()
             return True
         else: return False
 
@@ -95,6 +100,7 @@ class Table:
         self.history_manager.operations_num += 1
         if team in self.queue:
             self.queue.remove(team)
+            self.dump_to_file()
             return True
         else: return False
 
@@ -105,6 +111,7 @@ class Table:
         pos1 = self.queue.index(team1)
         pos2 = self.queue.index(team2)
         self.queue[pos1], self.queue[pos2] = team2, team1
+        self.dump_to_file()
         return True
 
     # Starts a coordination with team.
@@ -115,6 +122,7 @@ class Table:
         self.status = TableStatus.CORRECTING
         self.current_coordination_team = team
         self.current_coordination_start_time = int(time.time())
+        self.dump_to_file()
         return True
 
     # Finish the current coordination and saves it in the history_manager.
@@ -128,6 +136,7 @@ class Table:
                                         int(time.time())): return False
         self.status = TableStatus.IDLE
         self.history_manager.compute_expected_duration(self.name)
+        self.dump_to_file()
         return True
 
     # Switch the status to calling.
@@ -136,6 +145,7 @@ class Table:
         self.history_manager.operations_num += 1
         if self.status != TableStatus.IDLE: return False
         self.status = TableStatus.CALLING
+        self.dump_to_file()
         return True
 
     # Switch the status to IDLE.
@@ -144,5 +154,6 @@ class Table:
         self.history_manager.operations_num += 1
         if self.status != TableStatus.CALLING: return False
         self.status = TableStatus.IDLE
+        self.dump_to_file()
         return True
         

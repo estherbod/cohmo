@@ -2,6 +2,7 @@ import sys
 from base64 import b32encode
 from os import urandom
 import csv
+import shutil
 
 # Simple class to store a correction.
 class Correction:
@@ -36,17 +37,14 @@ class HistoryManager:
         self.apriori_duration = additional_config['APRIORI_DURATION']
         # Number of operations related to tables ever happened.
         # This is useful for caching.
-        self.operations_num = 0
+        self.operations_num = 0 # TODO: Place timestamp!
         try:
             with open(path, newline='') as history_file:
                 history_reader = csv.reader(
                     history_file, delimiter=',', quotechar='"')
                 for row in history_reader:
                     if not row: continue
-                    assert(len(row) == 5 or len(row) == 1)
-                    if len(row) == 1:
-                        self.operations_num = int(row[0])
-                        continue
+                    assert(len(row) == 5)
                     self.corrections.append(Correction(
                         row[0].strip(), row[1].strip(), int(row[2]),
                         int(row[3]), row[4].strip()))
@@ -57,22 +55,36 @@ class HistoryManager:
     # the constructor, see the header comment of __init__ for the
     # specifications.
     def dump_to_file(self, path=None):
-        if path is None: path = self.path
+        if path is None:
+            path = self.path
+            shutil.copyfile(path, path + '.backup')
         with open(path, 'w', newline='') as history_file:
             history_writer = csv.writer(history_file, delimiter=',',
                                         quotechar='"',
                                         quoting=csv.QUOTE_MINIMAL)
-            history_writer.writerow([self.operations_num])
             for correction in self.corrections:
                 history_writer.writerow([correction.team, correction.table,
                                         correction.start_time,
                                         correction.end_time, correction.id])
 
+    # Appends a single correction to a csv file.
+    def append_to_file(self, new_correction, path=None):
+        if path is None: path = self.path
+        with open(path, 'a', newline='') as history_file:
+            history_writer = csv.writer(history_file, delimiter=',',
+                                        quotechar='"',
+                                        quoting=csv.QUOTE_MINIMAL)
+            history_writer.writerow([new_correction.team, new_correction.table,
+                                     new_correction.start_time,
+                                     new_correction.end_time, new_correction.id])
+
     # Adds a single correction to the history (updating the expected_duration
     # of the related table).
     def add(self, team, table, start_time, end_time):
         if start_time > end_time: return False # Maybe raise ValueError
-        self.corrections.append(Correction(team, table, start_time, end_time))
+        new_correction = Correction(team, table, start_time, end_time)
+        self.corrections.append(new_correction)
+        self.append_to_file(new_correction)
         self.compute_expected_duration(table)
         return True
 
@@ -83,6 +95,7 @@ class HistoryManager:
             if correction.id == correction_id:
                 self.corrections.remove(correction)
                 self.compute_expected_duration(correction.table)
+                self.dump_to_file()
                 return True
         return False
 
