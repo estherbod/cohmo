@@ -1,0 +1,36 @@
+{
+    "name": "T4",
+    "problem": "2",
+    "coordinators": [
+        "Pippo Pippino",
+        "Topo Topoliino"
+    ],
+    "queue": [
+        "ALB",
+        "AZE",
+        "BEL",
+        "BGR",
+        "BIH",
+        "BLR",
+        "BRA",
+        "CRI",
+        "CYP",
+        "CZE",
+        "ECU",
+        "ESP",
+        "FIN",
+        "FRA",
+        "GEO",
+        "HUN",
+        "IDN",
+        "IND",
+        "IRL",
+        "IRN",
+        "ISR",
+        "ITA",
+        "JPN"
+    ],
+    "status": "CALLING",
+    "current_coordination_team": null,
+    "current_coordination_start_time": null
+}

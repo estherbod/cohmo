@@ -23,12 +23,8 @@ class ChiefCoordinator:
 
         self.tables = OrderedDict()
         for name in table_paths:
-            with open(table_paths[name], newline='') as table_file:
-                table_lines = table_file.readlines()
-                assert(table_lines[0].strip() == name)
             self.tables[name] = Table(table_paths[name], self.history_manager)
-        #  for x in self.tables: print(x)
-        #  print(table_paths, self.tables)
+            assert(name == self.tables[name].name)
         self.lost_positions = additional_config['LOST_POSITIONS']
 
     # Saves the current states of tables and history to the given files.

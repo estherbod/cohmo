@@ -1,0 +1,36 @@
+{
+    "name": "T12",
+    "problem": "6",
+    "coordinators": [
+        "Pappo Pippo",
+        "Peppo Puppo"
+    ],
+    "queue": [
+        "CZE",
+        "ECU",
+        "ESP",
+        "FIN",
+        "FRA",
+        "GEO",
+        "HUN",
+        "IDN",
+        "IND",
+        "IRL",
+        "IRN",
+        "ISR",
+        "ITA",
+        "JPN",
+        "KAZ",
+        "LIE",
+        "BEL",
+        "BGR",
+        "BIH",
+        "BLR",
+        "BRA",
+        "CRI",
+        "CYP"
+    ],
+    "status": "IDLE",
+    "current_coordination_team": null,
+    "current_coordination_start_time": null
+}

@@ -1,0 +1,36 @@
+{
+    "name": "T9",
+    "problem": "5",
+    "coordinators": [
+        "Cyber Netica",
+        "Lavagna Elettronica"
+    ],
+    "queue": [
+        "IND",
+        "IRL",
+        "IRN",
+        "ISR",
+        "ITA",
+        "JPN",
+        "KAZ",
+        "LIE",
+        "BEL",
+        "BGR",
+        "BIH",
+        "BLR",
+        "BRA",
+        "CRI",
+        "CYP",
+        "CZE",
+        "ECU",
+        "ESP",
+        "FIN",
+        "FRA",
+        "GEO",
+        "HUN",
+        "IDN"
+    ],
+    "status": "CALLING",
+    "current_coordination_team": null,
+    "current_coordination_start_time": null
+}

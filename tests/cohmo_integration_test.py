@@ -13,21 +13,44 @@ from cohmo.history import HistoryManager
 from cohmo.authentication_manager import AuthenticationManager
 from cohmo.views import init_chief, init_authentication_manager
 
-def generate_tempfile(content_rows):
+def generate_tempfile(content):
     with tempfile.NamedTemporaryFile(delete=False) as t_file:
-        t_file.write(('\n'.join(content_rows)).encode())
+        t_file.write(content.encode())
         return t_file.name
 
 class CohmoTestCase(unittest.TestCase):
     def setUp(self):
-        cohmo.app.config['TEAMS_FILE_PATH'] = generate_tempfile(['FRA,ITA,ENG,USA,CHN,IND,KOR'])
-        cohmo.app.config['HISTORY_FILE_PATH'] = generate_tempfile(['USA,T2,5,10,ID1', 'ENG,T5,8,12,ID2', 'CHN,T5,13,17,ID3'])
+        cohmo.app.config['TEAMS_FILE_PATH'] = generate_tempfile('FRA,ITA,ENG,USA,CHN,IND,KOR')
+        cohmo.app.config['HISTORY_FILE_PATH'] = generate_tempfile('USA,T2,5,10,ID1\n' + 'ENG,T5,8,12,ID2\n' + 'CHN,T5,13,17,ID3')
         cohmo.app.config['TABLE_FILE_PATHS'] = {
-            'T2': generate_tempfile(['T2', '3', 'Franco Anselmi, Antonio Cannavaro', 'ITA, ENG, IND', 'IDLE']),
-            'T5': generate_tempfile(['T5', '6', 'Alessandro Maschi, Giovanni Muciaccia', 'IND, KOR, ENG, USA', 'CALLING']),
-            'T8': generate_tempfile(['T8', '1', 'Marco Faschi, Giorgio Gigi', 'KOR, ENG, FRA', 'CORRECTING', 'USA', '10']),
+            'T2': generate_tempfile('''
+{
+    "name": "T2",
+    "problem": "3",
+    "coordinators": ["Franco Anselmi", "Antonio Cannavaro"],
+    "queue": ["ITA", "ENG", "IND"],
+    "status": "IDLE"
+}'''),
+            'T5': generate_tempfile('''
+{
+    "name": "T5",
+    "problem": "6",
+    "coordinators": ["Alessandro Maschi", "Giovanni Muciaccia"],
+    "queue": ["IND", "KOR", "ENG", "USA"],
+    "status": "CALLING"
+}'''),
+            'T8': generate_tempfile('''
+{
+    "name": "T8",
+    "problem": "1",
+    "coordinators": ["Marco Faschi", "Giorgio Gigi"],
+    "queue": ["KOR", "ENG", "FRA"],
+    "status": "CORRECTING",
+    "current_coordination_team": "USA",
+    "current_coordination_start_time": 10
+}'''),
         }
-        cohmo.app.config['AUTHENTICATION_FILE_PATH'] = generate_tempfile(["""
+        cohmo.app.config['AUTHENTICATION_FILE_PATH'] = generate_tempfile('''
 {
     "admin": {
         "password": "pass",
@@ -38,7 +61,7 @@ class CohmoTestCase(unittest.TestCase):
         "password": "xxx",
         "authorizations": ["T2", "T5"]
     }
-}"""])
+}''')
         cohmo.app.testing = True
         credentials = b64encode(b'admin:pass').decode('utf-8')
         self.headers = {'Authorization': 'Basic ' + credentials}

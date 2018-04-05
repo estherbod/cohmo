@@ -2,6 +2,7 @@ from cohmo.history import Correction, HistoryManager
 import enum
 import time
 import shutil
+import json
 
 class TableStatus(enum.IntEnum):
     CALLING = 0
@@ -22,31 +23,32 @@ class TableStatus(enum.IntEnum):
 # The history manager, that saves past coordinations, is injected into the Table
 # class and is automatically invoked whenever a coordination is finished.
 class Table:
-    # Constructs the table from a file.
+    # Constructs the table from a json file.
     #
-    # The format for the file is the following one:
+    # The data contained in the file are:
     # table name
     # problem name
-    # coordinators (separated by commas)
-    # queue of teams (separated by commas)
+    # coordinators
+    # queue of teams
     # status (calling, correcting, nothing)
     # current_team (needed only if status == CORRECTING)
     # start_time (needed only if status == CORRECTING) # Timestamp in seconds
     def __init__(self, path, history_manager):
         self.path = path
         with open(path, newline='') as table_file:
-            lines = table_file.readlines()
-            self.name = lines[0].strip()
-            self.problem = lines[1].strip()
-            self.coordinators = [coordinator.strip() for coordinator in lines[2].split(',')]
+            table_as_dict = json.load(table_file)
+            self.name = table_as_dict['name']
+            self.problem = table_as_dict['problem']
+            self.coordinators = table_as_dict['coordinators']
             self.history_manager = history_manager
-            self.queue = [team.strip() for team in lines[3].split(',')]
-            status_name = lines[4].strip()
+            self.queue = table_as_dict['queue']
+            status_name = table_as_dict['status']
             self.status = TableStatus[status_name]
             if self.status == TableStatus.CORRECTING:
-                assert(len(lines) >= 7)
-                self.current_coordination_team = lines[5].strip()
-                self.current_coordination_start_time = int(lines[6].strip())
+                self.current_coordination_team = \
+                    table_as_dict['current_coordination_team']
+                self.current_coordination_start_time = \
+                    table_as_dict['current_coordination_start_time']
             else:
                 self.current_coordination_start_time = None
                 self.current_coordination_team = None
@@ -60,14 +62,11 @@ class Table:
             # Before modifying the default file a backup is done.
             shutil.copyfile(path, path + '.backup')
         with open(path, 'w', newline='') as table_file:
-            table_file.write(self.name + '\n')
-            table_file.write(self.problem + '\n')
-            table_file.write(','.join(self.coordinators) + '\n')
-            table_file.write(','.join(self.queue) + '\n')
-            table_file.write(self.status.name + '\n')
-            if self.status == TableStatus.CORRECTING:
-                table_file.write(self.current_coordination_team + '\n')
-                table_file.write(str(self.current_coordination_start_time) + '\n')
+            table_as_dict = self.to_dict()
+            del table_as_dict['expected_duration']
+            table_as_dict['status'] = self.status.name
+
+            json.dump(table_as_dict, table_file, indent=4)
 
     def to_dict(self):
         return {

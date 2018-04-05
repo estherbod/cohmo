@@ -1,0 +1,36 @@
+{
+    "name": "T5",
+    "problem": "3",
+    "coordinators": [
+        "Franco Giuliani",
+        "Anita Amonte"
+    ],
+    "queue": [
+        "BEL",
+        "BGR",
+        "BIH",
+        "BLR",
+        "BRA",
+        "CRI",
+        "CYP",
+        "CZE",
+        "ECU",
+        "ESP",
+        "FIN",
+        "FRA",
+        "GEO",
+        "HUN",
+        "IDN",
+        "IND",
+        "IRL",
+        "IRN",
+        "ISR",
+        "ITA",
+        "JPN",
+        "KAZ",
+        "LIE"
+    ],
+    "status": "CORRECTING",
+    "current_coordination_team": "ALB",
+    "current_coordination_start_time": 10
+}

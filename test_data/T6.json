@@ -1,0 +1,36 @@
+{
+    "name": "T6",
+    "problem": "3",
+    "coordinators": [
+        "Mano Robotica",
+        "Pallina Rossa"
+    ],
+    "queue": [
+        "CRI",
+        "CYP",
+        "CZE",
+        "ECU",
+        "ESP",
+        "FIN",
+        "FRA",
+        "GEO",
+        "HUN",
+        "IDN",
+        "IND",
+        "IRL",
+        "IRN",
+        "ISR",
+        "ITA",
+        "JPN",
+        "KAZ",
+        "LIE",
+        "BEL",
+        "BGR",
+        "BIH",
+        "BLR",
+        "BRA"
+    ],
+    "status": "IDLE",
+    "current_coordination_team": null,
+    "current_coordination_start_time": null
+}

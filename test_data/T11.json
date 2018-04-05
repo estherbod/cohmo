@@ -1,0 +1,33 @@
+{
+    "name": "T11",
+    "problem": "6",
+    "coordinators": [
+        "A B",
+        "C D"
+    ],
+    "queue": [
+        "BIH",
+        "BLR",
+        "BRA",
+        "CRI",
+        "CYP",
+        "CZE",
+        "ECU",
+        "ESP",
+        "FIN",
+        "FRA",
+        "GEO",
+        "HUN",
+        "IDN",
+        "IND",
+        "IRL",
+        "IRN",
+        "ISR",
+        "ITA",
+        "JPN",
+        "KAZ"
+    ],
+    "status": "CORRECTING",
+    "current_coordination_team": "USA",
+    "current_coordination_start_time": 1
+}

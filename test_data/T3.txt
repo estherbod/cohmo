@@ -1,5 +1,0 @@
-T3
-2
-Aprilio Zucco, Telefono Piccio
-ESP,FIN,FRA,GEO,HUN,IDN,IND,IRL,IRN,ISR,ITA,JPN,KAZ
-IDLE

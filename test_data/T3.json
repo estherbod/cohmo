@@ -1,0 +1,26 @@
+{
+    "name": "T3",
+    "problem": "2",
+    "coordinators": [
+        "Aprilio Zucco",
+        "Telefono Piccio"
+    ],
+    "queue": [
+        "ESP",
+        "FIN",
+        "FRA",
+        "GEO",
+        "HUN",
+        "IDN",
+        "IND",
+        "IRL",
+        "IRN",
+        "ISR",
+        "ITA",
+        "JPN",
+        "KAZ"
+    ],
+    "status": "IDLE",
+    "current_coordination_team": null,
+    "current_coordination_start_time": null
+}

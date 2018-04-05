@@ -1,0 +1,20 @@
+{
+    "name": "T8",
+    "problem": "4",
+    "coordinators": [
+        "Anzioso Curiosone",
+        "Folle pseudoladro"
+    ],
+    "queue": [
+        "IRN",
+        "ISR",
+        "ITA",
+        "JPN",
+        "KAZ",
+        "LIE",
+        "LTU"
+    ],
+    "status": "IDLE",
+    "current_coordination_team": null,
+    "current_coordination_start_time": null
+}

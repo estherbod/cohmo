@@ -1,0 +1,18 @@
+{
+    "name": "T1",
+    "problem": "1",
+    "coordinators": [
+        "Federico Glaudo",
+        "Giada Franz"
+    ],
+    "queue": [
+        "KAZ",
+        "LIE",
+        "LTU",
+        "LUX",
+        "LVA"
+    ],
+    "status": "CORRECTING",
+    "current_coordination_team": "IND",
+    "current_coordination_start_time": 5
+}

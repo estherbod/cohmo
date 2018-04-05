@@ -1,0 +1,36 @@
+{
+    "name": "T7",
+    "problem": "4",
+    "coordinators": [
+        "Panzo Pinzo",
+        "Homo Sapiens"
+    ],
+    "queue": [
+        "FIN",
+        "FRA",
+        "GEO",
+        "HUN",
+        "IDN",
+        "IND",
+        "IRL",
+        "IRN",
+        "ISR",
+        "ITA",
+        "JPN",
+        "KAZ",
+        "LIE",
+        "BEL",
+        "BGR",
+        "BIH",
+        "BLR",
+        "BRA",
+        "CRI",
+        "CYP",
+        "CZE",
+        "ECU",
+        "ESP"
+    ],
+    "status": "CALLING",
+    "current_coordination_team": null,
+    "current_coordination_start_time": null
+}
