@@ -47,15 +47,14 @@ let content_comp = new Vue({
         TableStatus: TableStatus,
         TableStatusName: TableStatusName,
         call_next: true,
-    },
-    computed: {
-        team_coordination: function() {
-            return table_model.data.queue[0];
-        },
+        team_coordination: table_model.data.queue[0],
+        team_calling: table_model.data.queue[0],
     },
     methods: {
         after_action: function(event) {
             table_model.update();
+            this.team_coordination = table_model.data.queue[0];
+            this.team_calling = table_model.data.queue[0];
         },
         start_coordination: function(event) {
             axios.post('/table/' + table_name + '/start_coordination',
@@ -113,6 +112,17 @@ let content_comp = new Vue({
                 .catch(error => {
                     console.log(error);
                 });
+        },
+        call_team: function(event) {
+            axios.post('/table/' + table_name + '/call_team',
+                       {'team': this.team_calling})
+                .then(response => {
+                    if (!response.data.ok) {
+                        console.log('TODO')
+                        return;
+                    }
+                    this.after_action(event);
+                })
         },
         skip_to_next: function(event) {
             axios.post('/table/' + table_name + '/skip_to_next')

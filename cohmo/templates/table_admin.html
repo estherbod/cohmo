@@ -60,14 +60,13 @@
                     <div class='secondary_actions'>
                         Other action: <br>
                         <form>
-                            <!-- TODO: correct also here-->
-                            <input type='text' class='team' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>
-                            <!--
-                            // Attempt of autocomplete
-                            <v-autocomplete :items='table.queue' v-model='team_coordination' v-bind:placeholder='table.queue[0]'></v-autocomplete>
-                            -->
-                            <input type='button' v-on:click='start_coordination' value='Start coordination'>
+                            <input type='text' class='team' v-model='team_calling' v-bind:placeholder='table.queue[0]'/>
+                            <input type='button' v-on:click='call_team' value='Call team'>
                         </form>
+                        <!--<form>
+                            <input type='text' class='team' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>
+                            <input type='button' v-on:click='start_coordination' value='Start coordination'>
+                        </form>-->
                     </div>
                 </div>
             </div>
