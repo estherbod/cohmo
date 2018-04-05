@@ -25,7 +25,9 @@ class ChiefCoordinator:
         for name in table_paths:
             self.tables[name] = Table(table_paths[name], self.history_manager)
             assert(name == self.tables[name].name)
-        self.lost_positions = additional_config['LOST_POSITIONS']
+        self.skipped_positions = additional_config['SKIPPED_POSITIONS']
+        self.start_time = additional_config['START_TIME']
+        self.maximum_time = additional_config['MAXIMUM_TIME']
 
     # Saves the current states of tables and history to the given files.
     # The default files are the ones passed to the constructor.

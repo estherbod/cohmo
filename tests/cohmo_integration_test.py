@@ -318,7 +318,7 @@ class CohmoTestCase(unittest.TestCase):
         self.assertEqual(resp['queue'], ['ENG', 'ITA', 'IND'])
 
     def test_views_table_coordination_management(self):
-        cohmo.app.config['LOST_POSITIONS'] = 1
+        cohmo.app.config['SKIPPED_POSITIONS'] = 1
         cohmo.views.init_chief()
         cohmo.views.init_authentication_manager()
         client = cohmo.app.test_client()
