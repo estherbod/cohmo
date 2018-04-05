@@ -216,7 +216,7 @@ def skip_to_next(table_name):
     team = table.queue[0]
     if not table.remove_from_queue(team):
         return jsonify(ok=False, message='Problem removing the team from queue.')
-    if table.add_to_queue(team, min(chief.lost_positions, len(table.queue))):
+    if table.add_to_queue(team, min(chief.skipped_positions, len(table.queue))):
         return jsonify(ok=True);
     return jsonify(ok=False)
 

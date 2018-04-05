@@ -1,3 +1,5 @@
+import time
+
 DEBUG = True
 
 # Minimum number of significant corrections for the computation of the
@@ -10,6 +12,13 @@ NUM_SIGN_CORR = 5
 # A priori duration of a correction in seconds.
 APRIORI_DURATION = 20*60
 
-# Positions lost when a team is removed from the top of the queue and
-# reinserted in the queue.
-LOST_POSITIONS = 2
+# Positions skipped when the team does not appear during the call and the
+# coordinators call the next team in queue.
+SKIPPED_POSITIONS = 2
+
+# Start time of coordinations.
+START_TIME = time.mktime(time.strptime('2018-06-04 8:30:00', '%Y-%m-%d %H:%M:%S'))
+
+# Maximum time over which the coordination can not go.
+MAXIMUM_TIME = time.mktime(time.strptime('2018-06-04 16:00:00', '%Y-%m-%d %H:%M:%S'))
+
