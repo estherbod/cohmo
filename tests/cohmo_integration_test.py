@@ -151,7 +151,7 @@ class CohmoTestCase(unittest.TestCase):
         
     # Testing get_expected_duration.
     mock_time = Mock()
-    mock_time.side_effect = [3, 10]
+    mock_time.side_effect = [10123, 3, 10] # 10123 = history.operations_num
     @patch('time.time', mock_time) 
     def test_get_expected_duration(self):
         cohmo.app.config['NUM_SIGN_CORR'] = 2

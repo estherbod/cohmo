@@ -3,6 +3,7 @@ from base64 import b32encode
 from os import urandom
 import csv
 import shutil
+import time
 
 # Simple class to store a correction.
 class Correction:
@@ -35,9 +36,12 @@ class HistoryManager:
         self.expected_durations = {}
         self.num_sign_corr = additional_config['NUM_SIGN_CORR']
         self.apriori_duration = additional_config['APRIORI_DURATION']
-        # Number of operations related to tables ever happened.
-        # This is useful for caching.
-        self.operations_num = 0 # TODO: Place timestamp!
+        # An increasing variable keeping track of the number of operations
+        # related to tables ever happened.
+        # This is useful for caching. Exactly for caching reason it is
+        # initialized to a value that is reasonably larger than any value that
+        # could have been realized in a previous run.
+        self.operations_num = int(time.time())
         try:
             with open(path, newline='') as history_file:
                 history_reader = csv.reader(
