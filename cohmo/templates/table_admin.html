@@ -3,8 +3,8 @@
     <title>Admin Page for Coordinators</title>
     <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
     <script src="https://unpkg.com/axios@0.18.0/dist/axios.js"></script>
+    <link rel='stylesheet' type='text/css' href='{{url_for("static", filename="global.css")}}'>
     <link rel='stylesheet' type='text/css' href='{{url_for("static", filename="table_admin.css")}}'>
-    <link rel='stylesheet' type='text/css' href='{{url_for("static", filename="general_admin.css")}}'>
 </head>
 <body class='hidden'>
     <div id='header'>
@@ -43,8 +43,11 @@
                         <input type='text' class='team' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>
                         <input type='button' v-on:click='start_coordination' value='Start coordination'>
                     </form>
-                    <input type='button' v-on:click='switch_to_idle' value='Stop calling'>
-                    <input type='button' v-on:click='skip_to_next' value='Call next one'>
+                    <div class='secondary_actions'>
+                        Other actions: <br>
+                        <input type='button' v-on:click='switch_to_idle' value='Stop calling'>
+                        <input type='button' v-on:click='skip_to_next' value='Call next one'>
+                    </div>
                 </div>
                 <div v-if='table.status == TableStatus.CORRECTING'>
                     <input type='button' v-on:click='finish_coordination' value='Finish'>
@@ -53,16 +56,19 @@
                     <label for='call_next'>Call next</label>
                 </div>
                 <div v-if='table.status == TableStatus.IDLE'>
-                    <form>
-                        <!-- TODO: correct also here-->
-                        <input type='text' class='team' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>
-                        <!--
-                        // Attempt of autocomplete
-                        <v-autocomplete :items='table.queue' v-model='team_coordination' v-bind:placeholder='table.queue[0]'></v-autocomplete>
-                        -->
-                        <input type='button' v-on:click='start_coordination' value='Start coordination'>
-                    </form>
-                    <input type='button' v-on:click='switch_to_calling' value='Start calling'>
+                    <form><input type='button' v-on:click='switch_to_calling' value='Start calling'></form>
+                    <div class='secondary_actions'>
+                        Other action: <br>
+                        <form>
+                            <!-- TODO: correct also here-->
+                            <input type='text' class='team' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>
+                            <!--
+                            // Attempt of autocomplete
+                            <v-autocomplete :items='table.queue' v-model='team_coordination' v-bind:placeholder='table.queue[0]'></v-autocomplete>
+                            -->
+                            <input type='button' v-on:click='start_coordination' value='Start coordination'>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

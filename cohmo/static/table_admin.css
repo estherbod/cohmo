@@ -1,3 +1,6 @@
+/*
+ * General
+ */
 .hidden {
     display: none;
 }
@@ -6,6 +9,9 @@ h2 {
     font-weight: normal;
 }
 
+/*
+ * Header with the information of the table and the status
+ */
 #header {
     height: 150px;
     vertical-align: middle;
@@ -38,6 +44,9 @@ h2 {
     padding: 30px 10px;
 }
 
+/*
+ * Main div with the information of the situation
+ */
 #content {
     font-size: 20px;
 }
@@ -55,27 +64,79 @@ h2 {
     padding: 40px 40px;
 }
 
+/*
+ * Bottom of the page, with the actions
+ */
 #actions {
-    height: 100px;
+    height: 150px;
     width: 100%;
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     padding: 10px 10px;
+    text-align: center;
 }
 
-#header>.Correcting {
+/*
+#actions>.calling .principal_actions {
+    color: blue;
+    position: relative;
+    float: left;
+    width: 85%;
+    height: 100%;
+    text-align: center;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+*/
+
+#actions .secondary_actions {
+    font-size: 15px;
+/*
+    position: relative;
+    float: right;
+    width: 15%;
+    height: 100%;
+    text-align: right;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+*/
+}
+
+#actions .secondary_actions input[type=button], #actions .secondary_actions input[type=text]{
+    width: 150px;
+    height: 40px;
+    font-size: 15px;
+}
+
+
+#actions>.correcting {
+    text-align: center;
+/*
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    padding-left: 100px;*/
+}
+
+#actions>.idle {
+    text-align: center;
+}
+
+/*
+ * Customization of the different statuses
+ */
+#header>.correcting {
     color: #008000;
 }
 #current_coordination_team {
     text-align: center;
     font-size: 250px;
 }
-#actions>.Correcting {
-    text-align: center;
-}
 
-#header>.Calling {
+#header>.calling {
     color: #FFA500;
 }
 #current_calling_team {
@@ -86,10 +147,13 @@ h2 {
     border: 1px solid #FFA500;
 }
 
-#header>.Idle {
+#header>.idle {
     color: #696969;
 }
 
+/*
+ * Inputs style
+ */
 input[type=text]{
     width: 200px;
     height: 50px;
