@@ -145,6 +145,27 @@ def switch_to_calling(table_name):
         return jsonify(ok=True)
     return jsonify(ok=False)
 
+@app.route('/table/<string:table_name>/call_team', methods=['POST'])
+def call_team(table_name):
+    if table_name not in chief.tables:
+        return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
+    table = chief.tables[table_name]
+    req_data = json.loads(request.data)
+    if 'team' not in req_data:
+        return jsonify(ok=False, message=SPECIFY_TEAM)
+    team = req_data['team']
+    if team not in chief.teams:
+        return jsonify(ok=False, message=TEAM_NOT_EXIST.format(team))
+    if team in table.queue:
+        if not table.remove_from_queue(team):
+            return jsonify(ok=False)
+    if not table.add_to_queue(team, 0):
+        return jsonify(ok=False)
+    if table.status != 0:
+        if not table.switch_to_calling():
+            return jsonify(ok=False)
+    return jsonify(ok=True)
+
 @app.route('/table/<string:table_name>/skip_to_next', methods=['POST'])
 def skip_to_next(table_name):
     if table_name not in chief.tables:
