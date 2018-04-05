@@ -39,9 +39,3 @@ class ChiefCoordinator:
         self.history_manager.dump_to_file(history_path)
         for name in table_paths:
             self.tables[name].dump_to_file(table_paths[name])
-
-#  chief = ChiefCoordinator('../test_data/teams.txt',
-    #  {'T1':'../test_data/T1.txt', 'T8': '../test_data/T8.txt'},
-    #  '../test_data/history.txt')
-#  chief.tables['T1'].add_to_queue('ITA')
-#  print(chief.tables['T1'].queue)

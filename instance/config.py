@@ -13,3 +13,4 @@ TABLE_FILE_PATHS = {'T1': 'test_data/T1.txt',
                     'T11': 'test_data/T11.txt',
                     'T12': 'test_data/T12.txt'}
 HISTORY_FILE_PATH = 'test_data/history.txt'
+AUTHENTICATION_FILE_PATH = 'test_data/auth_list.json'

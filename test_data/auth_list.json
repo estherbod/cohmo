@@ -1,0 +1,11 @@
+{
+    "admin": {
+        "password": "pass",
+        "authorizations": [],
+        "admin": true
+    },
+    "T1": {
+        "password": "wtf",
+        "authorizations": ["T1"]
+    }
+}

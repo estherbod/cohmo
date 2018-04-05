@@ -1,5 +1,17 @@
 from cohmo import app, get_chief
-from flask import Flask, request, json, jsonify, render_template
+from cohmo.authentication_manager import AuthenticationManager
+from flask import Flask, request, json, jsonify, render_template, g, abort
+from flask_httpauth import HTTPBasicAuth
+
+auth = HTTPBasicAuth()
+authentication_manager = None
+def init_authentication_manager():
+    global authentication_manager
+    authentication_manager = AuthenticationManager(app.config['AUTHENTICATION_FILE_PATH'])
+
+@auth.verify_password
+def verify_password(username, password):
+    return authentication_manager.verify_password(username, password)
 
 chief = None
 def init_chief():
@@ -20,9 +32,12 @@ SPECIFY_TEAM = 'You have to specify a team.'
 # Available pages
 
 @app.route('/table/<string:table_name>/admin')
+@auth.login_required
 def table_admin(table_name):
     if table_name not in chief.tables:
-        return 'TODO'
+        abort(404)
+    if not authentication_manager.is_authorized(auth.username(), table_name):
+        abort(401)
     return render_template('table_admin.html', table_name=table_name)
 
 @app.route('/queues')
@@ -30,13 +45,17 @@ def queues():
     return render_template('queues.html')
 
 @app.route('/schedule/admin')
+@auth.login_required
 def schedule_admin():
+    if not authentication_manager.is_admin(auth.username()): abort(401)
     return render_template('schedule_admin.html')
 
 # API relative to a table
 
 @app.route('/table/<string:table_name>/add_to_queue', methods=['POST'])
+@auth.login_required
 def add_to_queue(table_name):
+    if not authentication_manager.is_authorized(auth.username(), table_name): abort(401)
     if table_name not in chief.tables:
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
     req_data = json.loads(request.data)
@@ -59,7 +78,9 @@ def add_to_queue(table_name):
     return jsonify(ok=False)
 
 @app.route('/table/<string:table_name>/remove_from_queue', methods=['POST'])
+@auth.login_required
 def remove_from_queue(table_name):
+    if not authentication_manager.is_authorized(auth.username(), table_name): abort(401)
     if table_name not in chief.tables:
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
     req_data = json.loads(request.data)
@@ -76,7 +97,9 @@ def remove_from_queue(table_name):
     return jsonify(ok=False)
 
 @app.route('/table/<string:table_name>/swap_teams_in_queue', methods=['POST'])
+@auth.login_required
 def swap_teams_in_queue(table_name):
+    if not authentication_manager.is_authorized(auth.username(), table_name): abort(401)
     if table_name not in chief.tables:
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
     req_data = json.loads(request.data)
@@ -98,7 +121,9 @@ def swap_teams_in_queue(table_name):
     return jsonify(ok=False)
 
 @app.route('/table/<string:table_name>/start_coordination', methods=['POST'])
+@auth.login_required
 def start_coordination(table_name):
+    if not authentication_manager.is_authorized(auth.username(), table_name): abort(401)
     if table_name not in chief.tables:
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
     req_data = json.loads(request.data)
@@ -117,7 +142,9 @@ def start_coordination(table_name):
     return jsonify(ok=False)
 
 @app.route('/table/<string:table_name>/finish_coordination', methods=['POST'])
+@auth.login_required
 def finish_coordination(table_name):
+    if not authentication_manager.is_authorized(auth.username(), table_name): abort(401)
     if table_name not in chief.tables:
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
     if chief.tables[table_name].finish_coordination():
@@ -126,7 +153,9 @@ def finish_coordination(table_name):
 
 # TODO: here there is still work to do.
 @app.route('/table/<string:table_name>/pause_coordination', methods=['POST'])
+@auth.login_required
 def pause_coordination(table_name):
+    if not authentication_manager.is_authorized(auth.username(), table_name): abort(401)
     if table_name not in chief.tables:
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
     table = chief.tables[table_name]
@@ -138,7 +167,9 @@ def pause_coordination(table_name):
     return jsonify(ok=False)
 
 @app.route('/table/<string:table_name>/switch_to_calling', methods=['POST'])
+@auth.login_required
 def switch_to_calling(table_name):
+    if not authentication_manager.is_authorized(auth.username(), table_name): abort(401)
     if table_name not in chief.tables:
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
     if chief.tables[table_name].switch_to_calling():
@@ -146,7 +177,9 @@ def switch_to_calling(table_name):
     return jsonify(ok=False)
 
 @app.route('/table/<string:table_name>/call_team', methods=['POST'])
+@auth.login_required
 def call_team(table_name):
+    if not authentication_manager.is_authorized(auth.username(), table_name): abort(401)
     if table_name not in chief.tables:
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
     table = chief.tables[table_name]
@@ -167,7 +200,9 @@ def call_team(table_name):
     return jsonify(ok=True)
 
 @app.route('/table/<string:table_name>/skip_to_next', methods=['POST'])
+@auth.login_required
 def skip_to_next(table_name):
+    if not authentication_manager.is_authorized(auth.username(), table_name): abort(401)
     if table_name not in chief.tables:
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
     table = chief.tables[table_name]
@@ -186,7 +221,9 @@ def skip_to_next(table_name):
     return jsonify(ok=False)
 
 @app.route('/table/<string:table_name>/switch_to_idle', methods=['POST'])
+@auth.login_required
 def switch_to_idle(table_name):
+    if not authentication_manager.is_authorized(auth.username(), table_name): abort(401)
     if table_name not in chief.tables:
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
     if chief.tables[table_name].switch_to_idle():
@@ -226,6 +263,7 @@ def get_tables_if_changed():
 # APIs relative to the history
 
 @app.route('/history/add', methods=['POST'])
+@auth.login_required
 def history_add():
     req_data = json.loads(request.data)
     if 'team' not in req_data:
@@ -245,6 +283,7 @@ def history_add():
     return jsonify(ok=False)
 
 @app.route('/history/delete', methods=['POST'])
+@auth.login_required
 def history_delete():
     req_data = json.loads(request.data)
     if 'correction_id' not in req_data:
@@ -271,12 +310,3 @@ def get_corrections():
                             'end_time': correction.end_time,
                             'id': str(correction.id)})
     return jsonify(ok=True, corrections=corrections)
-
-@app.route('/history/get_expected_duration', methods=['GET'])
-def get_expected_duration():
-    req_data = json.loads(request.data)
-    if 'table' not in req_data:
-        return jsonify(ok=False, message='You have to specify a table.')
-    table = req_data['table']
-    return jsonify(ok=True,
-                   expected_duration=chief.history_manager.get_expected_duration(table))
