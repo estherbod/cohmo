@@ -16,9 +16,20 @@ APRIORI_DURATION = 20*60
 # coordinators call the next team in queue.
 SKIPPED_POSITIONS = 2
 
+# Minimum duration of a coordination.
+MINIMUM_DURATION = 5*60
+
+# Maximum duration of a coordination.
+MAXIMUM_DURATION = 40*60
+
 # Start time of coordinations.
 START_TIME = time.mktime(time.strptime('2018-06-04 8:30:00', '%Y-%m-%d %H:%M:%S'))
 
 # Maximum time over which the coordination can not go.
 MAXIMUM_TIME = time.mktime(time.strptime('2018-06-04 16:00:00', '%Y-%m-%d %H:%M:%S'))
 
+# Scheduled breaks.
+BREAKS = [[time.mktime(time.strptime('2018-06-04 12:00:00', '%Y-%m-%d %H:%M:%S')),
+           time.mktime(time.strptime('2018-06-04 13:00:00', '%Y-%m-%d %H:%M:%S'))],
+          [time.mktime(time.strptime('2018-06-04 15:00:00', '%Y-%m-%d %H:%M:%S')),
+           time.mktime(time.strptime('2018-06-04 15:30:00', '%Y-%m-%d %H:%M:%S'))]]

@@ -30,12 +30,10 @@ class HistoryManager:
     # form:
     #   team, table, start_time, end_time, id
     # The first line must contain the number of past operations happened.
-    def __init__(self, path, additional_config):
+    def __init__(self, path):
         self.path = path
         self.corrections = []
         self.expected_durations = {}
-        self.num_sign_corr = additional_config['NUM_SIGN_CORR']
-        self.apriori_duration = additional_config['APRIORI_DURATION']
         # An increasing variable keeping track of the number of operations
         # related to tables ever happened.
         # This is useful for caching. Exactly for caching reason it is
@@ -89,7 +87,7 @@ class HistoryManager:
         new_correction = Correction(team, table, start_time, end_time)
         self.corrections.append(new_correction)
         self.append_to_file(new_correction)
-        self.compute_expected_duration(table)
+        # ~ self.compute_expected_duration(table)
         return True
 
     # Deletes a correction (updating the expected_duration of the related table)
@@ -98,7 +96,7 @@ class HistoryManager:
         for correction in self.corrections:
             if correction.id == correction_id:
                 self.corrections.remove(correction)
-                self.compute_expected_duration(correction.table)
+                # ~ self.compute_expected_duration(correction.table)
                 self.dump_to_file()
                 return True
         return False
@@ -138,28 +136,3 @@ class HistoryManager:
             
             if filtered_correction: result.append(correction)
         return result
-
-    # Computes the expected duration of the next correction of a table
-    # and stores it in the dictionary expected_durations.
-    # It is computed taking the arithmetic mean of the durations of the past
-    # corrections.
-    # If less than NUM_SIGN_CORR corrections have been done in the table,
-    # it pretends there exist additional corrections with duration APRIORI_DURATION.
-    def compute_expected_duration(self, table):
-        table_corrections = self.get_corrections({'table': table})
-        expected_duration = 0
-        for corr in table_corrections:
-            expected_duration += corr.duration()
-        expected_duration += max(self.num_sign_corr - len(table_corrections), 0) * self.apriori_duration
-        expected_duration /= max(self.num_sign_corr,
-                                 len(table_corrections))
-        self.expected_durations[table] = expected_duration
-
-    # Returns the expected_duration of the given table, stored in
-    # expected_durations.
-    # If the table is not still present in expected_durations, calls
-    # compute_expected_duration.
-    def get_expected_duration(self, table):
-        if table not in self.expected_durations:
-            self.compute_expected_duration(table)
-        return self.expected_durations[table]

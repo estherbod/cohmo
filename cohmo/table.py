@@ -33,7 +33,7 @@ class Table:
     # status (calling, correcting, nothing)
     # current_team (needed only if status == CORRECTING)
     # start_time (needed only if status == CORRECTING) # Timestamp in seconds
-    def __init__(self, path, history_manager):
+    def __init__(self, path, history_manager, additional_config):
         self.path = path
         with open(path, newline='') as table_file:
             table_as_dict = json.load(table_file)
@@ -52,6 +52,18 @@ class Table:
             else:
                 self.current_coordination_start_time = None
                 self.current_coordination_team = None
+            self.expected_duration = None
+            self.num_sign_corr = additional_config['NUM_SIGN_CORR']
+            self.apriori_duration = additional_config['APRIORI_DURATION']
+            self.minimum_duration = additional_config['MINIMUM_DURATION']
+            self.maximum_duration = additional_config['MAXIMUM_DURATION']
+            assert(self.minimum_duration < self.maximum_duration)
+            self.start_time = additional_config['START_TIME']
+            self.maximum_time = additional_config['MAXIMUM_TIME']
+            assert(self.start_time < self.maximum_time)
+            self.breaks = additional_config['BREAKS']
+            for bt in self.breaks:
+                assert(bt[0] <= bt[1])
 
     # Dumps the table to file. The format is the same as create_table_from_file.
     # It should be remarked that the current status of the table (whether it is
@@ -77,7 +89,7 @@ class Table:
             'status': self.status,
             'current_coordination_team': self.current_coordination_team,
             'current_coordination_start_time': self.current_coordination_start_time,
-            'expected_duration': self.history_manager.get_expected_duration(self.name),
+            'expected_duration': self.get_expected_duration(),
         }
 
 
@@ -89,6 +101,7 @@ class Table:
         if team not in self.queue:
             if pos == -1: pos = len(self.queue)
             self.queue.insert(pos, team)
+            self.compute_expected_duration()
             self.dump_to_file()
             return True
         else: return False
@@ -99,6 +112,7 @@ class Table:
         self.history_manager.operations_num += 1
         if team in self.queue:
             self.queue.remove(team)
+            self.compute_expected_duration()
             self.dump_to_file()
             return True
         else: return False
@@ -110,6 +124,7 @@ class Table:
         pos1 = self.queue.index(team1)
         pos2 = self.queue.index(team2)
         self.queue[pos1], self.queue[pos2] = team2, team1
+        self.compute_expected_duration()
         self.dump_to_file()
         return True
 
@@ -121,6 +136,7 @@ class Table:
         self.status = TableStatus.CORRECTING
         self.current_coordination_team = team
         self.current_coordination_start_time = int(time.time())
+        self.compute_expected_duration()
         self.dump_to_file()
         return True
 
@@ -134,7 +150,7 @@ class Table:
                                         self.current_coordination_start_time,
                                         int(time.time())): return False
         self.status = TableStatus.IDLE
-        self.history_manager.compute_expected_duration(self.name)
+        self.compute_expected_duration()
         self.dump_to_file()
         return True
 
@@ -156,3 +172,37 @@ class Table:
         self.dump_to_file()
         return True
         
+    # Computes the expected duration of the next correction of tje table
+    # and stores it in the dictionary expected_durations.
+    # It is computed taking the arithmetic mean of the durations of the past
+    # corrections.
+    # If less than NUM_SIGN_CORR corrections have been done in the table,
+    # it pretends there exist additional corrections with duration APRIORI_DURATION.
+    def compute_expected_duration(self):
+        table_corrections = self.history_manager.get_corrections({'table': self.name})
+        expected_duration = 0
+        for corr in table_corrections:
+            expected_duration += corr.duration()
+        expected_duration += max(self.num_sign_corr - len(table_corrections), 0) * self.apriori_duration
+        expected_duration /= max(self.num_sign_corr,
+                                 len(table_corrections))
+        now = int(time.time())
+        if now >= self.maximum_time:
+            print(now, self.maximum_time)
+        assert(now < self.maximum_time)
+        time_left = self.maximum_time - max(self.start_time, now)
+        for bt in self.breaks:
+            time_left -= (max(bt[1], now) - max(bt[0], now))
+        if expected_duration * len(self.queue) > time_left:
+            expected_duration = time_left / len(self.queue)
+        expected_duration = max(expected_duration, self.minimum_duration)
+        expected_duration = min(expected_duration, self.maximum_duration)
+        self.expected_duration = expected_duration
+
+    # Returns the expected_duration of the table, stored in
+    # expected_duration.
+    # If expected_duration is still None, calls compute_expected_duration.
+    def get_expected_duration(self):
+        if self.expected_duration == None:
+            self.compute_expected_duration()
+        return self.expected_duration

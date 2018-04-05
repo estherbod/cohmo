@@ -19,11 +19,11 @@ class ChiefCoordinator:
             lines = teams_file.readlines()
             assert(len(lines) >= 1)
             self.teams = [team.strip() for team in lines[0].split(',')]
-        self.history_manager = HistoryManager(history_path, additional_config)
+        self.history_manager = HistoryManager(history_path)
 
         self.tables = OrderedDict()
         for name in table_paths:
-            self.tables[name] = Table(table_paths[name], self.history_manager)
+            self.tables[name] = Table(table_paths[name], self.history_manager, additional_config)
             assert(name == self.tables[name].name)
         self.skipped_positions = additional_config['SKIPPED_POSITIONS']
         self.start_time = additional_config['START_TIME']
