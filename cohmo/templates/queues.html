@@ -5,8 +5,10 @@
     <script src='https://unpkg.com/axios@0.18.0/dist/axios.js'></script>
     <script src='{{url_for("static", filename="queues.js")}}' defer></script>
     <link rel='stylesheet' type='text/css' href='{{url_for("static", filename="queues.css")}}'>
+    <link rel='stylesheet' type='text/css' href='{{url_for("static", filename="global.css")}}'>
 </head>
 <body>
+    <div id='main-container'>
     <div id='schedule-times'>
         <div class='times-header'></div>
         <div class='times-container'>
@@ -28,4 +30,7 @@
             </div>
         </div>
     </div>
+<!--
+    </div>
+-->
 </body>

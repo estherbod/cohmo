@@ -3,6 +3,7 @@ Vue.options.delimiters = ['[[', ']]'];
 const TableStatus = Object.freeze({CALLING: 0, CORRECTING: 1, IDLE: 2});
 const TableStatusName = ['Calling', 'Coordination', 'Idle'];
 const SECOND_IN_PIXELS = 0.05;
+const UPDATE_INTERVAL = 10; // in seconds
 
 let queues_model = {
     tables: [],
@@ -32,7 +33,7 @@ function update_queues() {
 }
 
 update_queues();
-setInterval(update_queues, 10000);
+setInterval(update_queues, UPDATE_INTERVAL * 1000);
 
 
 const SCHEDULE_TIMES_INTERVAL = 20*60;
@@ -91,7 +92,7 @@ Vue.component('team-in-queue', {
         },
     },
     template: `
-<div class='team-in-queue'
+<div class='team-in-queue team'
      :style='"height: " + height + "px; line-height: " + height + "px; top: " + top_pos + "px"'>[[ team ]]</div>`
 });
 
@@ -156,7 +157,7 @@ Vue.component('queue-header', {
 <div v-bind:class='"queue-header " + [[status_name]]'>
     <div class='queue-header-container'>
         <div class='table-name'>[[ table.name ]]</div>
-        <div class='correcting' v-if='correcting'> [[ table.current_coordination_team ]] </div>
+        <div class='correcting team' v-if='correcting'> [[ table.current_coordination_team ]] </div>
         <div class='calling' v-if='calling'> calling </div>
         <div class='idle' v-if='idle'> idle </div>
     </div>
