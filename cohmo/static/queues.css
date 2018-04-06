@@ -28,7 +28,9 @@
     position: relative;
 }
 
-.queue-container {
+.team-container {
+    width: 100px;
+    position: absolute;
     text-align: center;
 }
 
@@ -36,9 +38,11 @@
      box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
+/*
     position: absolute;
+*/
     margin: 0 auto;
-    width: 90px;
+    width: 90%;
     border: 1px solid #5E5B5B;
     /*border: 1px solid #D6D6D6; /*#ffeb8e;*/
     /*border-top: none;*/
@@ -85,7 +89,7 @@
   to {background-color: #FFFB93;}
 }
 
-.queue-header.calling {
+.queue-header.calling, .team-calling>.team-in-queue {
     background-color: #FFDE3B;
     text-decoration: blink;
 	-webkit-animation-name: blinker;
