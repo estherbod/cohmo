@@ -57,7 +57,10 @@ let schedule_times_component = new Vue({
                     max_total_duration,
                     table.queue.length * table.expected_duration);
             }
-            return now + max_total_duration;
+            for (bt of BREAK_TIMES) {
+                max_total_duration += parseInt(bt[1]) - parseInt(bt[0]);
+            }
+            return Math.max(now, START_TIME) + max_total_duration;
         },
         times: function() {
             let now = new Date().getTime() / 1000;
@@ -118,7 +121,15 @@ let queues_component = new Vue({
                 else if (table.status == TableStatus.CORRECTING) {
                     curr = Math.max(now + 300, start_time + expected_duration)
                 }
+                curr = Math.max(curr, START_TIME)
                 for (let team of table.queue) {
+                    for (let bt of BREAK_TIMES) {
+                        bt_start = parseInt(bt[0]);
+                        bt_end = parseInt(bt[1]);
+                        if (bt_start - 300 <= curr && curr <= bt_end) {
+                            curr = bt_end;
+                        }
+                    }
                     result[table.name][team] = curr;
                     curr += expected_duration;
                 }

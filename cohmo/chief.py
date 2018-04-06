@@ -28,6 +28,7 @@ class ChiefCoordinator:
         self.skipped_positions = additional_config['SKIPPED_POSITIONS']
         self.start_time = additional_config['START_TIME']
         self.maximum_time = additional_config['MAXIMUM_TIME']
+        self.break_times = additional_config['BREAK_TIMES']
 
     # Saves the current states of tables and history to the given files.
     # The default files are the ones passed to the constructor.

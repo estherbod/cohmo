@@ -42,7 +42,8 @@ def table_admin(table_name):
 
 @app.route('/queues')
 def queues():
-    return render_template('queues.html')
+    return render_template('queues.html', START_TIME=chief.start_time,
+                                          BREAK_TIMES=json.dumps(chief.break_times))
 
 @app.route('/schedule/admin')
 @auth.login_required

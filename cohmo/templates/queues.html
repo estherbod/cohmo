@@ -3,6 +3,8 @@
     <title>Coordination Queues</title>
     <script src='https://unpkg.com/vue@2.5.16/dist/vue.js'></script>
     <script src='https://unpkg.com/axios@0.18.0/dist/axios.js'></script>
+    <script>const START_TIME = JSON.parse('{{ START_TIME }}')</script>
+    <script>const BREAK_TIMES = JSON.parse('{{ BREAK_TIMES }}')</script>
     <script src='{{url_for("static", filename="queues.js")}}' defer></script>
     <link rel='stylesheet' type='text/css' href='{{url_for("static", filename="queues.css")}}'>
     <link rel='stylesheet' type='text/css' href='{{url_for("static", filename="global.css")}}'>
@@ -30,4 +32,7 @@
             </div>
         </div>
     </div>
+<!--
+    <span>[[ break_times ]]</span>
+-->
 </body>
