@@ -16,7 +16,7 @@ let table_model = {
         TableStatusName: TableStatusName,
     },
     update() {
-        return axios.get('/table/' + table_name + '/get_all')
+        return axios.get('table/' + table_name + '/get_all')
             .then(response => {
                 if (!response.data.ok) {
                     console.log('TODO');
@@ -57,7 +57,7 @@ let content_comp = new Vue({
             this.team_calling = table_model.data.queue[0];
         },
         start_coordination: function(event) {
-            axios.post('/table/' + table_name + '/start_coordination',
+            axios.post('table/' + table_name + '/start_coordination',
                        {'team': this.team_coordination})
                 .then(response => {
                     if (!response.data.ok) {
@@ -69,7 +69,7 @@ let content_comp = new Vue({
                 })
         },
         finish_coordination: function(event) {
-            axios.post('/table/' + table_name + '/finish_coordination')
+            axios.post('table/' + table_name + '/finish_coordination')
                 .then(response => {
                     if (!response.data.ok) {
                         console.log('TODO');
@@ -85,7 +85,7 @@ let content_comp = new Vue({
                 });
         },
         pause_coordination: function(event) {
-            axios.post('/table/' + table_name + '/pause_coordination')
+            axios.post('table/' + table_name + '/pause_coordination')
                 .then(response => {
                     if (!response.data.ok) {
                         console.log('TODO');
@@ -101,7 +101,7 @@ let content_comp = new Vue({
                 });
         },
         switch_to_calling: function(event) {
-            axios.post('/table/' + table_name + '/switch_to_calling')
+            axios.post('table/' + table_name + '/switch_to_calling')
                 .then(response => {
                     if (!response.data.ok) {
                         console.log('TODO');
@@ -114,7 +114,7 @@ let content_comp = new Vue({
                 });
         },
         call_team: function(event) {
-            axios.post('/table/' + table_name + '/call_team',
+            axios.post('table/' + table_name + '/call_team',
                        {'team': this.team_calling})
                 .then(response => {
                     if (!response.data.ok) {
@@ -125,7 +125,7 @@ let content_comp = new Vue({
                 })
         },
         skip_to_next: function(event) {
-            axios.post('/table/' + table_name + '/skip_to_next')
+            axios.post('table/' + table_name + '/skip_to_next')
                 .then(response => {
                     if (!response.data.ok) {
                         console.log('TODO');
@@ -138,7 +138,7 @@ let content_comp = new Vue({
                 });
         },
         switch_to_idle: function(event) {
-            axios.post('/table/' + table_name + '/switch_to_idle')
+            axios.post('table/' + table_name + '/switch_to_idle')
                 .then(response => {
                     if (!response.data.ok) {
                         console.log('TODO');

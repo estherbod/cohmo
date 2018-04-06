@@ -9,7 +9,7 @@ let queues_model = {
     tables: [],
     last_update: -1,
     update() {
-        return axios.get('/tables/get_all', {params: {last_update: this.last_update}})
+        return axios.get('tables/get_all', {params: {last_update: this.last_update}})
             .then(response => {
                 if (!response.data.ok) {
                     console.log('TODO');
