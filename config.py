@@ -29,7 +29,7 @@ START_TIME = time.mktime(time.strptime('2018-06-04 8:30:00', '%Y-%m-%d %H:%M:%S'
 MAXIMUM_TIME = time.mktime(time.strptime('2018-06-04 16:00:00', '%Y-%m-%d %H:%M:%S'))
 
 # Scheduled breaks.
-BREAKS = [[time.mktime(time.strptime('2018-06-04 12:00:00', '%Y-%m-%d %H:%M:%S')),
-           time.mktime(time.strptime('2018-06-04 13:00:00', '%Y-%m-%d %H:%M:%S'))],
-          [time.mktime(time.strptime('2018-06-04 15:00:00', '%Y-%m-%d %H:%M:%S')),
-           time.mktime(time.strptime('2018-06-04 15:30:00', '%Y-%m-%d %H:%M:%S'))]]
+BREAK_TIMES = [[time.mktime(time.strptime('2018-06-04 12:00:00', '%Y-%m-%d %H:%M:%S')),
+                time.mktime(time.strptime('2018-06-04 13:00:00', '%Y-%m-%d %H:%M:%S'))],
+               [time.mktime(time.strptime('2018-06-04 15:00:00', '%Y-%m-%d %H:%M:%S')),
+                time.mktime(time.strptime('2018-06-04 15:30:00', '%Y-%m-%d %H:%M:%S'))]]

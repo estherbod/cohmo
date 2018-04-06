@@ -174,38 +174,77 @@ class CohmoTestCase(unittest.TestCase):
         
     # Testing get_expected_duration.
     mock_time = Mock()
-    mock_time.side_effect = [10123, 10, 3, 10, 10, 10, 30] # 10123 = history.operations_num
+    mock_time.side_effect = [10123, 10, 3, 10, 4, 10, 2, 10, 11, 10, 10, 10, 10,
+                             2, 10, 11, 10, 2, 10, 11, 10,
+                             2, 10, 3, 10, 2, 10, 3, 10] # 10123 = history.operations_num
     @patch('time.time', mock_time) 
     def test_get_expected_duration(self):
         cohmo.app.config['NUM_SIGN_CORR'] = 2
         cohmo.app.config['APRIORI_DURATION'] = 3
-        cohmo.app.config['MINIMUM_DURATION'] = 1
+        cohmo.app.config['MINIMUM_DURATION'] = 2
+        cohmo.app.config['MAXIMUM_DURATION'] = 8
         cohmo.app.config['START_TIME'] = 0
-        # ~ cohmo.app.config['MAXIMUM_TIME'] = 25
-        cohmo.app.config['BREAKS'] = []
+        tmp_maximum_time = cohmo.app.config['MAXIMUM_TIME']
+        cohmo.app.config['MAXIMUM_TIME'] = 25
+        cohmo.app.config['BREAK_TIMES'] = [[14, 16]]
         history = HistoryManager(cohmo.app.config['HISTORY_FILE_PATH'])
         table = Table(cohmo.app.config['TABLE_FILE_PATHS']['T2'], history, app.config)
+
+        # Testing the basic behaviour.
         self.assertEqual(history.corrections[0].duration(), 5)
         self.assertEqual(len(history.get_corrections({'table':'T2'})), 1)
+        self.assertAlmostEqual(table.get_expected_duration(), 4) # 10
+        self.assertTrue(table.start_coordination('ITA')) # 3, 10
         self.assertAlmostEqual(table.get_expected_duration(), 4)
-        self.assertTrue(table.start_coordination('ITA'))
-        self.assertAlmostEqual(table.get_expected_duration(), 4)
-        self.assertTrue(table.finish_coordination())
-        
-        # ~ self.assertAlmostEqual(table.expected_duration, 6)
-        # ~ self.assertAlmostEqual(table.get_expected_duration(), 6)
-        # ~ print(time.time())
-        # ~ self.assertEqual(len(table.queue), 3)
-        # ~ print(table.queue)
-        # ~ self.assertTrue(history.add('ENG', 'T2', 5, 21))
-        # ~ self.assertAlmostEqual(history.get_expected_duration('T2'), 28/3)
-        # ~ self.assertTrue(history.delete('ID1'))
-        # ~ self.assertEqual(len(history.get_corrections({'table':'T2'})), 2)
-        # ~ self.assertAlmostEqual(history.get_expected_duration('T2'), 23/2)
-        # ~ self.assertEqual(len(history.get_corrections({'table':'T2', 'team':'ITA'})), 1)
-        # ~ id_corr_ITA = history.get_corrections({'table':'T2', 'team':'ITA'})[0].id
-        # ~ self.assertTrue(history.delete(id_corr_ITA))
-        # ~ self.assertAlmostEqual(history.get_expected_duration('T2'), 19/2)
+        self.assertTrue(table.finish_coordination()) # 4, 10
+        self.assertAlmostEqual(table.get_expected_duration(), 3)
+        self.assertEqual(len(history.get_corrections({'table':'T2'})), 2)
+
+        # Testing the imposition on the maximum_time.
+        self.assertTrue(table.start_coordination('ITA')) # 2, 10
+        self.assertTrue(table.finish_coordination()) # 11, 10
+        self.assertAlmostEqual(table.get_expected_duration(), 13/3)
+
+        # Testing the case when the history is empty.
+        self.assertEqual(len(history.get_corrections({'table':'T2'})), 3)
+        corrections = history.get_corrections({'table':'T2'})
+        self.assertTrue(history.delete(corrections[0].id))
+        self.assertTrue(history.delete(corrections[1].id))
+        self.assertTrue(history.delete(corrections[2].id))
+        self.assertEqual(len(history.get_corrections({'table':'T2'})), 0)
+
+        # Recomputing the expected_duration and deleting almost all the queue.
+        table.compute_expected_duration() # 10
+        self.assertAlmostEqual(table.get_expected_duration(), 3)
+        self.assertTrue(table.remove_from_queue('ENG')) # 10
+        self.assertTrue(table.remove_from_queue('IND')) # 10
+        self.assertAlmostEqual(table.get_expected_duration(), 3)
+
+        # Testing the maximum_duration.
+        self.assertTrue(table.start_coordination('ITA')) # 2, 10
+        self.assertTrue(table.finish_coordination()) # 11, 10
+        self.assertAlmostEqual(table.get_expected_duration(), 6)
+
+        self.assertTrue(table.start_coordination('ITA')) # 2, 10
+        self.assertTrue(table.finish_coordination()) # 11, 10
+        self.assertAlmostEqual(table.get_expected_duration(), 8)
+
+        # Clearing the history again.
+        self.assertEqual(len(history.get_corrections({'table':'T2'})), 2)
+        corrections = history.get_corrections({'table':'T2'})
+        self.assertTrue(history.delete(corrections[0].id))
+        self.assertTrue(history.delete(corrections[1].id))
+
+        # Testing the minimum_duration.
+        self.assertTrue(table.start_coordination('ITA')) # 2, 10
+        self.assertTrue(table.finish_coordination()) # 3, 10
+        self.assertAlmostEqual(table.get_expected_duration(), 2)
+
+        self.assertTrue(table.start_coordination('ITA')) # 2, 10
+        self.assertTrue(table.finish_coordination()) # 3, 10
+        self.assertAlmostEqual(table.get_expected_duration(), 2)
+
+        cohmo.app.config['MAXIMUM_TIME'] = tmp_maximum_time
 
     def test_authentication_manager(self):
         authentication_manager = \

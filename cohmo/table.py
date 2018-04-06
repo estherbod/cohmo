@@ -61,8 +61,8 @@ class Table:
             self.start_time = additional_config['START_TIME']
             self.maximum_time = additional_config['MAXIMUM_TIME']
             assert(self.start_time < self.maximum_time)
-            self.breaks = additional_config['BREAKS']
-            for bt in self.breaks:
+            self.break_times = additional_config['BREAK_TIMES']
+            for bt in self.break_times:
                 assert(bt[0] <= bt[1])
 
     # Dumps the table to file. The format is the same as create_table_from_file.
@@ -187,11 +187,9 @@ class Table:
         expected_duration /= max(self.num_sign_corr,
                                  len(table_corrections))
         now = int(time.time())
-        if now >= self.maximum_time:
-            print(now, self.maximum_time)
         assert(now < self.maximum_time)
         time_left = self.maximum_time - max(self.start_time, now)
-        for bt in self.breaks:
+        for bt in self.break_times:
             time_left -= (max(bt[1], now) - max(bt[0], now))
         if expected_duration * len(self.queue) > time_left:
             expected_duration = time_left / len(self.queue)
