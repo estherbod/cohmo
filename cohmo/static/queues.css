@@ -28,25 +28,37 @@
     position: relative;
 }
 
+.team-container {
+    width: 100px;
+    position: absolute;
+    text-align: center;
+}
+
 .team-in-queue {
      box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
+/*
     position: absolute;
+*/
     margin: 0 auto;
-    width: 100px;
-    border: 1px solid #D6D6D6; /*#ffeb8e;*/
-    border-top: none;
+    width: 90%;
+    border: 1px solid #5E5B5B;
+    /*border: 1px solid #D6D6D6; /*#ffeb8e;*/
+    /*border-top: none;*/
     background-color: f8f8f8;
     font-weight: bold;
     text-align: center;
     vertical-align: middle;
     font-size: 0.8em;
+/*
     color: #34495e;
+*/
 }
 
 .queue-header {
     width: 100%;
+    color: #5F5C5C; /*#34495e;*/
     text-align: center;
     vertical-align: middle;
 /*
@@ -69,19 +81,30 @@
 }
 
 .queue-header.correcting {
-    background-color: #acffac;
+    background-color: #97F497;
 }
 
-.queue-header.calling {
-    background-color: #ffff90;
+@-webkit-keyframes blinker {
+  from {background-color: #FFDE3B;}
+  to {background-color: #FFFB93;}
+}
+
+.queue-header.calling, .team-calling>.team-in-queue {
+    background-color: #FFDE3B;
+    text-decoration: blink;
+	-webkit-animation-name: blinker;
+	-webkit-animation-duration: 0.5s;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-timing-function: ease-in-out;
+	-webkit-animation-direction: alternate;
 }
 
 .queue-header.idle {
-    background-color: #D0D0D0;
+    background-color: #DDDADA;
 }
 
 .time-in-schedule {
     position: absolute;
     width: 101%;
-    border-top: 1px dashed #004bff80;
+    border-top: 1px dashed #F2241D;
 }

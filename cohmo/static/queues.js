@@ -95,8 +95,10 @@ Vue.component('team-in-queue', {
         },
     },
     template: `
-<div class='team-in-queue team'
-     :style='"height: " + height + "px; line-height: " + height + "px; top: " + top_pos + "px"'>[[ team ]]</div>`
+<div class='team-container'
+    :style='"height: " + height + "px; line-height: " + height + "px; top: " + top_pos + "px"'>
+    <div class='team-in-queue team'>[[ team ]]</div>
+</div>`
 });
 
 let queues_component = new Vue({
