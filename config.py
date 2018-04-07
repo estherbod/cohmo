@@ -17,19 +17,19 @@ APRIORI_DURATION = 20*60
 SKIPPED_POSITIONS = 2
 
 # Minimum duration of a coordination.
-MINIMUM_DURATION = 5*60
+MINIMUM_DURATION = 10*60
 
 # Maximum duration of a coordination.
 MAXIMUM_DURATION = 40*60
 
 # Start time of coordinations.
-START_TIME = time.mktime(time.strptime('2018-04-06 20:30:00', '%Y-%m-%d %H:%M:%S'))
+START_TIME = time.mktime(time.strptime('2018-04-07 8:30:00', '%Y-%m-%d %H:%M:%S'))
 
 # Maximum time over which the coordination can not go.
-MAXIMUM_TIME = time.mktime(time.strptime('2018-04-07 8:00:00', '%Y-%m-%d %H:%M:%S'))
+MAXIMUM_TIME = time.mktime(time.strptime('2018-04-07 18:00:00', '%Y-%m-%d %H:%M:%S'))
 
 # Scheduled breaks.
-BREAK_TIMES = [[time.mktime(time.strptime('2018-04-07 00:00:00', '%Y-%m-%d %H:%M:%S')),
-                time.mktime(time.strptime('2018-04-07 00:30:00', '%Y-%m-%d %H:%M:%S'))],
-               [time.mktime(time.strptime('2018-04-07 02:00:00', '%Y-%m-%d %H:%M:%S')),
-                time.mktime(time.strptime('2018-04-07 02:15:00', '%Y-%m-%d %H:%M:%S'))]]
+BREAK_TIMES = [[time.mktime(time.strptime('2018-04-07 11:00:00', '%Y-%m-%d %H:%M:%S')),
+                time.mktime(time.strptime('2018-04-07 11:30:00', '%Y-%m-%d %H:%M:%S'))],
+               [time.mktime(time.strptime('2018-04-07 15:00:00', '%Y-%m-%d %H:%M:%S')),
+                time.mktime(time.strptime('2018-04-07 15:15:00', '%Y-%m-%d %H:%M:%S'))]]

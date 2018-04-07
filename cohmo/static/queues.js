@@ -96,7 +96,7 @@ Vue.component('team-in-queue', {
     },
     template: `
 <div class='team-container'
-    :style='"height: " + height + "px; line-height: " + height + "px; top: " + top_pos + "px"'>
+    :style='"height: " + (height-2) + "px; line-height: " + (height-2) + "px; top: " + (top_pos+2) + "px"'>
     <div class='team-in-queue team'>[[ team ]]</div>
 </div>`
 });
