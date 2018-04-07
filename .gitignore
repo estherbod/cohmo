@@ -101,3 +101,4 @@ ENV/
 .mypy_cache/
 cohmo-dev/
 cohmo-python2-venv/
+test_data/*.backup
