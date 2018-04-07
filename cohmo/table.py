@@ -187,11 +187,10 @@ class Table:
         expected_duration /= max(self.num_sign_corr,
                                  len(table_corrections))
         now = int(time.time())
-        assert(now < self.maximum_time)
         time_left = self.maximum_time - max(self.start_time, now)
         for bt in self.break_times:
             time_left -= (max(bt[1], now) - max(bt[0], now))
-        if expected_duration * len(self.queue) > time_left:
+        if expected_duration * len(self.queue) > time_left and len(self.queue) > 0:
             expected_duration = time_left / len(self.queue)
         expected_duration = max(expected_duration, self.minimum_duration)
         expected_duration = min(expected_duration, self.maximum_duration)

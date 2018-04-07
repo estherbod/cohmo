@@ -33,6 +33,8 @@ let table_model = {
 table_model.update()
     .then(function() {
         document.getElementsByTagName('body')[0].classList.remove('hidden');
+        content_comp.team_coordination = table_model.data.queue[0];
+        content_comp.team_calling = table_model.data.queue[0];
     });
 
 new Vue({
@@ -52,9 +54,10 @@ let content_comp = new Vue({
     },
     methods: {
         after_action: function(event) {
-            table_model.update();
-            this.team_coordination = table_model.data.queue[0];
-            this.team_calling = table_model.data.queue[0];
+            table_model.update().then(() => {
+                this.team_coordination = table_model.data.queue[0];
+                this.team_calling = table_model.data.queue[0];
+            });
         },
         start_coordination: function(event) {
             axios.post(APPLICATION_ROOT + 'table/' + table_name + '/start_coordination',
