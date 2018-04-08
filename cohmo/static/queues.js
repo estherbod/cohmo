@@ -27,7 +27,9 @@ let queues_model = {
 
 function update_queues() {
     queues_model.update().then(() => {
-        queues_component.now = new Date().getTime() / 1000;
+        let now = new Date().getTime() / 1000;
+        queues_component.now = now;
+        schedule_times_component.now = now;
         queues_component.$forceUpdate();
         schedule_times_component.$forceUpdate();
     });
@@ -41,6 +43,7 @@ const SCHEDULE_TIMES_INTERVAL = 20*60;
 let schedule_times_component = new Vue({
     el: '#schedule-times',
     data: {
+        now: 0,
         tables: queues_model.tables,
     },
     methods: {
@@ -51,7 +54,6 @@ let schedule_times_component = new Vue({
             return hours + ':' + minutes.substr(-2);
         },
         estimated_finish_time: function() {
-            let now = new Date().getTime() / 1000;
             let max_total_duration = 0;
             for (table of this.tables) {
                 max_total_duration = Math.max(
@@ -61,20 +63,20 @@ let schedule_times_component = new Vue({
             for (bt of BREAK_TIMES) {
                 max_total_duration += parseInt(bt[1]) - parseInt(bt[0]);
             }
-            return Math.max(now, START_TIME) + max_total_duration;
+            return Math.max(this.now, START_TIME) + max_total_duration;
         },
         times: function() {
-            let now = new Date().getTime() / 1000;
-            let curr = Math.ceil((now + 120) / SCHEDULE_TIMES_INTERVAL);
+            if (this.now == 0) return []; // To avoid hanging on initialization.
+            let curr = Math.ceil((this.now + 120) / SCHEDULE_TIMES_INTERVAL);
             curr = curr * SCHEDULE_TIMES_INTERVAL;
 
             res = [];
             const finish = this.estimated_finish_time();
             while (curr < finish
-                   || curr <= now + 2*SCHEDULE_TIMES_INTERVAL) {
+                   || curr <= this.now + 2*SCHEDULE_TIMES_INTERVAL) {
                 res.push({
                     timestamp: curr,
-                    height: (curr-now)*(SECOND_IN_PIXELS),
+                    height: (curr-this.now) * (SECOND_IN_PIXELS),
                     human_time: this.timestamp2hhmm(curr),
                 });
                 curr += SCHEDULE_TIMES_INTERVAL;
