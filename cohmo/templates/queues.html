@@ -29,6 +29,7 @@
         </div>
     </div>
     <div id='queues'>
+        <div v-for='problem in problems' class='problem-name' :style='"width: " + problem.width + ";"'>Problem [[ problem.name ]]</div>
         <div v-for='table in tables' class='queue-column' :key="table.name">
             <queue-header v-bind:table='table'></queue-header>
             <div class='queue-container'>

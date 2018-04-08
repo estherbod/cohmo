@@ -1,3 +1,7 @@
+body {
+    padding-top: 5px!important;
+}
+
 #main-container {
     position: relative;
     width: -webkit-fit-content;
@@ -63,6 +67,7 @@
     color: #5F5C5C; /*#34495e;*/
     text-align: center;
     vertical-align: middle;
+    font-weight: bold;
 /*
     font-family: "Roboto Mono", Monaco, courier, monospace;
 */
@@ -73,8 +78,11 @@
     border: 1px solid gray;
 }
 
-.queue-header, .times-header {
+.queue-header {
     height: 55px;
+}
+.times-header {
+    height: 91px; /* queue-header(height) + problem-name(height) + problem-name(margin)*/
 }
 
 .queue-header-container {
@@ -109,4 +117,19 @@
     position: absolute;
     width: 101%;
     border-top: 1px dashed #F2241D;
+}
+
+.problem-name {
+    float: left;
+    text-align: center;
+    height: 30px;
+    
+    
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    font-weight: bold;
+    color: #4b4b9e;
+    border-bottom: 5px solid #8585ff;
+    margin: 3px;
 }

@@ -55,15 +55,17 @@ let schedule_times_component = new Vue({
         },
         estimated_finish_time: function() {
             let max_total_duration = 0;
-            for (table of this.tables) {
+            for (let table of this.tables) {
                 max_total_duration = Math.max(
                     max_total_duration,
                     table.queue.length * table.expected_duration);
             }
-            for (bt of BREAK_TIMES) {
-                max_total_duration += parseInt(bt[1]) - parseInt(bt[0]);
+            for (let bt of BREAK_TIMES) {
+                max_total_duration +=
+                    Math.max(parseInt(bt[1]), this.now)
+                    - Math.max(parseInt(bt[0]), this.now);
             }
-            return Math.max(this.now, START_TIME) + max_total_duration;
+            return Math.max(this.now, START_TIME) + max_total_duration + 20 * 60;
         },
         times: function() {
             if (this.now == 0) return []; // To avoid hanging on initialization.
@@ -140,6 +142,21 @@ let queues_component = new Vue({
                 }
             }
             return result;
+        },
+        problems: function() {
+            this.now;
+            let problems = [];
+            // console.log(this.tables);
+            for (let table of this.tables) {
+                if (problems.length == 0 || problems[problems.length - 1].name != table.problem) {
+                    problems.push({
+                        name: table.problem,
+                        width: -6,
+                    });
+                }
+                problems[problems.length - 1].width += 100;
+            }
+            return problems;
         },
     },
 });
