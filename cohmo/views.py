@@ -1,6 +1,6 @@
 from cohmo import app, get_chief
 from cohmo.authentication_manager import AuthenticationManager
-from flask import Flask, request, json, jsonify, render_template, g, abort
+from flask import Flask, request, json, jsonify, render_template, abort, redirect, url_for
 from flask_httpauth import HTTPBasicAuth
 
 auth = HTTPBasicAuth()
@@ -44,6 +44,11 @@ def table_admin(table_name):
 def queues():
     return render_template('queues.html', START_TIME=chief.start_time,
                                           BREAK_TIMES=json.dumps(chief.break_times))
+
+@app.route('/')
+@app.route('/index.html')
+def redirect_to_queues():
+    return redirect(url_for('queues'), code=302)
 
 @app.route('/schedule/admin')
 @auth.login_required
