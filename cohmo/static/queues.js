@@ -27,7 +27,7 @@ let queues_model = {
 
 function update_queues() {
     queues_model.update().then(() => {
-        let now = new Date().getTime() / 1000;
+        let now = Math.max(START_TIME, new Date().getTime() / 1000);
         queues_component.now = now;
         schedule_times_component.now = now;
         queues_component.$forceUpdate();
@@ -65,7 +65,7 @@ let schedule_times_component = new Vue({
                     Math.max(parseInt(bt[1]), this.now)
                     - Math.max(parseInt(bt[0]), this.now);
             }
-            return Math.max(this.now, START_TIME) + max_total_duration + 20 * 60;
+            return this.now + max_total_duration + 20 * 60;
         },
         times: function() {
             if (this.now == 0) return []; // To avoid hanging on initialization.
@@ -128,7 +128,6 @@ let queues_component = new Vue({
                 else if (table.status == TableStatus.CORRECTING) {
                     curr = Math.max(this.now + 300, start_time + expected_duration)
                 }
-                curr = Math.max(curr, START_TIME)
                 for (let team of table.queue) {
                     for (let bt of BREAK_TIMES) {
                         bt_start = parseInt(bt[0]);
