@@ -35,7 +35,8 @@
                 <team-in-queue v-for='(team, index) in table.queue' v-bind:team='team'
                                :class='[table.status==0 && index==0 ? "team-calling" : ""]'
                                v-bind:expected_duration='table.expected_duration'
-                               v-bind:start_time='start_time[table.name][team]'>
+                               v-bind:start_time='start_time[table.name][team]'
+                               v-bind:now='now'>
                 </team-in-queue>
             </div>
         </div>

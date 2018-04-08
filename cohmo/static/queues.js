@@ -27,7 +27,7 @@ let queues_model = {
 
 function update_queues() {
     queues_model.update().then(() => {
-        queues_component.update_watcher++;
+        queues_component.now = new Date().getTime() / 1000;
         queues_component.$forceUpdate();
         schedule_times_component.$forceUpdate();
     });
@@ -85,19 +85,18 @@ let schedule_times_component = new Vue({
 });
 
 Vue.component('team-in-queue', {
-    props: ['team', 'expected_duration', 'start_time'],
-    methods: {
+    props: ['team', 'expected_duration', 'start_time', 'now'],
+    computed: {
         height: function() {
             return this.expected_duration * SECOND_IN_PIXELS - 1;
         },
         top_pos: function() {
-            let now = new Date().getTime() / 1000;
-            return (this.start_time - now) * SECOND_IN_PIXELS;
+            return (this.start_time - this.now) * SECOND_IN_PIXELS;
         },
     },
     template: `
 <div class='team-container'
-    :style='"height: " + (height()-2) + "px; line-height: " + (height()-2) + "px; top: " + (top_pos()+2) + "px"'>
+    :style='"height: " + (height-2) + "px; line-height: " + (height-2) + "px; top: " + (top_pos+2) + "px"'>
     <div class='team-in-queue team'>[[ team ]]</div>
 </div>`
 });
@@ -105,26 +104,25 @@ Vue.component('team-in-queue', {
 let queues_component = new Vue({
     el: '#queues',
     data: {
-        update_watcher: 0,
+        now: 0, // In seconds
         tables: queues_model.tables,
         TableStatus: TableStatus,
         TableStatusName: TableStatusName,
     },
     computed: {
         start_time: function() {
-            this.update_watcher;
+            this.now;
             let result = {};
             for (let table of this.tables) {
                 result[table.name] = {};
-                let now =  new Date().getTime() / 1000; // In seconds.
                 let curr = undefined;
                 let start_time = table.current_coordination_start_time;
                 let expected_duration = table.expected_duration;
                     
-                if (table.status == TableStatus.CALLING) curr = now;
-                else if (table.status == TableStatus.IDLE) curr = now + 300;
+                if (table.status == TableStatus.CALLING) curr = this.now;
+                else if (table.status == TableStatus.IDLE) curr = this.now + 300;
                 else if (table.status == TableStatus.CORRECTING) {
-                    curr = Math.max(now + 300, start_time + expected_duration)
+                    curr = Math.max(this.now + 300, start_time + expected_duration)
                 }
                 curr = Math.max(curr, START_TIME)
                 for (let team of table.queue) {
