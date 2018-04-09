@@ -23,20 +23,23 @@ MINIMUM_DURATION = 10*60
 MAXIMUM_DURATION = 40*60;
 
 
-coordination_day = '2018-04-09'
-timezone = 'CEST'
-date_format = '%Y-%m-%d %H:%M:%S %Z'
-
-date_template = coordination_day + ' {0} ' + timezone
+def generate_timestamp_from_time(time_str):
+    coordination_day = '2018-04-10'
+    timezone = 'UTC'
+    date_format = '%Y-%m-%d %H:%M:%S %Z'
+    date_template = coordination_day + ' {0} ' + timezone
+    res = time.mktime(time.strptime(date_template.format(time_str), date_format))
+    timezone_offset = -1 # offset in hours with respect to UTC
+    return res + timezone_offset * 3600 
 
 # Start time of coordinations.
-START_TIME = time.mktime(time.strptime(date_template.format('19:30:00'), date_format))
+START_TIME = generate_timestamp_from_time('9:30:00')
 
 # Maximum time over which the coordination can not go.
-MAXIMUM_TIME = time.mktime(time.strptime(date_template.format('23:00:00'), date_format))
+MAXIMUM_TIME = generate_timestamp_from_time('23:00:00')
 
 # Scheduled breaks.
-BREAK_TIMES = [[time.mktime(time.strptime(date_template.format('12:30:00'), date_format)),
-                time.mktime(time.strptime(date_template.format('13:45:00'), date_format))],
-               [time.mktime(time.strptime(date_template.format('18:00:00'), date_format)),
-                time.mktime(time.strptime(date_template.format('18:20:00'), date_format))]]
+BREAK_TIMES = [[generate_timestamp_from_time('12:30:00'),
+                generate_timestamp_from_time('13:45:00')],
+               [generate_timestamp_from_time('18:00:00'),
+                generate_timestamp_from_time('18:20:00')]]
