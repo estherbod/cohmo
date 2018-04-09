@@ -40,6 +40,7 @@ setInterval(update_queues, UPDATE_INTERVAL * 1000);
 
 
 const SCHEDULE_TIMES_INTERVAL = 20*60;
+const TIMEZONE_OFFSET = 2;
 let schedule_times_component = new Vue({
     el: '#schedule-times',
     data: {
@@ -49,8 +50,9 @@ let schedule_times_component = new Vue({
     methods: {
         timestamp2hhmm: function(timestamp) {
             let date = new Date(timestamp*1000);
-            let hours = date.getHours();
-            let minutes = "0" + date.getMinutes();
+            let hours = date.getUTCHours();
+            hours = (hours + TIMEZONE_OFFSET) % 24;
+            let minutes = "0" + date.getUTCMinutes();
             return hours + ':' + minutes.substr(-2);
         },
         estimated_finish_time: function() {
