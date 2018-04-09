@@ -6,6 +6,7 @@
         "Anita Amonte"
     ],
     "queue": [
+        "BEL",
         "BGR",
         "BIH",
         "BLR",
@@ -30,6 +31,6 @@
         "LIE"
     ],
     "status": "CORRECTING",
-    "current_coordination_team": "BEL",
-    "current_coordination_start_time": 1523308115
+    "current_coordination_team": "ALB",
+    "current_coordination_start_time": 10
 }
