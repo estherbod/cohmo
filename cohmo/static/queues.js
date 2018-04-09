@@ -28,6 +28,7 @@ let queues_model = {
 function update_queues() {
     queues_model.update().then(() => {
         let now = Math.max(START_TIME, new Date().getTime() / 1000);
+        now += Math.floor(Math.random() * 10);
         queues_component.now = now;
         schedule_times_component.now = now;
         queues_component.$forceUpdate();
