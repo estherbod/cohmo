@@ -542,7 +542,12 @@ class CohmoTestCase(unittest.TestCase):
                         resp['message'] == 'There are no teams to correct.')
 
     def test_views_table_get(self):
+        cohmo.app.config['START_TIME'] = 0 # past
+        cohmo.app.config['MAXIMUM_TIME'] = int(time.time()) + 3600*100 #future
+        cohmo.app.config['BREAK_TIMES'] = []
         cohmo.app.config['MINIMUM_DURATION'] = 1
+        cohmo.app.config['NUM_SIGN_CORR'] = 2
+        cohmo.app.config['APRIORI_DURATION'] = 3
         cohmo.views.init_chief()
         client = cohmo.app.test_client()
 
@@ -591,8 +596,6 @@ class CohmoTestCase(unittest.TestCase):
         self.assertEqual(resp['changed'], True)
 
     def test_views_history(self):
-        cohmo.app.config['NUM_SIGN_CORR'] = 2
-        cohmo.app.config['APRIORI_DURATION'] = 3
         cohmo.views.init_chief()
         cohmo.views.init_authentication_manager()
         client = cohmo.app.test_client()

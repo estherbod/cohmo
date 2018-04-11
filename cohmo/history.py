@@ -96,7 +96,6 @@ class HistoryManager:
         for correction in self.corrections:
             if correction.id == correction_id:
                 self.corrections.remove(correction)
-                # ~ self.compute_expected_duration(correction.table)
                 self.dump_to_file()
                 return True
         return False

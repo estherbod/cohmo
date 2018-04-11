@@ -73,15 +73,17 @@ def add_to_queue(table_name):
     if team in chief.tables[table_name].queue:
         return jsonify(ok=False,
                        message='Team {0} is already in queue at table {1}.'.format(team, table_name))
-    if 'pos' in req_data:
-        pos = int(req_data['pos']);
-        if 0 <= pos <= len(chief.tables[table_name].queue):
-            if chief.tables[table_name].add_to_queue(team, pos):
-                return jsonify(ok = True)
-        return jsonify(ok=False)
+    if 'pos' in req_data and req_data['pos']:
+        try: 
+            pos = int(req_data['pos']);
+            if 0 <= pos <= len(chief.tables[table_name].queue):
+                if chief.tables[table_name].add_to_queue(team, pos):
+                    return jsonify(ok = True)
+        except ValueError:
+            return jsonify(ok=False, message='The position variable must be an integer.')
     if chief.tables[table_name].add_to_queue(team):
         return jsonify(ok=True)
-    return jsonify(ok=False)
+    return jsonify(ok=False, message='An error occurred while adding the team in the queue.')
 
 @app.route('/table/<string:table_name>/remove_from_queue', methods=['POST'])
 @auth.login_required
@@ -100,7 +102,7 @@ def remove_from_queue(table_name):
                        message='Team {0} is not in queue at table {1}.'.format(team, table_name))
     if chief.tables[table_name].remove_from_queue(team):
         return jsonify(ok=True)
-    return jsonify(ok=False)
+    return jsonify(ok=False, message='An error occurred while deleting the team from the queue.')
 
 @app.route('/table/<string:table_name>/swap_teams_in_queue', methods=['POST'])
 @auth.login_required
@@ -124,7 +126,7 @@ def swap_teams_in_queue(table_name):
                            message='Team {0} is not in queue at table {1}.'.format(team, table_name))
     if chief.tables[table_name].swap_teams_in_queue(teams[0], teams[1]):
         return jsonify(ok=True)
-    return jsonify(ok=False)
+    return jsonify(ok=False, message='An error occurred while swapping the teams in the queue.')
 
 @app.route('/table/<string:table_name>/start_coordination', methods=['POST'])
 @auth.login_required
@@ -144,8 +146,8 @@ def start_coordination(table_name):
     if chief.tables[table_name].start_coordination(team):
         if chief.tables[table_name].remove_from_queue(team):
             return jsonify(ok=True)
-        return jsonify(ok=False, message='The team has not been removed from queue.')
-    return jsonify(ok=False)
+        return jsonify(ok=False, message='An error occurred removing the team from the queue.')
+    return jsonify(ok=False, message='An error occurred while deleting the team from the queue.')
 
 @app.route('/table/<string:table_name>/finish_coordination', methods=['POST'])
 @auth.login_required
@@ -155,9 +157,8 @@ def finish_coordination(table_name):
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
     if chief.tables[table_name].finish_coordination():
         return jsonify(ok=True)
-    return jsonify(ok=False)
+    return jsonify(ok=False, message='An error occurred while finishing the coordination.')
 
-# TODO: here there is still work to do.
 @app.route('/table/<string:table_name>/pause_coordination', methods=['POST'])
 @auth.login_required
 def pause_coordination(table_name):
@@ -165,12 +166,14 @@ def pause_coordination(table_name):
     if table_name not in chief.tables:
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
     table = chief.tables[table_name]
-    team = table.current_coordination_team # TODO: maybe check this is not malformed
+    team = table.current_coordination_team
+    if team not in chief.teams:
+        return jsonify(ok=False, message=TEAM_NOT_EXIST.format(team))
     if table.finish_coordination(): # If only this is true there is a problem.
         if table.add_to_queue(team):
             return jsonify(ok=True);
-        return jsonify(ok=False)
-    return jsonify(ok=False)
+        return jsonify(ok=False, message='The coordination has been paused, but there was an issue inserting the team again in the queue.')
+    return jsonify(ok=False, message='There was an issue finishing the coordination.')
 
 @app.route('/table/<string:table_name>/switch_to_calling', methods=['POST'])
 @auth.login_required
@@ -180,7 +183,7 @@ def switch_to_calling(table_name):
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
     if chief.tables[table_name].switch_to_calling():
         return jsonify(ok=True)
-    return jsonify(ok=False)
+    return jsonify(ok=False, message='An error occured while switching the status to calling.')
 
 @app.route('/table/<string:table_name>/call_team', methods=['POST'])
 @auth.login_required
@@ -197,12 +200,12 @@ def call_team(table_name):
         return jsonify(ok=False, message=TEAM_NOT_EXIST.format(team))
     if team in table.queue:
         if not table.remove_from_queue(team):
-            return jsonify(ok=False)
+            return jsonify(ok=False, message='There was an error removing the team from the queue.')
     if not table.add_to_queue(team, 0):
-        return jsonify(ok=False)
+        return jsonify(ok=False, message='An error occurred placing the team first in the queue.')
     if table.status != 0:
         if not table.switch_to_calling():
-            return jsonify(ok=False)
+            return jsonify(ok=False, message='An error occurred while switching the status to calling.')
     return jsonify(ok=True)
 
 @app.route('/table/<string:table_name>/skip_to_next', methods=['POST'])
@@ -224,7 +227,7 @@ def skip_to_next(table_name):
         return jsonify(ok=False, message='Problem removing the team from queue.')
     if table.add_to_queue(team, min(chief.skipped_positions, len(table.queue))):
         return jsonify(ok=True);
-    return jsonify(ok=False)
+    return jsonify(ok=False, message='An error occurred while adding the team in the queue.')
 
 @app.route('/table/<string:table_name>/switch_to_idle', methods=['POST'])
 @auth.login_required
@@ -234,7 +237,7 @@ def switch_to_idle(table_name):
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
     if chief.tables[table_name].switch_to_idle():
         return jsonify(ok=True)
-    return jsonify(ok=False)
+    return jsonify(ok=False, message='An error occurred while switching to idle.')
 
 @app.route('/table/<string:table_name>/get_queue', methods=['GET'])
 def get_queue(table_name):
@@ -257,7 +260,11 @@ def get_all(table_name):
 @app.route('/tables/get_all', methods=['GET'])
 def get_tables_if_changed():
     last_update = -1
-    if 'last_update' in request.args: last_update = int(request.args['last_update'])
+    if 'last_update' in request.args:
+        try:
+            last_update = int(request.args['last_update'])
+        except ValueError:
+            return jsonify(ok=True, message='The last_update variable must represent an integer.')
     if chief.history_manager.operations_num == last_update:
         return jsonify(ok=True, changed=False)
 
@@ -286,7 +293,7 @@ def history_add():
     end_time = req_data['end_time']
     if chief.history_manager.add(team, table, start_time, end_time):
         return jsonify(ok=True)
-    return jsonify(ok=False)
+    return jsonify(ok=False, message='An error occurred while adding the entry in the history.')
 
 @app.route('/history/delete', methods=['POST'])
 @auth.login_required
@@ -297,7 +304,7 @@ def history_delete():
     correction_id = req_data['correction_id']
     if chief.history_manager.delete(correction_id):
         return jsonify(ok=True)
-    return jsonify(ok=False)
+    return jsonify(ok=False, message='An error occurred while deleting the entry from the history.')
 
 @app.route('/history/get_corrections', methods=['GET'])
 def get_corrections():

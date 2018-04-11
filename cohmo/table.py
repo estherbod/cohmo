@@ -187,7 +187,7 @@ class Table:
         expected_duration /= max(self.num_sign_corr,
                                  len(table_corrections))
         now = int(time.time())
-        time_left = self.maximum_time - max(self.start_time, now)
+        time_left = max(self.maximum_time, now) - max(self.start_time, now)
         for bt in self.break_times:
             time_left -= (max(bt[1], now) - max(bt[0], now))
         if expected_duration * len(self.queue) > time_left and len(self.queue) > 0:
