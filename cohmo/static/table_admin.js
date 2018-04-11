@@ -94,9 +94,6 @@ let content_comp = new Vue({
                         console.log('TODO');
                         return;
                     }
-                    if (this.call_next) {
-                        this.switch_to_calling(event);
-                    }
                     this.after_action(event);
                 })
                 .catch(error => {

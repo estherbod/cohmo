@@ -59,10 +59,15 @@
                     </div>
                 </div>
                 <div v-if='table.status == TableStatus.CORRECTING'>
-                    <input type='button' v-on:click='finish_coordination' value='Finish'>
-                    <input type='button' v-on:click='pause_coordination' value='Pause'>
-                    <input type='checkbox' id='call_next' value='true' v-model='call_next'>
-                    <label for='call_next'>Call next</label>
+                    <form>
+                        <input type='button' v-on:click='finish_coordination' value='Finish'>
+                        <input type='checkbox' id='call_next' value='true' v-model='call_next'>
+                        <label for='call_next'>Call next</label>
+                    </form>
+                    <div class='secondary_actions'>
+                        Other action: <br>
+                        <input type='button' v-on:click='pause_coordination' value='Postpone'>
+                    </div>
                 </div>
                 <div v-if='table.status == TableStatus.IDLE'>
                     <form><input type='button' v-on:click='switch_to_calling' value='Start calling'></form>
