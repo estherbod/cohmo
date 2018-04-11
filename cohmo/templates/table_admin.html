@@ -49,33 +49,33 @@
                 <div v-if='table.status == TableStatus.CALLING'>
                     <form>
                         <!-- TODO: here I would like to put as default value table.queue[0] e cambiare anche sotto -->
-                        <input type='text' class='team' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>
-                        <input type='button' v-on:click='start_coordination' value='Start coordination'>
+                        <input type='text' class='team' v-model='team_coordination' v-bind:placeholder='table.queue[0]' :disabled='temporary_freezed'/>
+                        <input type='button' v-on:click='start_coordination' value='Start coordination' :disabled='temporary_freezed'>
                     </form>
                     <div class='secondary_actions'>
                         Other actions: <br>
-                        <input type='button' v-on:click='switch_to_idle' value='Stop calling'>
-                        <input type='button' v-on:click='skip_to_next' value='Call next one'>
+                        <input type='button' v-on:click='switch_to_idle' value='Stop calling' :disabled='temporary_freezed'>
+                        <input type='button' v-on:click='skip_to_next' value='Call next one' :disabled='temporary_freezed'>
                     </div>
                 </div>
                 <div v-if='table.status == TableStatus.CORRECTING'>
                     <form>
-                        <input type='button' v-on:click='finish_coordination' value='Finish'>
-                        <input type='checkbox' id='call_next' value='true' v-model='call_next'>
+                        <input type='button' v-on:click='finish_coordination' value='Finish' :disabled='temporary_freezed'>
+                        <input type='checkbox' id='call_next' value='true' v-model='call_next' :disabled='temporary_freezed'>
                         <label for='call_next'>Call next</label>
                     </form>
                     <div class='secondary_actions'>
                         Other action: <br>
-                        <input type='button' v-on:click='pause_coordination' value='Postpone'>
+                        <input type='button' v-on:click='pause_coordination' value='Postpone' :disabled='temporary_freezed'>
                     </div>
                 </div>
                 <div v-if='table.status == TableStatus.IDLE'>
-                    <form><input type='button' v-on:click='switch_to_calling' value='Start calling'></form>
+                    <form><input type='button' v-on:click='switch_to_calling' value='Start calling' :disabled='temporary_freezed'></form>
                     <div class='secondary_actions'>
                         Other action: <br>
                         <form>
-                            <input type='text' class='team' v-model='team_calling' v-bind:placeholder='table.queue[0]'/>
-                            <input type='button' v-on:click='call_team' value='Call team'>
+                            <input type='text' class='team' v-model='team_calling' v-bind:placeholder='table.queue[0]' :disabled='temporary_freezed'/>
+                            <input type='button' v-on:click='call_team' value='Call team' :disabled='temporary_freezed'>
                         </form>
                         <!--<form>
                             <input type='text' class='team' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>

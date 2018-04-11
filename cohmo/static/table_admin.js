@@ -51,15 +51,27 @@ let content_comp = new Vue({
         call_next: true,
         team_coordination: table_model.data.queue[0],
         team_calling: table_model.data.queue[0],
+        temporary_freezed: false,
     },
     methods: {
+        disable_buttons: function(event) {
+            this.temporary_freezed = true;
+        },
+        unable_buttons: function(event) {
+            this.temporary_freezed = false;
+        },
+        before_action: function(event) {
+            this.disable_buttons(event);
+        },
         after_action: function(event) {
+            this.unable_buttons(event);
             table_model.update().then(() => {
                 this.team_coordination = table_model.data.queue[0];
                 this.team_calling = table_model.data.queue[0];
             });
         },
         start_coordination: function(event) {
+            this.before_action(event);
             axios.post(APPLICATION_ROOT + 'table/' + table_name + '/start_coordination',
                        {'team': this.team_coordination})
                 .then(response => {
@@ -72,6 +84,7 @@ let content_comp = new Vue({
                 })
         },
         finish_coordination: function(event) {
+            this.before_action(event);
             axios.post(APPLICATION_ROOT + 'table/' + table_name + '/finish_coordination')
                 .then(response => {
                     if (!response.data.ok) {
@@ -88,6 +101,7 @@ let content_comp = new Vue({
                 });
         },
         pause_coordination: function(event) {
+            this.before_action(event);
             axios.post(APPLICATION_ROOT + 'table/' + table_name + '/pause_coordination')
                 .then(response => {
                     if (!response.data.ok) {
@@ -101,6 +115,7 @@ let content_comp = new Vue({
                 });
         },
         switch_to_calling: function(event) {
+            this.before_action(event);
             axios.post(APPLICATION_ROOT + 'table/' + table_name + '/switch_to_calling')
                 .then(response => {
                     if (!response.data.ok) {
@@ -114,6 +129,7 @@ let content_comp = new Vue({
                 });
         },
         call_team: function(event) {
+            this.before_action(event);
             axios.post(APPLICATION_ROOT + 'table/' + table_name + '/call_team',
                        {'team': this.team_calling})
                 .then(response => {
@@ -125,6 +141,7 @@ let content_comp = new Vue({
                 })
         },
         skip_to_next: function(event) {
+            this.before_action(event);
             axios.post(APPLICATION_ROOT + 'table/' + table_name + '/skip_to_next')
                 .then(response => {
                     if (!response.data.ok) {
@@ -138,6 +155,7 @@ let content_comp = new Vue({
                 });
         },
         switch_to_idle: function(event) {
+            this.before_action(event);
             axios.post(APPLICATION_ROOT + 'table/' + table_name + '/switch_to_idle')
                 .then(response => {
                     if (!response.data.ok) {
