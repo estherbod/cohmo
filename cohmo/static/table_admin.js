@@ -27,7 +27,7 @@ let table_model = {
             .catch(error => {
                 console.log(error);
             });
-    }
+    },
 };
 
 table_model.update()
@@ -42,6 +42,7 @@ new Vue({
     data: table_model.data,
 });
 
+const TIMEZONE_OFFSET = 2;
 let content_comp = new Vue({
     el: '#content',
     data: {
@@ -49,9 +50,18 @@ let content_comp = new Vue({
         TableStatus: TableStatus,
         TableStatusName: TableStatusName,
         call_next: true,
-        team_coordination: table_model.data.queue[0],
-        team_calling: table_model.data.queue[0],
+        team_coordination: '',
+        team_calling: '',
         temporary_freezed: false,
+    },
+    computed: {
+        human_current_coordination_start_time: function() {
+            let date = new Date(this.table.current_coordination_start_time*1000);
+            let hours = date.getUTCHours();
+            hours = (hours + TIMEZONE_OFFSET) % 24;
+            let minutes = "0" + date.getUTCMinutes();
+            return hours + ':' + minutes.substr(-2);
+        },
     },
     methods: {
         disable_buttons: function(event) {
@@ -79,6 +89,7 @@ let content_comp = new Vue({
                         console.log('TODO')
                         return;
                     }
+                    this.start_time_coordination = 
                     this.call_next = true;
                     this.after_action(event);
                 })

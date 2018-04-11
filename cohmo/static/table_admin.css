@@ -133,8 +133,13 @@ h2 {
 }
 #current_coordination_team {
     text-align: center;
-    font-size: 250px;
+    font-size: 220px;
 }
+
+#current_coordination_start_time {
+    text-align: center;
+}
+
 
 #header>.calling {
     color: #FFA500;

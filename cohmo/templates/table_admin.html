@@ -36,6 +36,7 @@
                 </div>
                 <div v-if='table.status == TableStatus.CORRECTING'>
                     <div id='current_coordination_team' class='team'>[[ table.current_coordination_team ]]</div>
+                    <div id='current_coordination_start_time'>Coordination started at [[ human_current_coordination_start_time ]]</div>
                 </div>
                 <div v-if='table.status == TableStatus.IDLE'>
                     <div class='queue'>
