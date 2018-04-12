@@ -67,14 +67,14 @@ let content_comp = new Vue({
         disable_buttons: function(event) {
             this.temporary_freezed = true;
         },
-        unable_buttons: function(event) {
+        enable_buttons: function(event) {
             this.temporary_freezed = false;
         },
         before_action: function(event) {
             this.disable_buttons(event);
         },
         after_action: function(event) {
-            this.unable_buttons(event);
+            this.enable_buttons(event);
             table_model.update().then(() => {
                 this.team_coordination = table_model.data.queue[0];
                 this.team_calling = table_model.data.queue[0];
@@ -87,7 +87,7 @@ let content_comp = new Vue({
                 .then(response => {
                     if (!response.data.ok) {
                         alert(response.data.message);
-                        document.getElementsByTagName('body')[0].classList.remove('hidden');
+                        this.enable_buttons(event);
                         return;
                     }
                     this.start_time_coordination = 
@@ -101,7 +101,7 @@ let content_comp = new Vue({
                 .then(response => {
                     if (!response.data.ok) {
                         alert(response.data.message);
-                        document.getElementsByTagName('body')[0].classList.remove('hidden');
+                        this.enable_buttons(event);
                         return;
                     }
                     if (this.call_next) {
@@ -119,7 +119,7 @@ let content_comp = new Vue({
                 .then(response => {
                     if (!response.data.ok) {
                         alert(response.data.message);
-                        document.getElementsByTagName('body')[0].classList.remove('hidden');
+                        this.enable_buttons(event);
                         return;
                     }
                     this.after_action(event);
@@ -134,7 +134,7 @@ let content_comp = new Vue({
                 .then(response => {
                     if (!response.data.ok) {
                         alert(response.data.message);
-                        document.getElementsByTagName('body')[0].classList.remove('hidden');
+                        this.enable_buttons(event);
                         return;
                     }
                     this.after_action(event);
@@ -150,7 +150,7 @@ let content_comp = new Vue({
                 .then(response => {
                     if (!response.data.ok) {
                         alert(response.data.message);
-                        document.getElementsByTagName('body')[0].classList.remove('hidden');
+                        this.enable_buttons(event);
                         return;
                     }
                     this.after_action(event);
@@ -162,7 +162,7 @@ let content_comp = new Vue({
                 .then(response => {
                     if (!response.data.ok) {
                         alert(response.data.message);
-                        document.getElementsByTagName('body')[0].classList.remove('hidden');
+                        this.enable_buttons(event);
                         return;
                     }
                     this.after_action(event);
@@ -177,7 +177,7 @@ let content_comp = new Vue({
                 .then(response => {
                     if (!response.data.ok) {
                         alert(response.data.message);
-                        document.getElementsByTagName('body')[0].classList.remove('hidden');
+                        this.enable_buttons(event);
                         return;
                     }
                     this.after_action(event);
