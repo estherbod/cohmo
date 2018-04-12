@@ -64,7 +64,8 @@ let content_comp = new Vue({
                        {'team': this.team_coordination})
                 .then(response => {
                     if (!response.data.ok) {
-                        console.log('TODO')
+                        alert(response.data.message);
+                        document.getElementsByTagName('body')[0].classList.remove('hidden');
                         return;
                     }
                     this.call_next = true;
@@ -75,7 +76,8 @@ let content_comp = new Vue({
             axios.post(APPLICATION_ROOT + 'table/' + table_name + '/finish_coordination')
                 .then(response => {
                     if (!response.data.ok) {
-                        console.log('TODO');
+                        alert(response.data.message);
+                        document.getElementsByTagName('body')[0].classList.remove('hidden');
                         return;
                     }
                     if (this.call_next) {
@@ -91,7 +93,8 @@ let content_comp = new Vue({
             axios.post(APPLICATION_ROOT + 'table/' + table_name + '/pause_coordination')
                 .then(response => {
                     if (!response.data.ok) {
-                        console.log('TODO');
+                        alert(response.data.message);
+                        document.getElementsByTagName('body')[0].classList.remove('hidden');
                         return;
                     }
                     if (this.call_next) {
@@ -107,7 +110,8 @@ let content_comp = new Vue({
             axios.post(APPLICATION_ROOT + 'table/' + table_name + '/switch_to_calling')
                 .then(response => {
                     if (!response.data.ok) {
-                        console.log('TODO');
+                        alert(response.data.message);
+                        document.getElementsByTagName('body')[0].classList.remove('hidden');
                         return;
                     }
                     this.after_action(event);
@@ -121,7 +125,8 @@ let content_comp = new Vue({
                        {'team': this.team_calling})
                 .then(response => {
                     if (!response.data.ok) {
-                        console.log('TODO')
+                        alert(response.data.message);
+                        document.getElementsByTagName('body')[0].classList.remove('hidden');
                         return;
                     }
                     this.after_action(event);
@@ -131,7 +136,8 @@ let content_comp = new Vue({
             axios.post(APPLICATION_ROOT + 'table/' + table_name + '/skip_to_next')
                 .then(response => {
                     if (!response.data.ok) {
-                        console.log('TODO');
+                        alert(response.data.message);
+                        document.getElementsByTagName('body')[0].classList.remove('hidden');
                         return;
                     }
                     this.after_action(event);
@@ -144,7 +150,8 @@ let content_comp = new Vue({
             axios.post(APPLICATION_ROOT + 'table/' + table_name + '/switch_to_idle')
                 .then(response => {
                     if (!response.data.ok) {
-                        console.log('TODO');
+                        alert(response.data.message);
+                        document.getElementsByTagName('body')[0].classList.remove('hidden');
                         return;
                     }
                     this.after_action(event);

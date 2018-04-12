@@ -46,8 +46,7 @@ const content_comp = new Vue({
                        {'team': this.add_selected_team, 'pos': this.add_position})
                 .then(response => {
                     if (!response.data.ok) {
-                        alert(response.data.message)
-                        console.log('TODO')
+                        alert(response.data.message);
                         return;
                     }
                     schedule_model.update();
@@ -58,8 +57,7 @@ const content_comp = new Vue({
                        {'team': this.remove_selected_team})
                 .then(response => {
                     if (!response.data.ok) {
-                        alert(response.data.message)
-                        console.log('TODO')
+                        alert(response.data.message);
                         return;
                     }
                     schedule_model.update();
@@ -70,8 +68,7 @@ const content_comp = new Vue({
                        {'teams': [this.swap_selected_team1, this.swap_selected_team2]})
                 .then(response => {
                     if (!response.data.ok) {
-                        alert(response.data.message)
-                        console.log('TODO')
+                        alert(response.data.message);
                         return;
                     }
                     schedule_model.update();

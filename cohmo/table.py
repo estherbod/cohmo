@@ -158,6 +158,7 @@ class Table:
     # Returns whether the status was succesfully changed.
     def switch_to_calling(self):
         self.history_manager.operations_num += 1
+        if len(self.queue) == 0: return False
         if self.status != TableStatus.IDLE: return False
         self.status = TableStatus.CALLING
         self.dump_to_file()
