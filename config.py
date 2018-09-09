@@ -1,4 +1,5 @@
 import time
+import calendar
 
 DEBUG = True
 
@@ -20,26 +21,26 @@ SKIPPED_POSITIONS = 2
 MINIMUM_DURATION = 10*60
 
 # Maximum duration of a coordination.
-MAXIMUM_DURATION = 40*60;
+MAXIMUM_DURATION = 30*60;
 
 
 def generate_timestamp_from_time(time_str):
-    coordination_day = '2018-04-10'
+    coordination_day = '2018-04-13'
     timezone = 'UTC'
     date_format = '%Y-%m-%d %H:%M:%S %Z'
     date_template = coordination_day + ' {0} ' + timezone
-    res = time.mktime(time.strptime(date_template.format(time_str), date_format))
-    timezone_offset = -1 # offset in hours with respect to UTC
-    return res + timezone_offset * 3600 
+    res = calendar.timegm(time.strptime(date_template.format(time_str), date_format))
+    timezone_offset = -2 # offset in hours with respect to UTC
+    return res + timezone_offset * 3600
 
 # Start time of coordinations.
-START_TIME = generate_timestamp_from_time('9:30:00')
+START_TIME = generate_timestamp_from_time('8:35:00')
 
 # Maximum time over which the coordination can not go.
 MAXIMUM_TIME = generate_timestamp_from_time('23:00:00')
 
 # Scheduled breaks.
-BREAK_TIMES = [[generate_timestamp_from_time('12:30:00'),
-                generate_timestamp_from_time('13:45:00')],
-               [generate_timestamp_from_time('18:00:00'),
-                generate_timestamp_from_time('18:20:00')]]
+BREAK_TIMES = [[generate_timestamp_from_time('12:40:00'),
+                generate_timestamp_from_time('14:20:00')],
+                [generate_timestamp_from_time('19:30:00'),
+                generate_timestamp_from_time('20:30:00')]]
