@@ -14,3 +14,7 @@ def get_chief():
 
 
 import cohmo.views
+from cohmo.views import init_chief, init_authentication_manager
+
+init_chief()
+init_authentication_manager()
