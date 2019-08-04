@@ -43,16 +43,19 @@ def table_admin(table_name):
     return render_template('table_admin.html', table_name=table_name)
 
 @app.route('/')
+@auth.login_required
 def queues():
     return render_template('queues.html', START_TIME=chief.start_time,
                                           BREAK_TIMES=json.dumps(chief.break_times))
 
 @app.route('/country/<string:country>')
+@auth.login_required
 def country_queues(country):
     return render_template('country_queues.html', country=country.upper(),
                            START_TIME=chief.start_time, BREAK_TIMES=json.dumps(chief.break_times))
 
 @app.route('/problem/<string:problem>')
+@auth.login_required
 def problem_queues(problem):
     return render_template('problem_queues.html', problem=problem,
                            START_TIME=chief.start_time, BREAK_TIMES=json.dumps(chief.break_times))
@@ -268,6 +271,7 @@ def switch_to_vacant(table_name):
     return jsonify(ok=False, message='An error occurred while switching to vacant.')
 
 @app.route('/table/<string:table_name>/get_queue', methods=['GET'])
+@auth.login_required
 def get_queue(table_name):
     if table_name not in chief.tables:
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
@@ -275,6 +279,7 @@ def get_queue(table_name):
     return jsonify(ok=True, queue=table_queue)
 
 @app.route('/table/<string:table_name>/get_all', methods=['GET'])
+@auth.login_required
 def get_all(table_name):
     if table_name not in chief.tables:
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
@@ -286,6 +291,7 @@ def get_all(table_name):
 # Return the tables data if and only if a new operation happened since last
 # update.
 @app.route('/tables/get_all', methods=['GET'])
+@auth.login_required
 def get_tables_if_changed():
     last_update = -1
     if 'last_update' in request.args:
@@ -335,6 +341,7 @@ def history_delete():
     return jsonify(ok=False, message='An error occurred while deleting the entry from the history.')
 
 @app.route('/history/get_corrections', methods=['GET'])
+@auth.login_required
 def get_corrections():
     req_data = json.loads(request.data)
     filters = {}
