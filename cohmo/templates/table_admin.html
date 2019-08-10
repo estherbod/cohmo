@@ -18,10 +18,10 @@
 <body class='hidden'>
     <div id='header'>
         <div id='table-info'>
-        <h1><span id='table'>[[ name ]]</span> - <span id='problem'>Problem [[ problem ]]</span></h1>
-        <h2>
-            <span v-for='(coordinator, index) in coordinators'>[[ coordinator ]]<span v-if='index+1 < coordinators.length'>, </span></span>
-        </h2>
+            <h1><span id='table'>[[ name ]]</span> - <span id='problem'>Problem [[ problem ]]</span></h1>
+            <h2>
+                <span v-for='(coordinator, index) in coordinators'>[[ coordinator ]]<span v-if='index+1 < coordinators.length'>, </span></span>
+            </h2>
         </div>
         <div :class='TableStatusName[status]' class='status'>[[ TableStatusName[status] ]]</div>
     </div>
