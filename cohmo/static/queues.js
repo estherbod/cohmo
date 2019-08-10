@@ -148,18 +148,39 @@ let queues_component = new Vue({
         problems: function() {
             this.now;
             let problems = [];
-            // console.log(this.tables);
+            let problem = {};
             for (let table of this.tables) {
-                if (problems.length == 0 || problems[problems.length - 1].name != table.problem) {
-                    problems.push({
-                        name: table.problem,
-                        width: -6,
-                    });
+                if (problem.name == table.problem) {
+                    problem.tables.push(table);
+                    problem.width += 100;
                 }
-                problems[problems.length - 1].width += 100;
+                else {
+                    if (problem.name != null) {
+                        problems.push(problem);
+                    }
+                    problem = {};
+                    problem.name = table.problem;
+                    problem.tables = [table];
+                    problem.width = 100 + 10;
+                }
+            }
+            if (problem.name != null) {
+                problems.push(problem);
             }
             return problems;
         },
+        max_queue_size: function() {
+            this.now;
+            let max_queue_size = 0;
+            for (let table of this.tables) {
+                max_queue_size = Math.max(max_queue_size, table.queue.length * table.expected_duration);
+            }
+            for (let bt of BREAK_TIMES) {
+                max_queue_size +=
+                    Math.max(parseInt(bt[1]), this.now) - Math.max(parseInt(bt[0]), this.now);
+            }
+            return max_queue_size * SECOND_IN_PIXELS;
+        }
     },
 });
 

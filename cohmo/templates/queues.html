@@ -27,17 +27,19 @@
                 </div>
             </div>
         </div>
-        <div id='queues' :style='"width: " + (tables.length*100 + 1) + "px;"'>
-            <div v-for='problem in problems' class='problem-name' :style='"width: " + problem.width + ";"'>Problem [[ problem.name ]]</div>
-            <div v-for='table in tables' class='queue-column' :key="table.name">
-                <queue-header v-bind:table='table'></queue-header>
-                <div class='queue-container'>
-                    <team-in-queue v-for='(team, index) in table.queue' v-bind:team='team'
-                                   :class='[table.status==0 && index==0 ? "team-calling" : ""]'
-                                   v-bind:expected_duration='table.expected_duration'
-                                   v-bind:start_time='start_time[table.name][team]'
-                                   v-bind:now='now'>
-                    </team-in-queue>
+        <div id='queues' :style='"width: " + (tables.length*106 + 1) + "px; height: " + (max_queue_size + 150) + "px;"'>
+            <div v-for='problem in problems' class='problem' :style='"width: " + problem.width + ";"'>
+                <div class='problem-name' :style='"width: " + (problem.width-10) + ";"'>Problem [[ problem.name ]]</div>
+                <div v-for='table in problem.tables' class='queue-column' :key="table.name">
+                    <queue-header v-bind:table='table'></queue-header>
+                    <div class='queue-container'>
+                        <team-in-queue v-for='(team, index) in table.queue' v-bind:team='team'
+                                       :class='[table.status==0 && index==0 ? "team-calling" : ""]'
+                                       v-bind:expected_duration='table.expected_duration'
+                                       v-bind:start_time='start_time[table.name][team]'
+                                       v-bind:now='now'>
+                        </team-in-queue>
+                    </div>
                 </div>
             </div>
         </div>
