@@ -67,7 +67,7 @@ class Table:
 
     # Dumps the table to file. The format is the same as create_table_from_file.
     # It should be remarked that the current status of the table (whether it is
-    # currently correcting is lost when doing this operation).
+    # currently correcting) is lost when doing this operation.
     def dump_to_file(self, path=None):
         if path is None:
             path = self.path
@@ -173,7 +173,7 @@ class Table:
         self.dump_to_file()
         return True
         
-    # Computes the expected duration of the next correction of tje table
+    # Computes the expected duration of the next correction of the table
     # and stores it in the dictionary expected_durations.
     # It is computed taking the arithmetic mean of the durations of the past
     # corrections.
