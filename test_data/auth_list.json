@@ -4,8 +4,76 @@
         "authorizations": [],
         "admin": true
     },
-    "T1": {
-        "password": "wtf",
-        "authorizations": ["T1"]
+    "1A": {
+        "password": "1A",
+        "authorizations": ["1A"]
+    },
+    "1B": {
+        "password": "1B",
+        "authorizations": ["1B"]
+    },
+    "1C": {
+        "password": "1C",
+        "authorizations": ["1C"]
+    },
+    "2A": {
+        "password": "2A",
+        "authorizations": ["2A"]
+    },
+    "2B": {
+        "password": "2B",
+        "authorizations": ["2B"]
+    },
+    "2C": {
+        "password": "2C",
+        "authorizations": ["2C"]
+    },
+    "3A": {
+        "password": "3A",
+        "authorizations": ["3A"]
+    },
+    "3B": {
+        "password": "3B",
+        "authorizations": ["3B"]
+    },
+    "4A": {
+        "password": "4A",
+        "authorizations": ["4A"]
+    },
+    "4B": {
+        "password": "4B",
+        "authorizations": ["4B"]
+    },
+    "4C": {
+        "password": "4C",
+        "authorizations": ["4C"]
+    },
+    "4D": {
+        "password": "4D",
+        "authorizations": ["4D"]
+    },
+    "5A": {
+        "password": "5A",
+        "authorizations": ["5A"]
+    },
+    "5B": {
+        "password": "5B",
+        "authorizations": ["5B"]
+    },
+    "5C": {
+        "password": "5C",
+        "authorizations": ["5C"]
+    },
+    "5D": {
+        "password": "5D",
+        "authorizations": ["5D"]
+    },
+    "6A": {
+        "password": "6A",
+        "authorizations": ["6A"]
+    },
+    "6B": {
+        "password": "6B",
+        "authorizations": ["6B"]
     }
 }

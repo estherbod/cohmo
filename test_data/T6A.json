@@ -1,16 +1,11 @@
 {
-    "name": "T10",
-    "problem": "5",
+    "name": "6A",
+    "problem": "6",
     "coordinators": [
-        "Biondo Naturale",
-        "Castano Chiaro"
+        "A B",
+        "C D"
     ],
     "queue": [
-        "JPN",
-        "KAZ",
-        "LIE",
-        "BEL",
-        "BGR",
         "BIH",
         "BLR",
         "BRA",
@@ -28,9 +23,11 @@
         "IRL",
         "IRN",
         "ISR",
-        "ITA"
+        "ITA",
+        "JPN",
+        "KAZ"
     ],
     "status": "CORRECTING",
-    "current_coordination_team": "SWE",
-    "current_coordination_start_time": 26
+    "current_coordination_team": "USA",
+    "current_coordination_start_time": 1
 }

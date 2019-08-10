@@ -1,12 +1,11 @@
 {
-    "name": "T3",
-    "problem": "2",
+    "name": "4A",
+    "problem": "4",
     "coordinators": [
-        "Aprilio Zucco",
-        "Telefono Piccio"
+        "Panzo Pinzo",
+        "Homo Sapiens"
     ],
     "queue": [
-        "ESP",
         "FIN",
         "FRA",
         "GEO",
@@ -18,9 +17,20 @@
         "ISR",
         "ITA",
         "JPN",
-        "KAZ"
+        "KAZ",
+        "LIE",
+        "BEL",
+        "BGR",
+        "BIH",
+        "BLR",
+        "BRA",
+        "CRI",
+        "CYP",
+        "CZE",
+        "ECU",
+        "ESP"
     ],
-    "status": "IDLE",
+    "status": "CALLING",
     "current_coordination_team": null,
     "current_coordination_start_time": null
 }

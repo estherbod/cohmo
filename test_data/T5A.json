@@ -1,16 +1,11 @@
 {
-    "name": "T7",
-    "problem": "4",
+    "name": "5A",
+    "problem": "5",
     "coordinators": [
-        "Panzo Pinzo",
-        "Homo Sapiens"
+        "Cyber Netica",
+        "Lavagna Elettronica"
     ],
     "queue": [
-        "FIN",
-        "FRA",
-        "GEO",
-        "HUN",
-        "IDN",
         "IND",
         "IRL",
         "IRN",
@@ -28,7 +23,12 @@
         "CYP",
         "CZE",
         "ECU",
-        "ESP"
+        "ESP",
+        "FIN",
+        "FRA",
+        "GEO",
+        "HUN",
+        "IDN"
     ],
     "status": "CALLING",
     "current_coordination_team": null,

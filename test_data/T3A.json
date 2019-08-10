@@ -1,11 +1,16 @@
 {
-    "name": "T6",
+    "name": "3A",
     "problem": "3",
     "coordinators": [
-        "Mano Robotica",
-        "Pallina Rossa"
+        "Franco Giuliani",
+        "Anita Amonte"
     ],
     "queue": [
+        "BEL",
+        "BGR",
+        "BIH",
+        "BLR",
+        "BRA",
         "CRI",
         "CYP",
         "CZE",
@@ -23,14 +28,9 @@
         "ITA",
         "JPN",
         "KAZ",
-        "LIE",
-        "BEL",
-        "BGR",
-        "BIH",
-        "BLR",
-        "BRA"
+        "LIE"
     ],
-    "status": "IDLE",
-    "current_coordination_team": null,
-    "current_coordination_start_time": null
+    "status": "CORRECTING",
+    "current_coordination_team": "ALB",
+    "current_coordination_start_time": 10
 }

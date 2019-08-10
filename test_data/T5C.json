@@ -1,0 +1,12 @@
+{
+    "name": "5C",
+    "problem": "5",
+    "coordinators": [
+        "Schedario Estroverso",
+        "Muschio Blu"
+    ],
+    "queue": [],
+    "status": "IDLE",
+    "current_coordination_team": null,
+    "current_coordination_start_time": null
+}

@@ -1,13 +1,11 @@
 {
-    "name": "T12",
-    "problem": "6",
+    "name": "2A",
+    "problem": "2",
     "coordinators": [
-        "Pappo Pippo",
-        "Peppo Puppo"
+        "Aprilio Zucco",
+        "Telefono Piccio"
     ],
     "queue": [
-        "CZE",
-        "ECU",
         "ESP",
         "FIN",
         "FRA",
@@ -20,15 +18,7 @@
         "ISR",
         "ITA",
         "JPN",
-        "KAZ",
-        "LIE",
-        "BEL",
-        "BGR",
-        "BIH",
-        "BLR",
-        "BRA",
-        "CRI",
-        "CYP"
+        "KAZ"
     ],
     "status": "IDLE",
     "current_coordination_team": null,

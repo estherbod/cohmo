@@ -1,11 +1,19 @@
 {
-    "name": "T9",
-    "problem": "5",
+    "name": "6B",
+    "problem": "6",
     "coordinators": [
-        "Cyber Netica",
-        "Lavagna Elettronica"
+        "Pappo Pippo",
+        "Peppo Puppo"
     ],
     "queue": [
+        "CZE",
+        "ECU",
+        "ESP",
+        "FIN",
+        "FRA",
+        "GEO",
+        "HUN",
+        "IDN",
         "IND",
         "IRL",
         "IRN",
@@ -20,17 +28,9 @@
         "BLR",
         "BRA",
         "CRI",
-        "CYP",
-        "CZE",
-        "ECU",
-        "ESP",
-        "FIN",
-        "FRA",
-        "GEO",
-        "HUN",
-        "IDN"
+        "CYP"
     ],
-    "status": "CALLING",
+    "status": "IDLE",
     "current_coordination_team": null,
     "current_coordination_start_time": null
 }
