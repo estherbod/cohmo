@@ -30,7 +30,7 @@
         "BLR",
         "BRA"
     ],
-    "status": "IDLE",
+    "status": "BUSY",
     "current_coordination_team": null,
     "current_coordination_start_time": null
 }

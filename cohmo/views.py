@@ -229,15 +229,15 @@ def skip_to_next(table_name):
         return jsonify(ok=True);
     return jsonify(ok=False, message='An error occurred while adding the team in the queue.')
 
-@app.route('/table/<string:table_name>/switch_to_idle', methods=['POST'])
+@app.route('/table/<string:table_name>/switch_to_busy', methods=['POST'])
 @auth.login_required
-def switch_to_idle(table_name):
+def switch_to_busy(table_name):
     if not authentication_manager.is_authorized(auth.username(), table_name): abort(401)
     if table_name not in chief.tables:
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
-    if chief.tables[table_name].switch_to_idle():
+    if chief.tables[table_name].switch_to_busy():
         return jsonify(ok=True)
-    return jsonify(ok=False, message='An error occurred while switching to idle.')
+    return jsonify(ok=False, message='An error occurred while switching to busy.')
 
 @app.route('/table/<string:table_name>/get_queue', methods=['GET'])
 def get_queue(table_name):

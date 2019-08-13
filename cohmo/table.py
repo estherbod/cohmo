@@ -7,7 +7,7 @@ import json
 class TableStatus(enum.IntEnum):
     CALLING = 0
     CORRECTING = 1
-    IDLE = 2
+    BUSY = 2
 
 # The coordination Table is the class that handles the queue of teams to
 # be corrected from a single table.
@@ -18,7 +18,7 @@ class TableStatus(enum.IntEnum):
 #
 # The internal state of a table is given by the queue (of teams to coordinate
 # with) and by its status. The status can be one of: calling, correcting,
-# idle. Idle means that the table is not correcting nor it is ready
+# busy. Busy means that the table is not correcting nor it is ready
 # to start a new coordination (i.e. the coordinators are playing football).
 # The history manager, that saves past coordinations, is injected into the Table
 # class and is automatically invoked whenever a coordination is finished.
@@ -149,7 +149,7 @@ class Table:
         if not self.history_manager.add(self.current_coordination_team, self.name,
                                         self.current_coordination_start_time,
                                         int(time.time())): return False
-        self.status = TableStatus.IDLE
+        self.status = TableStatus.BUSY
         self.compute_expected_duration()
         self.dump_to_file()
         return True
@@ -159,17 +159,17 @@ class Table:
     def switch_to_calling(self):
         self.history_manager.operations_num += 1
         if len(self.queue) == 0: return False
-        if self.status != TableStatus.IDLE: return False
+        if self.status != TableStatus.BUSY: return False
         self.status = TableStatus.CALLING
         self.dump_to_file()
         return True
 
-    # Switch the status to IDLE.
+    # Switch the status to BUSY.
     # Returns whether the status was succesfully changed.
-    def switch_to_idle(self):
+    def switch_to_busy(self):
         self.history_manager.operations_num += 1
         if self.status != TableStatus.CALLING: return False
-        self.status = TableStatus.IDLE
+        self.status = TableStatus.BUSY
         self.dump_to_file()
         return True
         

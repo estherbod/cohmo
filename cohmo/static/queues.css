@@ -94,7 +94,7 @@ body {
     -webkit-animation-direction: alternate;
 }
 
-.queue-header.idle {
+.queue-header.busy {
     background-color: #DDDADA;
 }
 

@@ -92,7 +92,7 @@ h2 {
     text-align: center;
 }
 
-#actions>.idle {
+#actions>.busy {
     text-align: center;
 }
 
@@ -123,7 +123,7 @@ h2 {
     border: 1px solid #FFA500;
 }
 
-#header>.idle {
+#header>.busy {
     color: #696969;
 }
 

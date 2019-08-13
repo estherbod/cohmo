@@ -1,7 +1,7 @@
 Vue.options.delimiters = ['[[', ']]'];
 
-const TableStatus = Object.freeze({CALLING: 0, CORRECTING: 1, IDLE: 2});
-const TableStatusName = ['calling', 'correcting', 'idle'];
+const TableStatus = Object.freeze({CALLING: 0, CORRECTING: 1, BUSY: 2});
+const TableStatusName = ['calling', 'correcting', 'busy'];
 
 let table_model = {
     data: {
@@ -171,9 +171,9 @@ let content_comp = new Vue({
                     console.log(error);
                 });
         },
-        switch_to_idle: function(event) {
+        switch_to_busy: function(event) {
             this.before_action(event);
-            axios.post(APPLICATION_ROOT + 'table/' + table_name + '/switch_to_idle')
+            axios.post(APPLICATION_ROOT + 'table/' + table_name + '/switch_to_busy')
                 .then(response => {
                     if (!response.data.ok) {
                         alert(response.data.message);

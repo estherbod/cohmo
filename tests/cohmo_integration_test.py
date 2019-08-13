@@ -29,7 +29,7 @@ class CohmoTestCase(unittest.TestCase):
     "problem": "3",
     "coordinators": ["Franco Anselmi", "Antonio Cannavaro"],
     "queue": ["ITA", "ENG", "IND"],
-    "status": "IDLE"
+    "status": "BUSY"
 }'''),
             'T5': generate_tempfile('''
 {
@@ -76,7 +76,7 @@ class CohmoTestCase(unittest.TestCase):
         chief = cohmo.get_chief()
         self.assertTrue('T2' in chief.tables and 'T5' in chief.tables and 'T8' in chief.tables)
         self.assertEqual(chief.teams, ['FRA', 'ITA', 'ENG', 'USA', 'CHN', 'IND', 'KOR'])
-        self.assertEqual(chief.tables['T2'].status, TableStatus.IDLE)
+        self.assertEqual(chief.tables['T2'].status, TableStatus.BUSY)
         self.assertEqual(chief.tables['T5'].status, TableStatus.CALLING)
         self.assertEqual(chief.tables['T8'].status, TableStatus.CORRECTING)
         self.assertEqual(chief.tables['T8'].current_coordination_team, 'USA')
@@ -118,12 +118,12 @@ class CohmoTestCase(unittest.TestCase):
         history = HistoryManager(cohmo.app.config['HISTORY_FILE_PATH'])
         table = Table(cohmo.app.config['TABLE_FILE_PATHS']['T2'], history, app.config)
         self.assertEqual(table.queue, ['ITA', 'ENG', 'IND'])
-        self.assertEqual(table.status, TableStatus.IDLE)
+        self.assertEqual(table.status, TableStatus.BUSY)
         self.assertTrue(table.switch_to_calling())
         self.assertEqual(table.status, TableStatus.CALLING)
-        self.assertTrue(table.switch_to_idle())
-        self.assertFalse(table.switch_to_idle())
-        self.assertEqual(table.status, TableStatus.IDLE)
+        self.assertTrue(table.switch_to_busy())
+        self.assertFalse(table.switch_to_busy())
+        self.assertEqual(table.status, TableStatus.BUSY)
         self.assertTrue(table.start_coordination('IND'))
         self.assertEqual(table.status, TableStatus.CORRECTING)
         self.assertEqual(table.current_coordination_team, 'IND')
@@ -138,11 +138,11 @@ class CohmoTestCase(unittest.TestCase):
         self.assertEqual(table.status, TableStatus.CORRECTING)
         self.assertEqual(table.current_coordination_team, 'IND')
         self.assertFalse(table.switch_to_calling())
-        self.assertFalse(table.switch_to_idle())
+        self.assertFalse(table.switch_to_busy())
         self.assertFalse(table.start_coordination('ITA'))
         self.assertEqual(len(history.get_corrections({'table':'T2', 'team':'IND'})), 0)
         self.assertTrue(table.finish_coordination())
-        self.assertEqual(table.status, TableStatus.IDLE)
+        self.assertEqual(table.status, TableStatus.BUSY)
         self.assertEqual(len(history.get_corrections({'table':'T2', 'team':'IND'})), 1)
 
         # Testing the queue modifying APIs.
@@ -445,11 +445,11 @@ class CohmoTestCase(unittest.TestCase):
         table_data = json.loads(resp['table_data'])
         self.assertEqual(table_data['status'], 0)      
 
-        # Testing switch_to_idle.
-        resp = json.loads(client.post('/table/T1/switch_to_idle', headers=headers).data)
+        # Testing switch_to_busy.
+        resp = json.loads(client.post('/table/T1/switch_to_busy', headers=headers).data)
         self.assertTrue('ok' in resp and resp['ok'] == False and
                         resp['message'] == 'Table T1 does not exist.')
-        resp = json.loads(client.post('/table/T2/switch_to_idle', headers=headers).data)
+        resp = json.loads(client.post('/table/T2/switch_to_busy', headers=headers).data)
         self.assertTrue('ok' in resp and resp['ok'] == True)
         resp = json.loads(client.get('/table/T2/get_all').data)
         self.assertTrue('ok' in resp and 'table_data' in resp)
@@ -493,7 +493,7 @@ class CohmoTestCase(unittest.TestCase):
         table_data = json.loads(resp['table_data'])
         self.assertEqual(table_data['status'], 0)
 
-        resp = json.loads(client.post('/table/T2/switch_to_idle', headers=headers).data)
+        resp = json.loads(client.post('/table/T2/switch_to_busy', headers=headers).data)
         self.assertTrue('ok' in resp and resp['ok'] == True)
         resp = json.loads(client.get('/table/T2/get_all').data)
         self.assertTrue('ok' in resp and 'table_data' in resp)

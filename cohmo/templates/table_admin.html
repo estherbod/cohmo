@@ -38,7 +38,7 @@
                     <div id='current_coordination_team' class='team'>[[ table.current_coordination_team ]]</div>
                     <div id='current_coordination_start_time'>Coordination started at [[ human_current_coordination_start_time ]]</div>
                 </div>
-                <div v-if='table.status == TableStatus.IDLE'>
+                <div v-if='table.status == TableStatus.BUSY'>
                     <div class='queue'>
                         queue: <span v-for='(team, index) in table.queue' ><span class='team'>[[ team ]]</span><span v-if='index+1 < table.queue.length'>, </span></span>
                     </div>
@@ -55,7 +55,7 @@
                     </form>
                     <div class='secondary_actions'>
                         Other actions: <br>
-                        <input type='button' v-on:click='switch_to_idle' value='Stop calling' :disabled='temporary_freezed'>
+                        <input type='button' v-on:click='switch_to_busy' value='Stop calling' :disabled='temporary_freezed'>
                         <input type='button' v-on:click='skip_to_next' value='Call next one' :disabled='temporary_freezed'>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                         <input type='button' v-on:click='pause_coordination' value='Postpone' :disabled='temporary_freezed'>
                     </div>
                 </div>
-                <div v-if='table.status == TableStatus.IDLE'>
+                <div v-if='table.status == TableStatus.BUSY'>
                     <form><input type='button' v-on:click='switch_to_calling' value='Start calling' :disabled='temporary_freezed'></form>
                     <div class='secondary_actions'>
                         Other action: <br>
