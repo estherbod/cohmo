@@ -25,7 +25,7 @@ MAXIMUM_DURATION = 30*60;
 
 
 def generate_timestamp_from_time(time_str):
-    coordination_day = '2018-04-13'
+    coordination_day = '2020-04-19'
     timezone = 'UTC'
     date_format = '%Y-%m-%d %H:%M:%S %Z'
     date_template = coordination_day + ' {0} ' + timezone
