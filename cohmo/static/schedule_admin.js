@@ -1,7 +1,7 @@
 Vue.options.delimiters = ['[[', ']]'];
 
-const TableStatus = Object.freeze({CALLING: 0, CORRECTING: 1, BUSY: 2});
-const TableStatusName = ['Calling', 'Coordination', 'Busy'];
+const TableStatus = Object.freeze({CALLING: 0, CORRECTING: 1, BUSY: 2, VACANT: 3});
+const TableStatusName = ['Calling', 'Coordination', 'Busy', 'Vacant'];
 
 let schedule_model = {
     tables: {},

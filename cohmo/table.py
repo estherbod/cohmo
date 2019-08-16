@@ -8,6 +8,7 @@ class TableStatus(enum.IntEnum):
     CALLING = 0
     CORRECTING = 1
     BUSY = 2
+    VACANT = 3
 
 # The coordination Table is the class that handles the queue of teams to
 # be corrected from a single table.
@@ -18,8 +19,9 @@ class TableStatus(enum.IntEnum):
 #
 # The internal state of a table is given by the queue (of teams to coordinate
 # with) and by its status. The status can be one of: calling, correcting,
-# busy. Busy means that the table is not correcting nor it is ready
+# busy, vacant. Busy means that the table is not correcting nor it is ready
 # to start a new coordination (i.e. the coordinators are playing football).
+# Vacant means the table is not correcting and not calling, but ready to start.
 # The history manager, that saves past coordinations, is injected into the Table
 # class and is automatically invoked whenever a coordination is finished.
 class Table:
@@ -159,7 +161,7 @@ class Table:
     def switch_to_calling(self):
         self.history_manager.operations_num += 1
         if len(self.queue) == 0: return False
-        if self.status != TableStatus.BUSY: return False
+        if self.status != TableStatus.BUSY and self.status != TableStatus.VACANT: return False
         self.status = TableStatus.CALLING
         self.dump_to_file()
         return True
@@ -168,11 +170,20 @@ class Table:
     # Returns whether the status was succesfully changed.
     def switch_to_busy(self):
         self.history_manager.operations_num += 1
-        if self.status != TableStatus.CALLING: return False
+        if self.status != TableStatus.CALLING and self.status != TableStatus.VACANT: return False
         self.status = TableStatus.BUSY
         self.dump_to_file()
         return True
-        
+
+    # Switch the status to VACANT.
+    # Returns whether the status was succesfully changed.
+    def switch_to_vacant(self):
+        self.history_manager.operations_num += 1
+        if self.status != TableStatus.BUSY: return False
+        self.status = TableStatus.VACANT
+        self.dump_to_file()
+        return True
+
     # Computes the expected duration of the next correction of the table
     # and stores it in the dictionary expected_durations.
     # It is computed taking the arithmetic mean of the durations of the past

@@ -20,8 +20,8 @@ def generate_tempfile(content):
 
 class CohmoTestCase(unittest.TestCase):
     def setUp(self):
-        cohmo.app.config['TEAMS_FILE_PATH'] = generate_tempfile('FRA,ITA,ENG,USA,CHN,IND,KOR')
-        cohmo.app.config['HISTORY_FILE_PATH'] = generate_tempfile('USA,T2,5,10,ID1\n' + 'ENG,T5,8,12,ID2\n' + 'CHN,T5,13,17,ID3')
+        cohmo.app.config['TEAMS_FILE_PATH'] = generate_tempfile('FRA,ITA,ENG,USA,CHN,IND,KOR,GER')
+        cohmo.app.config['HISTORY_FILE_PATH'] = generate_tempfile('USA,T2,5,10,ID1\n' + 'ENG,T5,8,12,ID2\n' + 'CHN,T5,13,17,ID3\n' + 'NLD,T3,16,29,ID4')
         cohmo.app.config['TABLE_FILE_PATHS'] = {
             'T2': generate_tempfile('''
 {
@@ -30,6 +30,14 @@ class CohmoTestCase(unittest.TestCase):
     "coordinators": ["Franco Anselmi", "Antonio Cannavaro"],
     "queue": ["ITA", "ENG", "IND"],
     "status": "BUSY"
+}'''),
+            'T3': generate_tempfile('''
+{
+    "name": "T3",
+    "problem": "4",
+    "coordinators": ["Pippo Pippino", "Topo Topoliino"],
+    "queue": ["GER", "FRA"],
+    "status": "VACANT"
 }'''),
             'T5': generate_tempfile('''
 {
@@ -74,15 +82,15 @@ class CohmoTestCase(unittest.TestCase):
 
     def test_chief_initialization(self):
         chief = cohmo.get_chief()
-        self.assertTrue('T2' in chief.tables and 'T5' in chief.tables and 'T8' in chief.tables)
-        self.assertEqual(chief.teams, ['FRA', 'ITA', 'ENG', 'USA', 'CHN', 'IND', 'KOR'])
+        self.assertTrue('T2' in chief.tables and 'T3' in chief.tables and 'T5' in chief.tables and 'T8' in chief.tables)
+        self.assertEqual(chief.teams, ['FRA', 'ITA', 'ENG', 'USA', 'CHN', 'IND', 'KOR', 'GER'])
         self.assertEqual(chief.tables['T2'].status, TableStatus.BUSY)
+        self.assertEqual(chief.tables['T3'].status, TableStatus.VACANT)
         self.assertEqual(chief.tables['T5'].status, TableStatus.CALLING)
         self.assertEqual(chief.tables['T8'].status, TableStatus.CORRECTING)
         self.assertEqual(chief.tables['T8'].current_coordination_team, 'USA')
-        self.assertEqual(chief.tables['T8'].current_coordination_start_time,
-                         10)
-        self.assertEqual(len(chief.history_manager.corrections), 3)
+        self.assertEqual(chief.tables['T8'].current_coordination_start_time, 10)
+        self.assertEqual(len(chief.history_manager.corrections), 4)
 
     def test_history(self):
         history = HistoryManager(cohmo.app.config['HISTORY_FILE_PATH'])
@@ -93,13 +101,13 @@ class CohmoTestCase(unittest.TestCase):
         self.assertEqual(len(history.get_corrections({'identifier':'ID2'})), 1)
         self.assertTrue(history.delete('ID2'))
         self.assertEqual(history.get_corrections({'identifier':'ID2'}), [])
-        self.assertEqual(len(history.corrections), 5)
+        self.assertEqual(len(history.corrections), 6)
 
         # Constructing HistoryManager from the file written by dump_to_file.
         history = HistoryManager(cohmo.app.config['HISTORY_FILE_PATH'])
-        self.assertEqual(len(history.corrections), 5)
-        self.assertEqual(history.corrections[2].table, 'T2')
-        self.assertEqual(history.corrections[2].team, 'ITA')
+        self.assertEqual(len(history.corrections), 6)
+        self.assertEqual(history.corrections[3].table, 'T2')
+        self.assertEqual(history.corrections[3].team, 'ITA')
         self.assertTrue(history.add('ITA', 'T5', 20, 30))
 
         # Testing various calls to get_corrections.
@@ -108,10 +116,11 @@ class CohmoTestCase(unittest.TestCase):
         self.assertEqual(len(history.get_corrections({'table':'T5'})), 3)
         self.assertEqual(history.get_corrections({'identifier':'ID2'}), [])
         self.assertEqual(len(history.get_corrections({'table':'T2'})), 2)
+        self.assertEqual(len(history.get_corrections({'table':'T3'})), 1)
         self.assertEqual(len(history.get_corrections({'table':'T8'})), 1)
         self.assertEqual(len(history.get_corrections({'table':'T5', 'team':'KOR'})), 1)
         self.assertEqual(history.get_corrections({'table':'T5', 'team':'ROK'}), [])
-        self.assertEqual(len(history.get_corrections({'start_time':(-100,100)})), 6)
+        self.assertEqual(len(history.get_corrections({'start_time':(-100,100)})), 7)
         self.assertEqual(len(history.get_corrections({'end_time':(15,25)})), 2)
 
     def test_table(self):
@@ -124,6 +133,9 @@ class CohmoTestCase(unittest.TestCase):
         self.assertTrue(table.switch_to_busy())
         self.assertFalse(table.switch_to_busy())
         self.assertEqual(table.status, TableStatus.BUSY)
+        self.assertTrue(table.switch_to_vacant())
+        self.assertFalse(table.switch_to_vacant())
+        self.assertEqual(table.status, TableStatus.VACANT)
         self.assertTrue(table.start_coordination('IND'))
         self.assertEqual(table.status, TableStatus.CORRECTING)
         self.assertEqual(table.current_coordination_team, 'IND')
@@ -139,6 +151,7 @@ class CohmoTestCase(unittest.TestCase):
         self.assertEqual(table.current_coordination_team, 'IND')
         self.assertFalse(table.switch_to_calling())
         self.assertFalse(table.switch_to_busy())
+        self.assertFalse(table.switch_to_vacant())
         self.assertFalse(table.start_coordination('ITA'))
         self.assertEqual(len(history.get_corrections({'table':'T2', 'team':'IND'})), 0)
         self.assertTrue(table.finish_coordination())
@@ -158,7 +171,6 @@ class CohmoTestCase(unittest.TestCase):
         self.assertFalse(table.swap_teams_in_queue('FRA', 'KOR'))
         self.assertTrue(table.swap_teams_in_queue('KOR', 'IND'))
         self.assertEqual(table.queue, ['IND', 'CHN', 'KOR', 'ENG'])
-
 
     # Testing operations_num.
     def test_operations_num(self):
@@ -459,6 +471,20 @@ class CohmoTestCase(unittest.TestCase):
         self.assertTrue('ok' in resp)
         self.assertEqual(resp['queue'], ['IND', 'CHN', 'ENG'])
 
+        # Testing switch_to_vacant.
+        resp = json.loads(client.post('/table/T1/switch_to_vacant', headers=headers).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Table T1 does not exist.')
+        resp = json.loads(client.post('/table/T2/switch_to_vacant', headers=headers).data)
+        self.assertTrue('ok' in resp and resp['ok'] == True)
+        resp = json.loads(client.get('/table/T2/get_all').data)
+        self.assertTrue('ok' in resp and 'table_data' in resp)
+        table_data = json.loads(resp['table_data'])
+        self.assertEqual(table_data['status'], 3)
+        resp = json.loads(client.get('/table/T2/get_queue').data)
+        self.assertTrue('ok' in resp)
+        self.assertEqual(resp['queue'], ['IND', 'CHN', 'ENG'])
+
         # Testing call_team
         resp = json.loads(client.post('/table/T1/call_team', headers=headers).data)
         self.assertTrue('ok' in resp and resp['ok'] == False and
@@ -581,7 +607,7 @@ class CohmoTestCase(unittest.TestCase):
         resp = json.loads(client.get('/tables/get_all',
                                      data=json.dumps({})).data)
         self.assertTrue('ok' in resp and resp['ok'])
-        self.assertEqual(len(json.loads(resp['tables'])), 3)
+        self.assertEqual(len(json.loads(resp['tables'])), 4)
         self.assertEqual(resp['changed'], True)
         last_update = resp['last_update']
         resp = json.loads(client.get('/tables/get_all',
@@ -592,7 +618,7 @@ class CohmoTestCase(unittest.TestCase):
         resp = json.loads(client.get('/tables/get_all',
                                      query_string = {'last_update': last_update-1}).data)
         self.assertTrue('ok' in resp and resp['ok'])
-        self.assertEqual(len(json.loads(resp['tables'])), 3)
+        self.assertEqual(len(json.loads(resp['tables'])), 4)
         self.assertEqual(resp['changed'], True)
 
     def test_views_history(self):

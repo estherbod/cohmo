@@ -1,7 +1,7 @@
 Vue.options.delimiters = ['[[', ']]'];
 
-const TableStatus = Object.freeze({CALLING: 0, CORRECTING: 1, BUSY: 2});
-const TableStatusName = ['Calling', 'Coordination', 'Busy'];
+const TableStatus = Object.freeze({CALLING: 0, CORRECTING: 1, BUSY: 2, VACANT: 3});
+const TableStatusName = ['Calling', 'Coordination', 'Busy', 'Vacant'];
 const SECOND_IN_PIXELS = 0.05;
 const UPDATE_INTERVAL = 10; // in seconds
 
@@ -127,7 +127,7 @@ let queues_component = new Vue({
                 let expected_duration = table.expected_duration;
                     
                 if (table.status == TableStatus.CALLING) curr = this.now;
-                else if (table.status == TableStatus.BUSY) curr = this.now + 300;
+                else if (table.status == TableStatus.BUSY || table.status == TableStatus.VACANT) curr = this.now + 300;
                 else if (table.status == TableStatus.CORRECTING) {
                     curr = Math.max(this.now + 300, start_time + expected_duration)
                 }
@@ -196,10 +196,14 @@ Vue.component('queue-header', {
         busy: function() {
             return this.table.status == TableStatus.BUSY;
         },
+        vacant: function() {
+            return this.table.status == TableStatus.VACANT;
+        },
         status_name: function() {
             if (this.correcting) return 'correcting';
             if (this.calling) return 'calling';
             if (this.busy) return 'busy';
+            if (this.vacant) return 'vacant';
         },
     },
     template: `
@@ -209,6 +213,7 @@ Vue.component('queue-header', {
         <div class='correcting team' v-if='correcting'> [[ table.current_coordination_team ]] </div>
         <div class='calling' v-if='calling'> calling </div>
         <div class='busy' v-if='busy'> busy </div>
+        <div class='vacant' v-if='vacant'> vacant </div>
     </div>
 </div>`,
 });

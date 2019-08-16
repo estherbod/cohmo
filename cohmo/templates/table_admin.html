@@ -38,7 +38,7 @@
                     <div id='current_coordination_team' class='team'>[[ table.current_coordination_team ]]</div>
                     <div id='current_coordination_start_time'>Coordination started at [[ human_current_coordination_start_time ]]</div>
                 </div>
-                <div v-if='table.status == TableStatus.BUSY'>
+                <div v-if='table.status == TableStatus.BUSY || table.status == TableStatus.VACANT'>
                     <div class='queue'>
                         queue: <span v-for='(team, index) in table.queue' ><span class='team'>[[ team ]]</span><span v-if='index+1 < table.queue.length'>, </span></span>
                     </div>
@@ -73,15 +73,23 @@
                 <div v-if='table.status == TableStatus.BUSY'>
                     <form><input type='button' v-on:click='switch_to_calling' value='Start calling' :disabled='temporary_freezed'></form>
                     <div class='secondary_actions'>
-                        Other action: <br>
+                        Other actions: <br>
                         <form>
                             <input type='text' class='team' v-model='team_calling' v-bind:placeholder='table.queue[0]' :disabled='temporary_freezed'/>
                             <input type='button' v-on:click='call_team' value='Call team' :disabled='temporary_freezed'>
                         </form>
-                        <!--<form>
-                            <input type='text' class='team' v-model='team_coordination' v-bind:placeholder='table.queue[0]'/>
-                            <input type='button' v-on:click='start_coordination' value='Start coordination'>
-                        </form>-->
+                        <input type='button' v-on:click='switch_to_vacant' value='Switch to vacant' :disabled='temporary_freezed'>
+                    </div>
+                </div>
+                <div v-if='table.status == TableStatus.VACANT'>
+                    <form><input type='button' v-on:click='switch_to_calling' value='Start calling' :disabled='temporary_freezed'></form>
+                    <div class='secondary_actions'>
+                        Other actions: <br>
+                        <form>
+                            <input type='text' class='team' v-model='team_calling' v-bind:placeholder='table.queue[0]' :disabled='temporary_freezed'/>
+                            <input type='button' v-on:click='call_team' value='Call team' :disabled='temporary_freezed'>
+                        </form>
+                        <input type='button' v-on:click='switch_to_busy' value='Switch to busy' :disabled='temporary_freezed'>
                     </div>
                 </div>
             </div>

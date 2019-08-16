@@ -98,6 +98,10 @@ body {
     background-color: #DDDADA;
 }
 
+.queue-header.vacant {
+    background-color: #DDDADA;
+}
+
 .time-in-schedule {
     position: absolute;
     width: 101%;

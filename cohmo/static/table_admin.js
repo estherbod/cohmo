@@ -1,7 +1,7 @@
 Vue.options.delimiters = ['[[', ']]'];
 
-const TableStatus = Object.freeze({CALLING: 0, CORRECTING: 1, BUSY: 2});
-const TableStatusName = ['calling', 'correcting', 'busy'];
+const TableStatus = Object.freeze({CALLING: 0, CORRECTING: 1, BUSY: 2, VACANT: 3});
+const TableStatusName = ['calling', 'correcting', 'busy', 'vacant'];
 
 let table_model = {
     data: {
@@ -186,5 +186,20 @@ let content_comp = new Vue({
                     console.log(error);
                 });
         },
+        switch_to_vacant: function(event) {
+            this.before_action(event);
+            axios.post(APPLICATION_ROOT + 'table/' + table_name + '/switch_to_vacant')
+                .then(response => {
+                    if (!response.data.ok) {
+                        alert(response.data.message);
+                        this.enable_buttons(event);
+                        return;
+                    }
+                    this.after_action(event);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
     }
 });
