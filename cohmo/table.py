@@ -151,7 +151,7 @@ class Table:
         if not self.history_manager.add(self.current_coordination_team, self.name,
                                         self.current_coordination_start_time,
                                         int(time.time())): return False
-        self.status = TableStatus.BUSY
+        self.status = TableStatus.VACANT
         self.compute_expected_duration()
         self.dump_to_file()
         return True
@@ -170,7 +170,7 @@ class Table:
     # Returns whether the status was succesfully changed.
     def switch_to_busy(self):
         self.history_manager.operations_num += 1
-        if self.status != TableStatus.CALLING and self.status != TableStatus.VACANT: return False
+        if self.status != TableStatus.VACANT: return False
         self.status = TableStatus.BUSY
         self.dump_to_file()
         return True
@@ -179,7 +179,7 @@ class Table:
     # Returns whether the status was succesfully changed.
     def switch_to_vacant(self):
         self.history_manager.operations_num += 1
-        if self.status != TableStatus.BUSY: return False
+        if self.status != TableStatus.CALLING and self.status != TableStatus.BUSY: return False
         self.status = TableStatus.VACANT
         self.dump_to_file()
         return True

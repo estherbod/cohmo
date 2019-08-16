@@ -130,12 +130,12 @@ class CohmoTestCase(unittest.TestCase):
         self.assertEqual(table.status, TableStatus.BUSY)
         self.assertTrue(table.switch_to_calling())
         self.assertEqual(table.status, TableStatus.CALLING)
-        self.assertTrue(table.switch_to_busy())
-        self.assertFalse(table.switch_to_busy())
-        self.assertEqual(table.status, TableStatus.BUSY)
         self.assertTrue(table.switch_to_vacant())
         self.assertFalse(table.switch_to_vacant())
         self.assertEqual(table.status, TableStatus.VACANT)
+        self.assertTrue(table.switch_to_busy())
+        self.assertFalse(table.switch_to_busy())
+        self.assertEqual(table.status, TableStatus.BUSY)
         self.assertTrue(table.start_coordination('IND'))
         self.assertEqual(table.status, TableStatus.CORRECTING)
         self.assertEqual(table.current_coordination_team, 'IND')
@@ -155,7 +155,7 @@ class CohmoTestCase(unittest.TestCase):
         self.assertFalse(table.start_coordination('ITA'))
         self.assertEqual(len(history.get_corrections({'table':'T2', 'team':'IND'})), 0)
         self.assertTrue(table.finish_coordination())
-        self.assertEqual(table.status, TableStatus.BUSY)
+        self.assertEqual(table.status, TableStatus.VACANT)
         self.assertEqual(len(history.get_corrections({'table':'T2', 'team':'IND'})), 1)
 
         # Testing the queue modifying APIs.
@@ -423,7 +423,7 @@ class CohmoTestCase(unittest.TestCase):
         resp = json.loads(client.get('/table/T2/get_all').data)
         self.assertTrue('ok' in resp and 'table_data' in resp)
         table_data = json.loads(resp['table_data'])
-        self.assertEqual(table_data['status'], 2)
+        self.assertEqual(table_data['status'], 3)
         resp = json.loads(client.post('/table/T2/finish_coordination', headers=headers).data)
         self.assertTrue('ok' in resp and resp['ok'] == False)
 
@@ -457,20 +457,6 @@ class CohmoTestCase(unittest.TestCase):
         table_data = json.loads(resp['table_data'])
         self.assertEqual(table_data['status'], 0)      
 
-        # Testing switch_to_busy.
-        resp = json.loads(client.post('/table/T1/switch_to_busy', headers=headers).data)
-        self.assertTrue('ok' in resp and resp['ok'] == False and
-                        resp['message'] == 'Table T1 does not exist.')
-        resp = json.loads(client.post('/table/T2/switch_to_busy', headers=headers).data)
-        self.assertTrue('ok' in resp and resp['ok'] == True)
-        resp = json.loads(client.get('/table/T2/get_all').data)
-        self.assertTrue('ok' in resp and 'table_data' in resp)
-        table_data = json.loads(resp['table_data'])
-        self.assertEqual(table_data['status'], 2)
-        resp = json.loads(client.get('/table/T2/get_queue').data)
-        self.assertTrue('ok' in resp)
-        self.assertEqual(resp['queue'], ['IND', 'CHN', 'ENG'])
-
         # Testing switch_to_vacant.
         resp = json.loads(client.post('/table/T1/switch_to_vacant', headers=headers).data)
         self.assertTrue('ok' in resp and resp['ok'] == False and
@@ -481,6 +467,20 @@ class CohmoTestCase(unittest.TestCase):
         self.assertTrue('ok' in resp and 'table_data' in resp)
         table_data = json.loads(resp['table_data'])
         self.assertEqual(table_data['status'], 3)
+        resp = json.loads(client.get('/table/T2/get_queue').data)
+        self.assertTrue('ok' in resp)
+        self.assertEqual(resp['queue'], ['IND', 'CHN', 'ENG'])
+
+        # Testing switch_to_busy.
+        resp = json.loads(client.post('/table/T1/switch_to_busy', headers=headers).data)
+        self.assertTrue('ok' in resp and resp['ok'] == False and
+                        resp['message'] == 'Table T1 does not exist.')
+        resp = json.loads(client.post('/table/T2/switch_to_busy', headers=headers).data)
+        self.assertTrue('ok' in resp and resp['ok'] == True)
+        resp = json.loads(client.get('/table/T2/get_all').data)
+        self.assertTrue('ok' in resp and 'table_data' in resp)
+        table_data = json.loads(resp['table_data'])
+        self.assertEqual(table_data['status'], 2)
         resp = json.loads(client.get('/table/T2/get_queue').data)
         self.assertTrue('ok' in resp)
         self.assertEqual(resp['queue'], ['IND', 'CHN', 'ENG'])
@@ -519,12 +519,12 @@ class CohmoTestCase(unittest.TestCase):
         table_data = json.loads(resp['table_data'])
         self.assertEqual(table_data['status'], 0)
 
-        resp = json.loads(client.post('/table/T2/switch_to_busy', headers=headers).data)
+        resp = json.loads(client.post('/table/T2/switch_to_vacant', headers=headers).data)
         self.assertTrue('ok' in resp and resp['ok'] == True)
         resp = json.loads(client.get('/table/T2/get_all').data)
         self.assertTrue('ok' in resp and 'table_data' in resp)
         table_data = json.loads(resp['table_data'])
-        self.assertEqual(table_data['status'], 2)
+        self.assertEqual(table_data['status'], 3)
         resp = json.loads(client.post('/table/T2/remove_from_queue', headers=headers,
                                       data=json.dumps({'team': 'KOR'})).data)
         self.assertTrue('ok' in resp and resp['ok'] == True)
