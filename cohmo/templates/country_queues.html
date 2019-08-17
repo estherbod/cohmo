@@ -10,7 +10,7 @@
     <script type='text/javascript'
             src='{{url_for("static", filename="queues.js")}}' defer></script>
     <script type='text/javascript'>
-        const country = '';
+        const country = '{{ country }}';
         const START_TIME = JSON.parse('{{ START_TIME }}');
         const BREAK_TIMES = JSON.parse('{{ BREAK_TIMES }}');
     </script>
@@ -18,7 +18,7 @@
     <link rel='stylesheet' type='text/css' href='{{url_for("static", filename="global.css")}}'>
 </head>
 <body>
-    <h1>Coordination schedule with estimated times</h1>
+    <h1>Coordination schedule with estimated times for {{country}}</h1>
     <div id='main-container'>
         <div id='schedule-times'>
             <div class='times-container'>
@@ -29,18 +29,20 @@
                 </div>
             </div>
         </div>
-        <div id='queues' :style='"width: " + (tables.length*106 + 1) + "px; height: " + (max_queue_size + 150) + "px;"'>
-            <div v-for='problem in problems' class='problem' :style='"width: " + problem.width + ";"'>
-                <div class='problem-name' :style='"width: " + (problem.width-10) + ";"'>Problem [[ problem.name ]]</div>
+        <div id='queues' :style='"width: " + (problems.length*120 + 10) + "px; height: " + (max_queue_size + 150) + "px;"'>
+            <div v-for='problem in problems' class='problem' :style='"width: 110px;"'>
+                <div class='problem-name' :style='"width: 100px;"'>Problem [[ problem.name ]]</div>
                 <div v-for='table in problem.tables' class='queue-column' :key="table.name">
-                    <queue-header v-bind:table='table'></queue-header>
-                    <div class='queue-container'>
-                        <team-in-queue v-for='(team, index) in table.queue' v-bind:team='team'
-                                       :class='[table.status==0 && index==0 ? "team-calling" : ""]'
-                                       v-bind:expected_duration='table.expected_duration'
-                                       v-bind:start_time='start_time[table.name][team]'
-                                       v-bind:now='now' v-bind:country='country'>
-                        </team-in-queue>
+                    <div v-if='table.queue.includes(country) || table.current_coordination_team == country'>
+                        <queue-header v-bind:table='table'></queue-header>
+                        <div class='queue-container'>
+                            <team-in-queue v-for='(team, index) in table.queue' v-bind:team='team'
+                                           :class='[table.status==0 && index==0 ? "team-calling" : ""]'
+                                           v-bind:expected_duration='table.expected_duration'
+                                           v-bind:start_time='start_time[table.name][team]'
+                                           v-bind:now='now' v-bind:country='country'>
+                            </team-in-queue>
+                       </div>
                     </div>
                 </div>
             </div>

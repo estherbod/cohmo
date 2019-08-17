@@ -7,6 +7,7 @@ const UPDATE_INTERVAL = 10; // in seconds
 
 let queues_model = {
     tables: [],
+    country: country,
     last_update: -1,
     update() {
         return axios.get(APPLICATION_ROOT + 'tables/get_all', {params: {last_update: this.last_update}})
@@ -38,7 +39,6 @@ function update_queues() {
 
 update_queues();
 setInterval(update_queues, UPDATE_INTERVAL * 1000);
-
 
 const SCHEDULE_TIMES_INTERVAL = 20*60;
 const TIMEZONE_OFFSET = 2;
@@ -92,7 +92,7 @@ let schedule_times_component = new Vue({
 });
 
 Vue.component('team-in-queue', {
-    props: ['team', 'expected_duration', 'start_time', 'now'],
+    props: ['team', 'expected_duration', 'start_time', 'now', 'country'],
     computed: {
         height: function() {
             return this.expected_duration * SECOND_IN_PIXELS - 1;
@@ -100,11 +100,14 @@ Vue.component('team-in-queue', {
         top_pos: function() {
             return (this.start_time - this.now) * SECOND_IN_PIXELS;
         },
+        current_team: function() {
+            return (this.country == this.team ? 'current-team' : '');
+        },
     },
     template: `
 <div class='team-container'
     :style='"height: " + (height-2) + "px; line-height: " + (height-2) + "px; top: " + (top_pos+2) + "px"'>
-    <div class='team-in-queue team'>[[ team ]]</div>
+    <div v-bind:class='"team-in-queue team " + [[current_team]]'>[[ team ]]</div>
 </div>`
 });
 
@@ -115,6 +118,7 @@ let queues_component = new Vue({
         tables: queues_model.tables,
         TableStatus: TableStatus,
         TableStatusName: TableStatusName,
+        country: queues_model.country,
     },
     computed: {
         start_time: function() {

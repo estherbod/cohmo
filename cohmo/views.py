@@ -50,6 +50,11 @@ def queues():
 def redirect_to_queues():
     return redirect(url_for('queues'), code=302)
 
+@app.route('/queues/<string:country>')
+def country_queues(country):
+    return render_template('country_queues.html', country=country,
+                           START_TIME=chief.start_time, BREAK_TIMES=json.dumps(chief.break_times))
+
 @app.route('/schedule/admin')
 @auth.login_required
 def schedule_admin():
