@@ -104,7 +104,7 @@ h2 {
  * Customization of the different statuses
  */
 #header>.correcting {
-    color: #008000;
+    color: #4D4D4D;
 }
 #current_coordination_team {
     text-align: center;
@@ -128,11 +128,11 @@ h2 {
 }
 
 #header>.busy {
-    color: #696969;
+    color: #4D4D4D;
 }
 
 #header>.vacant {
-    color: #696969;
+    color: #008000;
 }
 
 /*
