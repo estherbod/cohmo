@@ -6,31 +6,32 @@
         "Anita Amonte"
     ],
     "queue": [
-        "BEL",
-        "BGR",
-        "BIH",
         "BLR",
         "BRA",
+        "CAN",
+        "CHI",
         "CRI",
         "CYP",
         "CZE",
+        "DEN",
         "ECU",
         "ESP",
         "FIN",
         "FRA",
         "GEO",
+        "GER",
+        "HEL",
         "HUN",
-        "IDN",
         "IND",
         "IRL",
-        "IRN",
         "ISR",
         "ITA",
         "JPN",
         "KAZ",
-        "LIE"
+        "LTU",
+        "LUX"
     ],
-    "status": "CORRECTING",
-    "current_coordination_team": "ALB",
-    "current_coordination_start_time": 10
+    "status": "CALLING",
+    "current_coordination_team": null,
+    "current_coordination_start_time": null
 }

@@ -5,7 +5,20 @@
         "Schedario Estroverso",
         "Muschio Blu"
     ],
-    "queue": [],
+    "queue": [
+        "ALB",
+        "AUS",
+        "AUT",
+        "AZE",
+        "BEL",
+        "BGR",
+        "BIH",
+        "BLR",
+        "BRA",
+        "CAN",
+        "CHI",
+        "CRI"
+    ],
     "status": "VACANT",
     "current_coordination_team": null,
     "current_coordination_start_time": null
