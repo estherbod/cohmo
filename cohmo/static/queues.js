@@ -156,7 +156,7 @@ let queues_component = new Vue({
             for (let table of this.tables) {
                 if (problem.name == table.problem) {
                     problem.tables.push(table);
-                    problem.width += 100;
+                    problem.width += 65;
                 }
                 else {
                     if (problem.name != null) {
@@ -165,7 +165,7 @@ let queues_component = new Vue({
                     problem = {};
                     problem.name = table.problem;
                     problem.tables = [table];
-                    problem.width = 100 + 10;
+                    problem.width = 65 + 4;
                 }
             }
             if (problem.name != null) {

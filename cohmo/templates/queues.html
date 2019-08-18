@@ -29,9 +29,9 @@
                 </div>
             </div>
         </div>
-        <div id='queues' :style='"width: " + (tables.length*106 + 1) + "px; height: " + (max_queue_size + 150) + "px;"'>
+        <div id='queues' :style='"width: " + (tables.length*65 + 50) + "px; height: " + (max_queue_size + 150) + "px;"'>
             <div v-for='problem in problems' class='problem' :style='"width: " + problem.width + ";"'>
-                <div class='problem-name' :style='"width: " + (problem.width-10) + ";"'>Problem [[ problem.name ]]</div>
+                <div class='problem-name' :style='"width: " + (problem.width-4) + ";"'>Problem [[ problem.name ]]</div>
                 <div v-for='table in problem.tables' class='queue-column' :key="table.name">
                     <queue-header v-bind:table='table'></queue-header>
                     <div class='queue-container'>

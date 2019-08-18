@@ -29,13 +29,13 @@
                 </div>
             </div>
         </div>
-        <div id='queues' :style='"width: " + (problems.length*120 + 10) + "px; height: " + (max_queue_size + 150) + "px;"'>
-            <div v-for='problem in problems' class='problem' :style='"width: 110px;"'>
+        <div id='queues' :style='"width: " + (problems.length*100 + 50) + "px; height: " + (max_queue_size + 150) + "px;"'>
+            <div v-for='problem in problems' class='problem' :style='"width: 100px;"'>
                 <div class='problem-name' :style='"width: 100px;"'>Problem [[ problem.name ]]</div>
-                <div v-for='table in problem.tables' class='queue-column' :key="table.name">
+                <div v-for='table in problem.tables' class='queue-column' :style='"width: 100px;"' :key="table.name">
                     <div v-if='table.queue.includes(country) || table.current_coordination_team == country'>
                         <queue-header v-bind:table='table'></queue-header>
-                        <div class='queue-container'>
+                        <div class='queue-container' :style='"width: 100px;"'>
                             <team-in-queue v-for='(team, index) in table.queue' v-bind:team='team'
                                            :class='[table.status==0 && index==0 ? "team-calling" : ""]'
                                            v-bind:expected_duration='table.expected_duration'

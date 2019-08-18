@@ -18,7 +18,7 @@ h1 {
 
 #queues {
     margin: 0 auto;
-    padding-left: 70px;
+    padding-left: 50px;
 }
 
 #schedule-times {
@@ -31,7 +31,7 @@ h1 {
 
 .queue-column {
     float: left;
-    width: 100px;
+    width: 65px;
 }
 
 .queue-container, .times-container {
@@ -39,7 +39,7 @@ h1 {
 }
 
 .team-container {
-    width: 100px;
+    width: 100%;
     position: absolute;
     text-align: center;
 }
@@ -123,8 +123,8 @@ h1 {
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
-    margin: 3px;
-    padding: 5px;
+    margin: 1px;
+    padding: 2px;
     height: 100%;
 }
 
