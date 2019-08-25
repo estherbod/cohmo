@@ -89,9 +89,18 @@ h1 {
     background-color: #B3B3B3;
 }
 
+.queue-header.correcting.current-team {
+    background-color: #33BBFF;
+}
+
 @-webkit-keyframes blinker {
   from {background-color: #FFDE3B;}
   to {background-color: #FFFB93;}
+}
+
+@-webkit-keyframes blinker-current {
+  from {background-color: #33BBFF;}
+  to {background-color: #99DDFF;}
 }
 
 .queue-header.calling, .team-calling>.team-in-queue {
@@ -102,6 +111,11 @@ h1 {
     -webkit-animation-iteration-count: infinite;
     -webkit-animation-timing-function: ease-in-out;
     -webkit-animation-direction: alternate;
+}
+
+.queue-header.calling.current-team, .team-calling>.team-in-queue.current-team {
+    background-color: #33BBFF;
+    -webkit-animation-name: blinker-current;
 }
 
 .queue-header.busy {

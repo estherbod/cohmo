@@ -191,7 +191,7 @@ let queues_component = new Vue({
 });
 
 Vue.component('queue-header', {
-    props: ['table',],
+    props: ['table','country'],
     computed: {
         correcting: function() {
             return this.table.status === TableStatus.CORRECTING;
@@ -211,9 +211,13 @@ Vue.component('queue-header', {
             if (this.busy) return 'busy';
             if (this.vacant) return 'vacant';
         },
+        current_team: function() {
+            return ((this.correcting && this.country == this.table.current_coordination_team) ||
+                    (this.calling && this.country == this.table.queue[0])) ? 'current-team' : '';
+        },
     },
     template: `
-<div v-bind:class='"queue-header " + [[status_name]]'>
+<div v-bind:class='"queue-header " + [[status_name]] + " " + [[current_team]]'>
     <div class='queue-header-container'>
         <div class='table-name'>[[ table.name ]]</div>
         <div class='correcting team' v-if='correcting'> [[ table.current_coordination_team ]] </div>

@@ -35,7 +35,7 @@
                 <div class='problem-name' :style='"width: 100px;"'>Problem [[ problem.name ]]</div>
                 <div v-for='table in problem.tables' class='queue-column' :style='"width: 100px;"' :key="table.name">
                     <div v-if='table.queue.includes(country) || table.current_coordination_team == country'>
-                        <queue-header v-bind:table='table'></queue-header>
+                        <queue-header v-bind:table='table' v-bind:country='country'></queue-header>
                         <div class='queue-container' :style='"width: 100px;"'>
                             <team-in-queue v-for='(team, index) in table.queue' v-bind:team='team'
                                            :class='[table.status==0 && index==0 ? "team-calling" : ""]'
