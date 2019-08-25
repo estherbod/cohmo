@@ -40,15 +40,10 @@ def table_admin(table_name):
         abort(401)
     return render_template('table_admin.html', table_name=table_name)
 
-@app.route('/queues')
+@app.route('/')
 def queues():
     return render_template('queues.html', START_TIME=chief.start_time,
                                           BREAK_TIMES=json.dumps(chief.break_times))
-
-@app.route('/')
-@app.route('/index.html')
-def redirect_to_queues():
-    return redirect(url_for('queues'), code=302)
 
 @app.route('/country/<string:country>')
 def country_queues(country):
