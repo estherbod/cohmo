@@ -31,7 +31,7 @@ SPECIFY_TEAM = 'You have to specify a team.'
 
 # Available pages
 
-@app.route('/table/<string:table_name>/admin')
+@app.route('/table/<string:table_name>')
 @auth.login_required
 def table_admin(table_name):
     if table_name not in chief.tables:
@@ -55,7 +55,7 @@ def country_queues(country):
     return render_template('country_queues.html', country=country,
                            START_TIME=chief.start_time, BREAK_TIMES=json.dumps(chief.break_times))
 
-@app.route('/schedule/admin')
+@app.route('/schedule')
 @auth.login_required
 def schedule_admin():
     if not authentication_manager.is_admin(auth.username()): abort(401)
