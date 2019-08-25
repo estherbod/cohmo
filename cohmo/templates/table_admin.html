@@ -34,14 +34,14 @@
                         <span v-for='(team, index) in table.queue' v-if='index>0'> <span class='team'>[[ team ]]</span><span v-if='index+1 < table.queue.length'>, </span></span>
                     </div>
                 </div>
-                <div v-if='table.status == TableStatus.CORRECTING'>
-                    <div id='current_coordination_team' class='team'>[[ table.current_coordination_team ]]</div>
-                    <div id='current_coordination_start_time'>Coordination started at [[ human_current_coordination_start_time ]]</div>
-                </div>
-                <div v-if='table.status == TableStatus.BUSY || table.status == TableStatus.VACANT'>
+                <div v-if='table.status == TableStatus.CORRECTING || table.status == TableStatus.BUSY || table.status == TableStatus.VACANT'>
                     <div class='queue'>
                         queue: <span v-for='(team, index) in table.queue' ><span class='team'>[[ team ]]</span><span v-if='index+1 < table.queue.length'>, </span></span>
                     </div>
+                </div>
+                <div v-if='table.status == TableStatus.CORRECTING'>
+                    <div id='current_coordination_team' class='team'>[[ table.current_coordination_team ]]</div>
+                    <div id='current_coordination_start_time'>Coordination started at [[ human_current_coordination_start_time ]]</div>
                 </div>
             </div>
         </div>
