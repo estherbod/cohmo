@@ -51,6 +51,11 @@ def country_queues(country):
     return render_template('country_queues.html', country=country.upper(),
                            START_TIME=chief.start_time, BREAK_TIMES=json.dumps(chief.break_times))
 
+@app.route('/problem/<string:problem>')
+def problem_queues(problem):
+    return render_template('problem_queues.html', problem=problem,
+                           START_TIME=chief.start_time, BREAK_TIMES=json.dumps(chief.break_times))
+
 @app.route('/schedule')
 @auth.login_required
 def schedule_admin():

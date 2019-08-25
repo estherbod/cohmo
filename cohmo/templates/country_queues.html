@@ -11,6 +11,7 @@
             src='{{url_for("static", filename="queues.js")}}' defer></script>
     <script type='text/javascript'>
         const country = '{{ country }}';
+        const problem = '';
         const START_TIME = JSON.parse('{{ START_TIME }}');
         const BREAK_TIMES = JSON.parse('{{ BREAK_TIMES }}');
     </script>
@@ -40,7 +41,7 @@
                                            :class='[table.status==0 && index==0 ? "team-calling" : ""]'
                                            v-bind:expected_duration='table.expected_duration'
                                            v-bind:start_time='start_time[table.name][team]'
-                                           v-bind:now='now' v-bind:country='country'>
+                                           v-bind:now='now' v-bind:country='country' v-bind:problem='problem'>
                             </team-in-queue>
                        </div>
                     </div>

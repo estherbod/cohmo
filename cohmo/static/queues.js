@@ -8,6 +8,7 @@ const UPDATE_INTERVAL = 10; // in seconds
 let queues_model = {
     tables: [],
     country: country,
+    problem: problem,
     last_update: -1,
     update() {
         return axios.get(APPLICATION_ROOT + 'tables/get_all', {params: {last_update: this.last_update}})
@@ -92,7 +93,7 @@ let schedule_times_component = new Vue({
 });
 
 Vue.component('team-in-queue', {
-    props: ['team', 'expected_duration', 'start_time', 'now', 'country'],
+    props: ['team', 'expected_duration', 'start_time', 'now', 'country', 'problem'],
     computed: {
         height: function() {
             return this.expected_duration * SECOND_IN_PIXELS - 1;
@@ -119,6 +120,7 @@ let queues_component = new Vue({
         TableStatus: TableStatus,
         TableStatusName: TableStatusName,
         country: queues_model.country,
+        problem: queues_model.problem
     },
     computed: {
         start_time: function() {
