@@ -44,7 +44,7 @@ class CohmoTestCase(unittest.TestCase):
     "name": "T5",
     "problem": "6",
     "coordinators": ["Alessandro Maschi", "Giovanni Muciaccia"],
-    "queue": ["IND", "KOR", "ENG", "USA"],
+    "queue": ["KOR", "IND", "ENG", "USA"],
     "status": "CALLING"
 }'''),
             'T8': generate_tempfile('''
@@ -498,11 +498,11 @@ class CohmoTestCase(unittest.TestCase):
         self.assertTrue('ok' in resp and resp['ok'] == False and
                         resp['message'] == 'Team VAT does not exist.')
         resp = json.loads(client.post('/table/T2/call_team', headers=headers,
-                                      data=json.dumps({'team': 'KOR'})).data)
+                                      data=json.dumps({'team': 'FRA'})).data)
         self.assertTrue('ok' in resp and resp['ok'] == True)
         resp = json.loads(client.get('/table/T2/get_queue').data)
         self.assertTrue('ok' in resp)
-        self.assertEqual(resp['queue'], ['KOR', 'IND', 'CHN', 'ENG'])        
+        self.assertEqual(resp['queue'], ['FRA', 'IND', 'CHN', 'ENG'])
         resp = json.loads(client.get('/table/T2/get_all').data)
         self.assertTrue('ok' in resp and 'table_data' in resp)
         table_data = json.loads(resp['table_data'])
@@ -513,7 +513,7 @@ class CohmoTestCase(unittest.TestCase):
         self.assertTrue('ok' in resp and resp['ok'] == True)
         resp = json.loads(client.get('/table/T2/get_queue').data)
         self.assertTrue('ok' in resp)
-        self.assertEqual(resp['queue'], ['IND', 'KOR', 'CHN', 'ENG'])        
+        self.assertEqual(resp['queue'], ['IND', 'FRA', 'CHN', 'ENG'])
         resp = json.loads(client.get('/table/T2/get_all').data)
         self.assertTrue('ok' in resp and 'table_data' in resp)
         table_data = json.loads(resp['table_data'])
@@ -526,7 +526,7 @@ class CohmoTestCase(unittest.TestCase):
         table_data = json.loads(resp['table_data'])
         self.assertEqual(table_data['status'], 3)
         resp = json.loads(client.post('/table/T2/remove_from_queue', headers=headers,
-                                      data=json.dumps({'team': 'KOR'})).data)
+                                      data=json.dumps({'team': 'FRA'})).data)
         self.assertTrue('ok' in resp and resp['ok'] == True)
         resp = json.loads(client.get('/table/T2/get_queue').data)
         self.assertTrue('ok' in resp)

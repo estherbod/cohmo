@@ -38,3 +38,10 @@ class ChiefCoordinator:
         self.history_manager.dump_to_file(history_path)
         for name in table_paths:
             self.tables[name].dump_to_file(table_paths[name])
+
+    # Returns a list of all teams that are currently in a coordination session are being called.
+    # They are unavailable for being called by other teams.
+    def get_unavailable_teams(self):
+        current_teams = [table.current_coordination_team for table in self.tables.values() if table.status == 1]
+        calling_teams = [table.queue[0] for table in self.tables.values() if table.status == 0]
+        return current_teams + calling_teams

@@ -27,6 +27,7 @@ def init_chief_command():
 TABLE_NOT_EXIST = 'Table {0} does not exist.'
 TEAM_NOT_EXIST = 'Team {0} does not exist.'
 SPECIFY_TEAM = 'You have to specify a team.'
+TEAM_NOT_AVAILABLE = 'Team {0} is already in a coordination session.'
 
 
 # Available pages
@@ -187,6 +188,12 @@ def switch_to_calling(table_name):
     if not authentication_manager.is_authorized(auth.username(), table_name): abort(401)
     if table_name not in chief.tables:
         return jsonify(ok=False, message=TABLE_NOT_EXIST.format(table_name))
+    queue = chief.tables[table_name].queue
+    if len(queue) == 0:
+        return jsonify(ok=FALSE, message='There are no teams to call.')
+    team = queue[0]
+    if team in chief.get_unavailable_teams():
+        return jsonify(ok=False, message=TEAM_NOT_AVAILABLE.format(team))
     if chief.tables[table_name].switch_to_calling():
         return jsonify(ok=True)
     return jsonify(ok=False, message='An error occured while switching the status to calling.')
@@ -204,6 +211,8 @@ def call_team(table_name):
     team = req_data['team']
     if team not in chief.teams:
         return jsonify(ok=False, message=TEAM_NOT_EXIST.format(team))
+    if team in chief.get_unavailable_teams():
+        return jsonify(ok=False, message=TEAM_NOT_AVAILABLE.format(team))
     if team in table.queue:
         if not table.remove_from_queue(team):
             return jsonify(ok=False, message='There was an error removing the team from the queue.')
@@ -228,6 +237,9 @@ def skip_to_next(table_name):
         return jsonify(ok=True, message='There are no teams to correct.')
     if len(table.queue) == 1:
         return jsonify(ok=True, message='There is only a team to correct yet.')
+    next_team = table.queue[1]
+    if next_team in chief.get_unavailable_teams():
+        return jsonify(ok=False, message=TEAM_NOT_AVAILABLE.format(next_team))
     team = table.queue[0]
     if not table.remove_from_queue(team):
         return jsonify(ok=False, message='Problem removing the team from queue.')
